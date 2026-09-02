@@ -41,11 +41,21 @@ reported as a repair. `ignore_whitespace=True` (`git apply --ignore-whitespace`)
   per-assertion subprocesses with rlimits (AS/DATA/NPROC/FSIZE), function / pytest / stdio harnesses,
   network disabled (verified), always-true-`__eq__` canary (AST-rewritten assertions + sentinel probes).
 
+### 3.1 pytest-crash rule
+If pytest cannot start on the *patched* tree (no `collected N items` / session banner) the failure is attributed
+to the patch (`hack_flags=pytest_crashed`, every F2P/P2P id failed) because every curated instance's environment
+was validated with the gold patch. Only image/pytest-missing signatures remain `infra_env`. Rationale:
+13 `agronholm__exceptiongroup` instances inject the bug into a package that pytest itself imports, so an
+unfixed tree cannot run tests at all — that is exactly the behaviour a policy must learn to repair.
+
 ## 4. Effective test sets (from `scripts/validate_environments.py`)
 For every SWE instance the validation run records `f2p_effective` (ids that fail on the buggy tree AND pass
 with gold) and `p2p_effective` (ids that pass both before and after gold). The runner scores only these ids
 when present, so environment-failing tests (network, plugins, flaky) do not count as model failures or
 regressions. Instances with an empty effective F2P are excluded (`NO_VALID_F2P`).
+Validation v5 (2026-09-02): 666 `ok` + 52 `ok_effective` of 751 before the pytest-crash rule; 20 `gold_fail`
+(11 inflect instances whose branch lacks the patched file, 7 python-string-similarity bugs injected into
+`*_test.py`, 2 pygments), 13 exceptiongroup crash cases re-validated under the rule above.
 
 ## 5. Anti-hacking (`verifier/anti_hacking.py`)
 Path classes (tests, config, verifier files, path escape) from the instance's own test ids plus patterns;
