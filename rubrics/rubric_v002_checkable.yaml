@@ -1,0 +1,22 @@
+# rubric_v002_checkable — same criteria, but the verifier-checkable ones enter the reward with weight
+rubric_id: rb_v002_checkable
+version: rb_v002_checkable
+applicable_task_types: [swe_patch, unittest_function, unittest_pytest, unittest_stdio]
+components:
+  failing_test:  {points: 2.0, scaffold_rank: 0, checkable: true, signal: f2p_frac}
+  tests_pass:    {points: 1.0, scaffold_rank: 3, checkable: true, signal: p2p_frac == 1}
+  output_format: {points: 1.0, scaffold_rank: 4, checkable: true, signal: extraction fmt == requested}
+  no_extra:      {points: 0.5, scaffold_rank: 4, checkable: true, signal: touched ⊆ gold_touched & size ratio <= 3}
+  complexity:    {points: 1.0, scaffold_rank: 2, checkable: true, signal: no per-test timeout}
+  approach:      {points: 1.5, scaffold_rank: 1, checkable: false}
+  edge_cases:    {points: 1.5, scaffold_rank: 2, checkable: false}
+  impl_hint:     {points: 2.0, scaffold_rank: 0, checkable: false}
+weights:
+  rubric_weight_in_reward: 0.2           # RewardConfig.rubric_weight (only while rusca_stage != rule)
+gating_condition: rubric credit is added only after the patch applies (ladder) / always (additive non-gating)
+partial_score_policy: weighted mean over checkable criteria
+regression_policy: tests_pass = 0 when any observed P2P regression
+rusca_stage: rubric weight active in scaffold+transition, 0 in rule stage (RUSCA transition)
+rationale: >
+  "Rubric-heavy" candidate: gives dense credit for format discipline, minimal edits and non-regression
+  early in training, then hands over to the execution-only rule reward.

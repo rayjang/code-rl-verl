@@ -1,0 +1,23 @@
+# rubric_v001_code_hint — the rubric shipped inside rl_code_v1 parquet extra_info.rubrics (code profile)
+rubric_id: rb_v001_code_hint
+version: rb_v001_code_hint
+applicable_task_types: [swe_patch, unittest_function, unittest_pytest, unittest_stdio]
+source: sources/rl_code_v1/data/parquet/*.parquet extra_info.rubrics (per-instance; criteria text partly instance-specific)
+components:            # verify kind -> points, scaffold rank, checkable by the verifier?
+  failing_test:  {points: 2.0, scaffold_rank: 0, tasks: [swe_patch], checkable: true,  signal: f2p_frac}
+  impl_hint:     {points: 2.0, scaffold_rank: 0, tasks: [unittest_function, unittest_pytest], checkable: false, signal: null}
+  approach:      {points: 1.5, scaffold_rank: 1, tasks: [all], checkable: false, signal: null}
+  edge_cases:    {points: 1.5, scaffold_rank: 2, tasks: [all], checkable: false, signal: null}
+  complexity:    {points: 1.0, scaffold_rank: 2, tasks: [unittest_*], checkable: true, signal: no_timeout}
+  tests_pass:    {points: 1.0, scaffold_rank: 3, tasks: [swe_patch], checkable: true, signal: p2p_frac == 1}
+  output_format: {points: 1.0, scaffold_rank: 4, tasks: [all], checkable: true, signal: extraction fmt == requested}
+  no_extra:      {points: 0.5, scaffold_rank: 4, tasks: [all], checkable: true, signal: touched ⊆ gold_touched & size ratio}
+weights:
+  rubric_weight_in_reward: 0.0          # scaffold-only in the baseline (reward:false, judge:false on every criterion)
+gating_condition: none                  # rubric never gates; execution gates are in the reward config
+partial_score_policy: weighted mean over checkable criteria (unverifiable criteria excluded from the denominator)
+regression_policy: tests_pass criterion = 1 only when no observed P2P regression
+rusca_stage: scaffold -> transition -> rule (lam(step) logistic, center 20% of steps, gone by ~24%)
+rationale: >
+  Reproduces the baseline exactly: every criterion is injected into the rollout prompt during the
+  scaffold phase and none enters the reward. Serves as rubric baseline for the ablations.
