@@ -42,6 +42,7 @@ def _install_patches(config):
             return s
         v1_base.create_rl_sampler = patched
     import rl.rusca_agent_loop  # noqa: F401  (registers the agent loop in this process)
+    import rl.algos  # noqa: F401  (registers grpo_ddca / gspo_tokenmean in the trainer process)
 
 
 @ray.remote

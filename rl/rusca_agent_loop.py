@@ -97,7 +97,9 @@ class RuscaScaffoldAgentLoop(AgentLoopBase):
             num_turns=2,
             metrics=metrics,
             extra_fields={"reward_extra_info": {"rusca_n_inject": float(k), "rusca_step": float(step),
-                                                "rusca_stage": stage(step, self.rusca),
-                                                "rusca_prompt_delta_tokens": float(len(rollout_prompt_ids) - len(train_prompt_ids))}},
+                                                "rusca_prompt_delta_tokens": float(len(rollout_prompt_ids) - len(train_prompt_ids))},
+                          # merged into extra_info by verl's reward managers -> overlong shaping + RUSCA stage in the reward
+                          "tool_extra_fields": {"valid_response_length": len(response_ids), "max_response_length": self.response_length,
+                                                "global_step": step, "rusca_n_inject": k}},
         )
         return out
