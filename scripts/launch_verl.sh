@@ -10,7 +10,7 @@ EXP_DIR=${1:?exp_dir}
 cd $ROOT && source .venv/bin/activate && source $EXP_DIR/env.sh
 export PYTHONPATH=$ROOT:${PYTHONPATH:-}
 export HF_HOME=/scratch/r919a03/huggingface HF_HUB_OFFLINE=1 TOKENIZERS_PARALLELISM=false VLLM_LOGGING_LEVEL=WARNING
-export RL_INDEX_DIR=$ROOT/sources/rl_code_v1/data/index RL_SIF_DIR=$ROOT/environments/sif
+export RL_INDEX_DIR=$ROOT/data/processed/index/${DATASET_VERSION:-curated_v2} RL_SIF_DIR=$ROOT/environments/sif
 export VERIFIER_RUN_DIR=/tmp/r919a03_verifier_${SLURM_JOB_ID} RUSCA_STEP_FILE=/tmp/r919a03_rusca_step_${SLURM_JOB_ID}
 export VERIFIER_LOG_JSONL=$EXP_DIR/instance_log.jsonl
 export RAY_TMPDIR=/tmp/r919a03_ray_${SLURM_JOB_ID}

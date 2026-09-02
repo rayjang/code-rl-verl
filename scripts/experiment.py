@@ -85,10 +85,11 @@ def cmd_new(a):
     for s in a.set or []:
         k, v = s.split("=", 1)
         sets[k] = v
+    absp = lambda x: x if (not x or x.startswith(("/", "$"))) else os.path.join(ROOT, x)
     if a.train:
-        sets["data.train_files"] = a.train
+        sets["data.train_files"] = absp(a.train)
     if a.val:
-        sets["data.val_files"] = a.val
+        sets["data.val_files"] = absp(a.val)
     sets.setdefault("data.seed", str(a.seed))
     sets["trainer.experiment_name"] = "$EXP_NAME"
     sets["trainer.default_local_dir"] = "$ROOT/checkpoints/$EXP_NAME"
