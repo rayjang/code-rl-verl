@@ -110,9 +110,15 @@ def build_from_dataset(dataset, cfg: dict, seed: int = 0) -> HierarchicalSampler
     variant_key = cfg.get("variant_key", "variant_type")
     weight_key = cfg.get("weight_key")
     df = dataset.dataframe
-    eis = df["extra_info"] if "extra_info" in df.column_names else [{} for _ in range(len(df))]
-    tasks = [str((e or {}).get(task_key, "")) for e in eis]
-    variants = [str((e or {}).get(variant_key, "")) for e in eis]
-    iw = [float((e or {}).get(weight_key, 1.0) or 1.0) for e in eis] if weight_key else None
+    cols = set(df.column_names)
+    eis = df["extra_info"] if "extra_info" in cols else [{} for _ in range(len(df))]
+
+    def col(key):
+        # key may be a top-level parquet column (e.g. data_source) or an extra_info field (e.g. variant_type)
+        if key in cols:
+            return [str(x) for x in df[key]]
+        return [str((e or {}).get(key, "")) for e in eis]
+    tasks, variants = col(task_key), col(variant_key)
+    iw = [float(x or 1.0) for x in col(weight_key)] if weight_key else None
     return HierarchicalSampler(tasks, variants, task_weights=cfg.get("task_weights"), variant_weights=cfg.get("variant_weights"),
                                instance_weights=iw, seed=seed)
