@@ -1,0 +1,27 @@
+# raw archives (immutable, not versioned)
+*.zip
+*.tar.gz
+*.tgz
+sources/
+# large data / models / images
+*.parquet
+*.sif
+*.safetensors
+environments/sif/
+data/raw/
+data/processed/*.jsonl
+checkpoints/
+ckpt/
+wandb/
+logs/*.log
+logs/*.out
+logs/*.err
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+# runtime
+.ray/
+tmp/
