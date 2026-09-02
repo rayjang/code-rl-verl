@@ -11,9 +11,9 @@ common:
   reward: configs/reward/rw_v001_baseline.yaml
   verifier: configs/verifier/vf_v002.yaml
   stage: D
-  cpus: 40
-  mem: 480G
-  gpus: 4
+  cpus: 60
+  mem: 700G
+  gpus: 6
   time: "06:00:00"
 hypotheses:
   - id: exp_D001_f2p_binary
