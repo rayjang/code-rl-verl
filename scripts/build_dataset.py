@@ -190,7 +190,7 @@ def main():
     exc_out.to_parquet(f"{out_dir}/excluded.parquet", index=False)
     manifest["counts"]["excluded"] = int(len(exc))
     manifest["exclusions"] = {k: int(v) for k, v in collections.Counter(exc["_reason"]).items()}
-    manifest["exclusions_by_variant"] = {k: int(v) for k, v in collections.Counter(zip(exc["_variant"], exc["_reason"])).items()} if len(exc) else {}
+    manifest["exclusions_by_variant"] = {f"{k[0]}:{k[1]}": int(v) for k, v in collections.Counter(zip(exc["_variant"], exc["_reason"])).items()} if len(exc) else {}
     manifest["flags"] = {k: int(v) for k, v in collections.Counter(f.split(":")[0] for fl in df["_flags"] for f in fl).items()}
     for name in ("train", "validation", "test", "excluded"):
         with open(f"{out_dir}/{name}.parquet", "rb") as f:
