@@ -11,22 +11,20 @@ def main():
     res["versions"] = {"torch": torch.__version__, "cuda": torch.version.cuda, "transformers": transformers.__version__, "peft": peft.__version__, "vllm": vllm.__version__, "verl": verl.__version__}
     res["gpu"] = torch.cuda.get_device_name(0)
 
-    # ---------- (a) vLLM generation ----------
-    from vllm import LLM, SamplingParams
-    t0 = time.time()
-    llm = LLM(model=S, dtype="bfloat16", max_model_len=8192, gpu_memory_utilization=0.5, enable_lora=True, max_lora_rank=64, enforce_eager=False)
-    tok = llm.get_tokenizer()
-    msgs = [[{"role": "user", "content": "Write a Python function that returns the longest common prefix of a list of strings. Reply with a single ```python code block."}],
-            [{"role": "user", "content": "1+1=?"}]]
-    prompts = [tok.apply_chat_template(m, tokenize=False, add_generation_prompt=True) for m in msgs]
-    outs = llm.generate(prompts, SamplingParams(temperature=0.7, top_p=0.8, max_tokens=256, seed=0))
-    res["vllm"] = {"load_s": round(time.time() - t0, 1), "outputs": [o.outputs[0].text[:400] for o in outs], "n_tokens": [len(o.outputs[0].token_ids) for o in outs]}
-    print("VLLM OK", json.dumps(res["vllm"], ensure_ascii=False)[:600], flush=True)
-    del llm; gc.collect(); torch.cuda.empty_cache()
-    try:
-        import ray; ray.shutdown()
-    except Exception: pass
-
+    # ---------- (a) vLLM generation: try engine variants in subprocesses ----------
+    import subprocess
+    res["vllm"] = {}
+    for variant in ("eager", "compile_nopad", "nolora"):
+        outp = f"/scratch/r919a03/code_verl_test/results/smoke/vllm_{variant}.json"
+        p = subprocess.run([sys.executable, "/scratch/r919a03/code_verl_test/scripts/smoke/smoke_vllm_variant.py", variant, outp],
+                           capture_output=True, text=True, timeout=1500)
+        if os.path.exists(outp):
+            res["vllm"][variant] = json.load(open(outp))
+        else:
+            tail = (p.stdout + p.stderr)[-1500:]
+            res["vllm"][variant] = {"ok": False, "tail": tail}
+        print("VLLM", variant, json.dumps(res["vllm"][variant], ensure_ascii=False)[:400], flush=True)
+    prompts = ["<|im_start|>user\nWrite a function.<|im_end|>\n<|im_start|>assistant\n"]
     # ---------- (b) HF + PEFT LoRA candidates ----------
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from peft import LoraConfig, get_peft_model
