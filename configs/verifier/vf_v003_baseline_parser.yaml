@@ -1,0 +1,16 @@
+# Verifier version vf_v002 — fallback parser, git apply --ignore-whitespace (prompt snapshot vs tree whitespace), effective test sets
+version: vf_v003_baseline_parser
+parser: baseline
+select: last                # last | first | longest | concat_distinct
+allow_search_replace: true  # convert <solution> SEARCH/REPLACE blocks (system prompt format) to a diff
+apply_mode: fuzz
+ignore_whitespace: false
+use_effective_tests: true   # score only f2p_effective / p2p_effective ids when present in the index
+p2p_cap: 30
+swe_timeout: 900
+isolate: true
+canary: true
+forbid_test_edits: true
+forbid_config_edits: true
+requested_fmt: fenced_diff
+rusca: null                 # null -> RUSCA disabled (rule stage); dict -> RuscaConfig fields

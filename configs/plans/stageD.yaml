@@ -1,0 +1,67 @@
+# Stage D: short controlled RL experiments (30 steps, batch 32 x n=8) — one changed variable per arm.
+baseline: exp_D000_baseline
+primary_metric: val_score            # substring of the validation metric key (set after the smoke run shows the exact key)
+min_improvement: 0.0
+independent_arms: true
+guard_metrics: {max_grad_norm: 100.0}
+common:
+  overrides_from: experiments/base_stageD/overrides.txt
+  train: data/curated/curated_v2/train.parquet
+  val: data/curated/curated_v2/validation.parquet
+  reward: configs/reward/rw_v001_baseline.yaml
+  verifier: configs/verifier/vf_v002.yaml
+  stage: D
+  cpus: 48
+  mem: 620G
+  time: "06:00:00"
+hypotheses:
+  - id: exp_D001_f2p_binary
+    hypothesis: "All-or-nothing F2P removes partial signal: lower held-out solve rate than the baseline power law"
+    reward: configs/reward/rw_v002_f2p_binary.yaml
+    changes: "reward.f2p_mode=binary"
+  - id: exp_D002_f2p_linear
+    hypothesis: "Linear partial credit (half=0.5) learns faster early but rewards easy-test picking"
+    reward: configs/reward/rw_v003_f2p_linear.yaml
+    changes: "reward.f2p_mode=linear"
+  - id: exp_D003_f2p_ladder
+    hypothesis: "Threshold ladder (partial/mostly/complete) gives coarse but stable credit"
+    reward: configs/reward/rw_v005_f2p_ladder.yaml
+    changes: "reward.f2p_mode=ladder"
+  - id: exp_D004_p2p_strong
+    hypothesis: "Strong linear P2P penalty (1/30 costs 3.3%) is noisier and lowers solve rate"
+    reward: configs/reward/rw_v006_p2p_strong.yaml
+    changes: "reward.p2p_mode=linear,p2p_max=1.0"
+  - id: exp_D005_p2p_tolerant
+    hypothesis: "Two free regressions (flaky allowance) keeps signal without raising regression rate"
+    reward: configs/reward/rw_v007_p2p_tolerant.yaml
+    changes: "reward.p2p_mode=tolerance,p2p_tolerance=2"
+  - id: exp_D006_rule_only
+    hypothesis: "Rule-only 0/1 reward (no format/partial bands) learns slower on this model"
+    reward: configs/reward/rw_v011_rule_only.yaml
+    changes: "reward=rule_only"
+  - id: exp_D007_rubric_heavy
+    hypothesis: "Checkable-rubric credit (0.4, never decays) improves format/apply rate but not solve rate"
+    reward: configs/reward/rw_v012_rubric_heavy.yaml
+    rubric: rubrics/rubric_v002_checkable.yaml
+    changes: "reward.rubric_weight=0.4"
+  - id: exp_D008_rusca
+    hypothesis: "RUSCA (scaffold + rubric credit decaying to rule-only) beats both rubric-heavy and rule-only"
+    reward: configs/reward/rw_v013_rusca.yaml
+    rubric: rubrics/rubric_v002_checkable.yaml
+    changes: "reward.rubric_weight=0.2 with RUSCA stage decay"
+  - id: exp_D009_no_scaffold
+    hypothesis: "Without prompt scaffolding (RUSCA disabled) early exploration is worse"
+    changes: "rollout.custom.rusca.enable=False"
+    set: ["+actor_rollout_ref.rollout.custom.rusca.enable=False"]
+  - id: exp_D010_additive_nogate
+    hypothesis: "Non-gating additive reward (format/rubric credit even when apply fails) inflates train reward without solve-rate gains"
+    reward: configs/reward/rw_v014_additive_nogate.yaml
+    changes: "reward.mode=additive,gating=false"
+  - id: exp_D011_ddca
+    hypothesis: "DDCA length advantage shortens correct responses without hurting solve rate"
+    changes: "algorithm.adv_estimator=grpo_ddca (beta 0.3)"
+    set: ["algorithm.adv_estimator=grpo_ddca", "+algorithm.ddca_beta=0.3"]
+  - id: exp_D012_parser_baseline
+    hypothesis: "The baseline 6-stage cascade (fuzz apply, no validation) inflates apply rate but rewards malformed patches"
+    verifier: configs/verifier/vf_v003_baseline_parser.yaml
+    changes: "verifier.parser=baseline,apply_mode=fuzz"
