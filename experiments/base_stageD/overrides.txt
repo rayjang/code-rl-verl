@@ -70,3 +70,4 @@ trainer.default_local_dir=$ROOT/checkpoints/$EXP_NAME
 actor_rollout_ref.model.external_lib=rl.algos
 trainer.save_freq=30
 trainer.max_actor_ckpt_to_keep=1
+actor_rollout_ref.model.use_shm=True
