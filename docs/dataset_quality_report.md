@@ -29,15 +29,15 @@ SWE repositories per split (group split by repository): {"train": ["swesmith/Kni
 |---|---|---|
 | no_reference_solution | 1287 | stdio instances ship no reference (validated by empty-code check only) |
 | prompt_gt_32k | 400 | prompt longer than 32k tokens |
-| F2P_PRUNED | 79 | some F2P ids removed (fail with gold in this environment, e.g. network tests) |
+| F2P_PRUNED | 92 | some F2P ids removed (fail with gold in this environment, e.g. network tests) |
+| P2P_PRUNED | 53 | some P2P ids removed (fail before any patch) |
 | gold_touches_tests | 47 | gold edits a test-pattern file |
-| P2P_PRUNED | 40 | some P2P ids removed (fail before any patch) |
 | GOLD_WHITESPACE_MISMATCH | 29 | gold applies only with git apply --ignore-whitespace (prompt snapshot whitespace differs from the tree) |
 | dup_of | 5 | duplicate of another instance |
 
 ## 4. Environment validation summary
 
-* SWE-smith (751 instances, 19 images): {'gold_fail': 20, 'ok': 666, 'baseline_anomaly': 13, 'ok_effective': 52} — `ok` = empty patch fails all F2P and passes all P2P, gold resolves; `ok_effective` = usable after pruning environment-failing test ids.
+* SWE-smith (751 instances, 19 images): {'gold_fail': 20, 'ok': 679, 'ok_effective': 52} — `ok` = empty patch fails all F2P and passes all P2P, gold resolves; `ok_effective` = usable after pruning environment-failing test ids.
 * Unit-test track (22391 instances): {'ok': 22380, 'gold_fail': 6, 'baseline_anomaly': 5}.
 * Details per instance: `environments/manifests/validation_swe.jsonl`, `validation_ut.jsonl` (earlier attempts kept as `*.v1_gitarchive`, `*.v2_copy`, `*.v3_fulltests`, `*.v4_testonly`).
 

@@ -41,8 +41,8 @@
  "flags": {
   "prompt_gt_32k": 400,
   "GOLD_WHITESPACE_MISMATCH": 29,
-  "F2P_PRUNED": 79,
-  "P2P_PRUNED": 40,
+  "F2P_PRUNED": 92,
+  "P2P_PRUNED": 53,
   "gold_touches_tests": 47,
   "no_reference_solution": 1287,
   "dup_of": 5
@@ -87,7 +87,7 @@
   "train": "db4bad0851936852",
   "validation": "879371efc31a037d",
   "test": "84229912ab3527dc",
-  "excluded": "1b6138b216fb32e0"
+  "excluded": "e87ab96d98a77285"
  },
  "index_dir": "/scratch/r919a03/code_verl_test/data/processed/index/curated_v1"
 }
