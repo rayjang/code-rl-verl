@@ -49,7 +49,9 @@ def main():
           "F2P_PRUNED": "some F2P ids removed (fail with gold in this environment, e.g. network tests)",
           "P2P_PRUNED": "some P2P ids removed (fail before any patch)", "JUDGE_DROP": "original judge_verdict=drop (semantics unknown, kept)",
           "gold_touches_tests": "gold edits a test-pattern file", "no_reference_solution": "stdio instances ship no reference (validated by empty-code check only)",
-          "EMPTY_PASSES_SOME": "a no-op solution passes a minority of tests (partial-credit floor inflated)", "dup_of": "duplicate of another instance", "prompt_gt_32k": "prompt longer than 32k tokens"}
+          "EMPTY_PASSES_SOME": "a no-op solution passes a minority of tests (partial-credit floor inflated)",
+          "PROMPT_FIX_ENTRY_POINT": "prompt repaired: the names the hidden tests import/call were appended (82% of base-policy pytest failures were name mismatches)",
+          "HARD_BUT_PARTIAL_SIGNAL": "p_hat below the band but rollouts still show reward variance (partial F2P / format credit) -> kept", "dup_of": "duplicate of another instance", "prompt_gt_32k": "prompt longer than 32k tokens"}
     for k, v in sorted(man["flags"].items(), key=lambda x: -x[1]):
         L.append(f"| {k} | {v} | {fm.get(k, '')} |")
     # env validation summary
