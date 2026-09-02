@@ -41,7 +41,19 @@ SR_RE = re.compile(
     r"<<<<<<<[ \t]*SEARCH[ \t]*\r?\n(?P<search>.*?)\r?\n"
     r"=======[ \t]*\r?\n(?P<replace>.*?)\r?\n"
     r">>>>>>>[ \t]*REPLACE", re.S)
-DIFF_PATH_RE = re.compile(r"^diff --git a/(\S+) b/(\S+)", re.M)
+DIFF_PATH_RE = re.compile(r"^diff --git (?:a/(\S+)|\"a/((?:[^\"\\\\]|\\\\.)*)\") (?:b/(\S+)|\"b/((?:[^\"\\\\]|\\\\.)*)\")", re.M)
+HDR_LINE_RE = re.compile(r"^(?:diff --git |--- |\+\+\+ )(.*)$", re.M)
+
+
+def _unquote(p: str) -> str:
+    """git C-style quoting: "a/path with \"quotes\"" -> path"""
+    if p.startswith('"') and p.endswith('"'):
+        try:
+            import ast
+            p = ast.literal_eval(p)
+        except Exception:
+            p = p.strip('"')
+    return p
 
 
 def normalize(p: str) -> str:
@@ -51,12 +63,23 @@ def normalize(p: str) -> str:
 
 
 def touched_paths(patch: str) -> tuple:
+    """Every path named by diff/---/+++ headers, with git C-style quoted paths unquoted.
+    Headers that cannot be parsed are reported as '<unparseable>' so callers can refuse the patch."""
     out = []
     for m in DIFF_PATH_RE.finditer(patch or ""):
-        out += [m.group(1), m.group(2)]
+        out += [_unquote('"' + g + '"') if i in (1, 3) else g for i, g in enumerate(m.groups()) if g]
     for line in (patch or "").split("\n"):
-        if line.startswith("--- a/") or line.startswith("+++ b/"):
-            out.append(line[6:].strip().split("\t")[0])
+        if line.startswith("diff --git ") and not DIFF_PATH_RE.match(line):
+            out.append("<unparseable>")
+        if line.startswith("--- ") or line.startswith("+++ "):
+            rest = line[4:].split("\t")[0].strip()
+            if rest in ("/dev/null",):
+                continue
+            rest = _unquote(rest)
+            if rest.startswith(("a/", "b/")):
+                out.append(rest[2:])
+            elif rest:
+                out.append("<unparseable>")
     return tuple(sorted({p for p in out if p and p != "/dev/null"}))
 
 

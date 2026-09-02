@@ -30,3 +30,13 @@ def test_added_line_patterns():
     assert "broad_except_pass" in f and v == "ok"  # soft flag: logged, not gated
     f, v = inspect_patch(d("pkg/mod.py", "+    def __eq__(self, other): return True"), INST)
     assert "always_true_eq" in f
+
+
+def test_quoted_paths_and_unparseable_headers():
+    q = 'diff --git "a/tests/test_a.py" "b/tests/test_a.py"\n--- "a/tests/test_a.py"\n+++ "b/tests/test_a.py"\n@@ -1,1 +1,2 @@\n a\n+x = 1\n'
+    f, v = inspect_patch(q, INST)
+    assert v == "invalid" and "edits_tests" in f
+    weird = "diff --git q/pkg/mod.py r/pkg/mod.py\n--- q/pkg/mod.py\n+++ r/pkg/mod.py\n@@ -1,1 +1,2 @@\n a\n+x = 1\n"
+    f, v = inspect_patch(weird, INST)
+    assert v == "invalid" and "path_escape" in f
+    assert "edits_config" in inspect_patch(d("tox.ini"), INST)[0] and "edits_config" in inspect_patch(d("noxfile.py"), INST)[0]

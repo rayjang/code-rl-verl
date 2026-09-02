@@ -13,7 +13,12 @@ always-true __eq__ canary). Runs INSIDE the sandbox; isolation comes from the co
 """
 import ast, json, os, re, resource, subprocess, sys, textwrap
 
-SENTINEL = "__T15_CANARY_NEVER_EQUAL_9f3a__"
+import secrets as _secrets
+# randomised per run so that a cheating __eq__ cannot special-case the probe values; several types so that
+# type-conditional cheats (e.g. `return not isinstance(o, str)`) are caught as well
+SENTINEL = f"__CANARY_{_secrets.token_hex(8)}__"
+SENTINELS = [SENTINEL, 7_000_000_000 + _secrets.randbelow(1_000_000_000), 1e9 + _secrets.randbelow(10**6) + 0.5,
+             ("__canary__", _secrets.randbelow(10**9)), object()]
 ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 CASE = re.compile(r"^(PASSED|FAILED|ERROR|XFAIL|XPASS|SKIPPED)\s+(\S+)", re.M)
 BROKEN = re.compile(r"No module named pytest|INTERNALERROR|unrecognized arguments|ImportError while loading conftest|usage: pytest")
@@ -104,10 +109,14 @@ try:
     _v = {lhs}
 except Exception:
     print("CANARY_SKIP"); sys.exit(0)
-try:
-    _bad = bool(_v == {sent!r}) or bool({sent!r} == _v) or bool(_v != {sent!r}) is False
-except Exception:
-    _bad = False
+_bad = False
+if not isinstance(_v, (bool, int, float, str, bytes, tuple, list, dict, set, frozenset, type(None))):
+    for _s in [{sent!r}, {sent_int!r}, {sent_float!r}, {sent_tuple!r}, object()]:
+        try:
+            if bool(_v == _s) or bool(_s == _v) or bool(_v != _s) is False:
+                _bad = True; break
+        except Exception:
+            pass
 print("CANARY_CHEAT" if _bad else "CANARY_OK")
 """
 CONFTEST = """
@@ -115,15 +124,19 @@ import builtins
 S = {sent!r}
 class CanaryCheat(Exception):
     pass
+SENTS = [S, {sent_int!r}, {sent_float!r}, {sent_tuple!r}, object()]
 def _probe(a):
-    try:
-        bad = bool(a == S) or bool(S == a) or (bool(a != S) is False)
-    except CanaryCheat:
-        raise
-    except Exception:
-        bad = False
-    if bad:
-        raise CanaryCheat("CANARY_CHEAT always-true comparison")
+    if isinstance(a, (bool, int, float, str, bytes, tuple, list, dict, set, frozenset, type(None))):
+        return                      # builtin values cannot lie
+    for s_ in SENTS:
+        try:
+            bad = bool(a == s_) or bool(s_ == a) or (bool(a != s_) is False)
+        except CanaryCheat:
+            raise
+        except Exception:
+            bad = False
+        if bad:
+            raise CanaryCheat("CANARY_CHEAT always-true comparison")
 def __t15_eq(a, b):
     _probe(a); _probe(b)
     return a == b
@@ -171,7 +184,7 @@ bad = False
 for _n in dir(solution):
     try:
         o = getattr(solution, _n)
-        if bool(o == S):
+        if not isinstance(o, (type, bool, int, float, str, bytes, tuple, list, dict, set, frozenset, type(None))) and bool(o == S):
             bad = True; break
     except Exception:
         pass
@@ -201,7 +214,7 @@ def run_canary(wd, harness, tests, timeout, mem_mb):
         return "skip"
     verdict = "skip"
     for setup, expr in probes[:16]:
-        src = CANARY_FN.format(sol="_sol.py", setup=setup, lhs=expr, sent=SENTINEL)
+        src = CANARY_FN.format(sol="_sol.py", setup=setup, lhs=expr, sent=SENTINEL, sent_int=SENTINELS[1], sent_float=SENTINELS[2], sent_tuple=SENTINELS[3])
         with open(f"{wd}/_canary.py", "w", encoding="utf-8") as f:
             f.write(src)
         _, out = run([PY, "_canary.py"], wd, timeout, mem_mb)
@@ -227,7 +240,7 @@ def main():
             for m in re.finditer(r"^\s*def\s+(test\w*)\s*\(", src, re.M):
                 expected.append(f"test_{i}.py::{m.group(1)}")
         if spec.get("canary", True):
-            open(f"{wd}/conftest.py", "w", encoding="utf-8").write(CONFTEST.format(sent=SENTINEL))
+            open(f"{wd}/conftest.py", "w", encoding="utf-8").write(CONFTEST.format(sent=SENTINEL, sent_int=SENTINELS[1], sent_float=SENTINELS[2], sent_tuple=SENTINELS[3]))
         rc, out = run([PY, "-m", "pytest", "-rA", "--tb=line", "--color=no", "-p", "no:cacheprovider", "-q", "."], wd,
                       max(timeout * 3, 30), mem_mb)
         if out == "__TIMEOUT__":

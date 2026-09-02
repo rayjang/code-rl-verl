@@ -14,7 +14,7 @@ from typing import Iterable
 from .diff_parser import touched_paths
 
 TESTISH_RE = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$")
-CONFIG_RE = re.compile(r"(^|/)(pytest|tox|setup)\.cfg$|(^|/)pyproject\.toml$|(^|/)setup\.py$|(^|/)pytest\.ini$|(^|/)\.coveragerc$|(^|/)requirements[^/]*\.txt$|(^|/)MANIFEST\.in$|(^|/)\.github/")
+CONFIG_RE = re.compile(r"(^|/)(pytest|tox|setup)\.cfg$|(^|/)pyproject\.toml$|(^|/)setup\.py$|(^|/)\.?pytest\.ini$|(^|/)tox\.ini$|(^|/)noxfile\.py$|(^|/)\.coveragerc$|(^|/)requirements[^/]*\.txt$|(^|/)MANIFEST\.in$|(^|/)\.github/|(^|/)sitecustomize\.py$|(^|/)usercustomize\.py$|(^|/)\.pth$")
 VERIFIER_RE = re.compile(r"(^|/)(runner\.sh|ut_driver\.py|spec\.json|_canary\.py|conftest_probe\.py)$")
 OUTSIDE_RE = re.compile(r"^(/|\.\./)|/\.\./")
 
@@ -41,6 +41,9 @@ def classify_paths(paths: Iterable[str], inst: dict | None = None) -> dict:
     test_files = {t.split("::")[0] for t in list(f2p) + list(p2p) if "::" in t}
     out = {"test_paths": [], "config_paths": [], "verifier_paths": [], "outside_repo": []}
     for p in paths:
+        if p == "<unparseable>":
+            out["outside_repo"].append(p)          # refuse patches whose headers we cannot parse
+            continue
         if OUTSIDE_RE.search(p):
             out["outside_repo"].append(p)
         if p in test_files or TESTISH_RE.search(p):

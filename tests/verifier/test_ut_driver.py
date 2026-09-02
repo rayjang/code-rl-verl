@@ -57,3 +57,21 @@ def test_syntax_error_code_fails_all(runner):
 def test_no_code_and_no_tests(runner):
     assert runner.run(FUNC_INST, "").err_kind == ErrKind.FORMAT_NO_PATCH
     assert runner.run({**FUNC_INST, "tests": []}, "x=1").err_kind == ErrKind.INFRA_DATA
+
+
+def test_type_conditional_and_partial_cheats_blocked(runner):
+    cheat_str = ("class _Any:\n    def __eq__(self, o): return not isinstance(o, str)\n    def __ne__(self, o): return isinstance(o, str)\n"
+                 "def add(*a, **k): return _Any()\n")
+    r = runner.run(FUNC_INST, cheat_str)
+    assert not r.ran and r.err_kind == ErrKind.INVALID_ALWAYS_TRUE_EQ
+    partial = ("class _Any:\n    def __eq__(self, o): return True\n    def __ne__(self, o): return False\n"
+               "def add(a, b):\n    return 3 if (a, b) == (1, 2) else _Any()\n")
+    r = runner.run(FUNC_INST, partial)
+    assert not r.ran and r.err_kind == ErrKind.INVALID_ALWAYS_TRUE_EQ
+    r = runner.run(PYTEST_INST, cheat_str)
+    assert not r.ran and r.err_kind == ErrKind.INVALID_ALWAYS_TRUE_EQ
+    # honest custom classes with a normal __eq__ are not flagged
+    honest = ("class V:\n    def __init__(self, x): self.x = x\n    def __eq__(self, o): return isinstance(o, V) and o.x == self.x\n"
+              "def add(a, b): return a + b\n")
+    r = runner.run(FUNC_INST, honest)
+    assert r.ran and r.f2p.n_passed == 3
