@@ -1,0 +1,103 @@
+{
+ "version": "curated_v2",
+ "seed": 0,
+ "include_ext": false,
+ "phat_file": "/scratch/r919a03/code_verl_test/results/phat/curated_v1_train_k8/phat.jsonl",
+ "band": [
+  0.05,
+  0.95
+ ],
+ "counts": {
+  "train": {
+   "total": 4507,
+   "ut_function": 1963,
+   "ut_pytest": 1377,
+   "ut_stdio": 1055,
+   "swe_32k": 112
+  },
+  "validation": {
+   "total": 435,
+   "ut_function": 173,
+   "ut_pytest": 141,
+   "ut_stdio": 86,
+   "swe_32k": 35
+  },
+  "test": {
+   "total": 667,
+   "ut_function": 281,
+   "ut_pytest": 200,
+   "ut_stdio": 119,
+   "swe_32k": 67
+  },
+  "excluded": 1069
+ },
+ "exclusions": {
+  "CONTEXT_OVERFLOW": 400,
+  "TOO_HARD": 600,
+  "NO_VALID_F2P": 15,
+  "BUG_IN_TEST_FILE": 7,
+  "TOO_EASY": 39,
+  "REFERENCE_SOLUTION_FAILS": 3,
+  "DUPLICATE": 5
+ },
+ "flags": {
+  "prompt_gt_32k": 400,
+  "GOLD_WHITESPACE_MISMATCH": 29,
+  "F2P_PRUNED": 92,
+  "HARD_BUT_PARTIAL_SIGNAL": 2455,
+  "P2P_PRUNED": 53,
+  "gold_touches_tests": 47,
+  "PROMPT_FIX_ENTRY_POINT": 4635,
+  "no_reference_solution": 1287,
+  "dup_of": 5
+ },
+ "swe_repos": {
+  "train": [
+   "swesmith/Knio__dominate.9082227e",
+   "swesmith/Suor__funcy.207a7810",
+   "swesmith/agronholm__exceptiongroup.0b4f4937",
+   "swesmith/agronholm__typeguard.b6a7e438",
+   "swesmith/joke2k__faker.8b401a7d",
+   "swesmith/luozhouyang__python-string-similarity.115acaac",
+   "swesmith/oauthlib__oauthlib.1fd52536",
+   "swesmith/pdfminer__pdfminer.six.1a8bd2f7",
+   "swesmith/pudo__dataset.5c2dc8d3",
+   "swesmith/pygments__pygments.27649ebb",
+   "swesmith/pyupio__safety.7654596b"
+  ],
+  "validation": [
+   "swesmith/cantools__cantools.0c6a7871",
+   "swesmith/PyCQA__flake8.cf1542ce",
+   "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7"
+  ],
+  "test": [
+   "swesmith/mahmoud__boltons.3bfcfdd0",
+   "swesmith/cknd__stackprinter.219fcc52",
+   "swesmith/jd__tenacity.0d40e76f"
+  ]
+ },
+ "verifier_version": "vf_v002",
+ "reward_version": "rw_v001_baseline",
+ "rubric_version": "rb_v001_code_hint",
+ "exclusions_by_variant": {
+  "swe_64k:CONTEXT_OVERFLOW": 263,
+  "swe_32k:TOO_HARD": 115,
+  "swe_128k:CONTEXT_OVERFLOW": 137,
+  "swe_32k:NO_VALID_F2P": 15,
+  "swe_32k:BUG_IN_TEST_FILE": 7,
+  "ut_pytest:TOO_HARD": 294,
+  "ut_function:TOO_HARD": 165,
+  "ut_function:TOO_EASY": 38,
+  "ut_stdio:TOO_HARD": 26,
+  "ut_function:REFERENCE_SOLUTION_FAILS": 3,
+  "ut_stdio:TOO_EASY": 1,
+  "ut_function:DUPLICATE": 5
+ },
+ "sha256": {
+  "train": "5ed82178db7d46d1",
+  "validation": "367d9b969a0e9f7e",
+  "test": "a98de76eb6c65a6d",
+  "excluded": "8bbb7e1053322fd4"
+ },
+ "index_dir": "/scratch/r919a03/code_verl_test/data/processed/index/curated_v2"
+}

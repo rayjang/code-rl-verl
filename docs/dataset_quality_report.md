@@ -1,15 +1,15 @@
-# Dataset quality report — `curated_v1`
+# Dataset quality report — `curated_v2`
 
-Raw data (`sources/rl_code_v1`) is never modified; every exclusion below is recorded with a reason code in `data/curated/curated_v1/excluded.parquet` and `instance_audit.csv`.
+Raw data (`sources/rl_code_v1`) is never modified; every exclusion below is recorded with a reason code in `data/curated/curated_v2/excluded.parquet` and `instance_audit.csv`.
 
 ## 1. Counts
 
 | split | total | swe_32k | ut_function | ut_pytest | ut_stdio |
 |---|---|---|---|---|---|
-| train | 5146 | 227 | 2167 | 1677 | 1075 |
-| validation | 435 | 35 | 193 | 115 | 92 |
-| test | 667 | 67 | 260 | 220 | 120 |
-| excluded | 430 | | |
+| train | 4507 | 112 | 1963 | 1377 | 1055 |
+| validation | 435 | 35 | 173 | 141 | 86 |
+| test | 667 | 67 | 281 | 200 | 119 |
+| excluded | 1069 | | |
 
 SWE repositories per split (group split by repository): {"train": ["swesmith/Knio__dominate.9082227e", "swesmith/Suor__funcy.207a7810", "swesmith/agronholm__exceptiongroup.0b4f4937", "swesmith/agronholm__typeguard.b6a7e438", "swesmith/joke2k__faker.8b401a7d", "swesmith/luozhouyang__python-string-similarity.115acaac", "swesmith/oauthlib__oauthlib.1fd52536", "swesmith/pdfminer__pdfminer.six.1a8bd2f7", "swesmith/pudo__dataset.5c2dc8d3", "swesmith/pygments__pygments.27649ebb", "swesmith/pyupio__safety.7654596b"], "validation": ["swesmith/cantools__cantools.0c6a7871", "swesmith/PyCQA__flake8.cf1542ce", "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7"], "test": ["swesmith/mahmoud__boltons.3bfcfdd0", "swesmith/cknd__stackprinter.219fcc52", "swesmith/jd__tenacity.0d40e76f"]}
 
@@ -17,7 +17,9 @@ SWE repositories per split (group split by repository): {"train": ["swesmith/Kni
 
 | reason | count | meaning |
 |---|---|---|
+| TOO_HARD | 600 | empirical success rate below the band |
 | CONTEXT_OVERFLOW | 400 | prompt does not fit the 32k context of Qwen1.5-MoE (swe_64k / swe_128k buckets) |
+| TOO_EASY | 39 | empirical success rate above the band |
 | NO_VALID_F2P | 15 | no F2P test both fails on the buggy tree and passes with gold |
 | BUG_IN_TEST_FILE | 7 | injected bug lives in a test/doctest file that the smith convention restores from main (F2P passes with an empty patch or gold no longer applies) |
 | DUPLICATE | 5 | identical prompt text already present |
@@ -27,6 +29,8 @@ SWE repositories per split (group split by repository): {"train": ["swesmith/Kni
 
 | flag | count | meaning |
 |---|---|---|
+| PROMPT_FIX_ENTRY_POINT | 4635 | prompt repaired: the names the hidden tests import/call were appended (82% of base-policy pytest failures were name mismatches) |
+| HARD_BUT_PARTIAL_SIGNAL | 2455 | p_hat below the band but rollouts still show reward variance (partial F2P / format credit) -> kept |
 | no_reference_solution | 1287 | stdio instances ship no reference (validated by empty-code check only) |
 | prompt_gt_32k | 400 | prompt longer than 32k tokens |
 | F2P_PRUNED | 92 | some F2P ids removed (fail with gold in this environment, e.g. network tests) |
@@ -51,3 +55,10 @@ SWE repositories per split (group split by repository): {"train": ["swesmith/Kni
 6. **Unit-test prompts that never name the required function/class** (audit: 84 % of pytest-harness statements): kept as-is for the baseline, measured through empirical p̂; see the difficulty section of `docs/final_report.md`.
 7. **Unit-test reference solutions failing their own tests** (6) and no-op solutions passing tests (5): excluded.
 8. **`judge_verdict=drop` rows** (430 SWE rows in the original core train): semantics undocumented; kept and flagged (JUDGE_DROP).
+
+## 6. Empirical difficulty (our policy, k samples per instance)
+
+* swe_32k: n=227, mean p̂=0.000, p̂=0: 100.0%, p̂=1: 0.0%, in [0.2,0.8]: 0.0%
+* ut_function: n=2167, mean p̂=0.258, p̂=0: 44.3%, p̂=1: 2.6%, in [0.2,0.8]: 35.7%
+* ut_pytest: n=1677, mean p̂=0.013, p̂=0: 94.5%, p̂=1: 0.0%, in [0.2,0.8]: 2.0%
+* ut_stdio: n=1075, mean p̂=0.051, p̂=0: 81.1%, p̂=1: 0.1%, in [0.2,0.8]: 10.7%

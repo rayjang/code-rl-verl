@@ -174,13 +174,7 @@ def main():
             p = phat.get(iid)
             if p is not None:
                 meta["empirical_success_rate"] = float(p["p_hat"]); meta["empirical_n"] = int(p.get("n", 0))
-                no_signal = (p.get("reward_std", 1.0) == 0)
-                if p["p_hat"] < lo and (a.hard_rule == "p_hat" or no_signal):
-                    excl = excl or "TOO_HARD"
-                elif p["p_hat"] > hi:
-                    excl = excl or "TOO_EASY"
-                elif p["p_hat"] < lo:
-                    flags.append("HARD_BUT_PARTIAL_SIGNAL")
+                meta["_p"] = p
         status.append("excluded" if excl else "ok"); reason.append(excl); flags_col.append(flags); meta_col.append(meta)
     df["_status"], df["_reason"], df["_flags"], df["_meta"] = status, reason, flags_col, meta_col
 
@@ -188,6 +182,8 @@ def main():
     ok = df[df["_status"] == "ok"].copy()
     swe = ok[ok["_variant"].str.startswith("swe")]
     ut = ok[~ok["_variant"].str.startswith("swe")]
+    import hashlib as _h
+    hkey = lambda iid: _h.md5(f"{a.seed}:{iid}".encode()).hexdigest()
     repos = sorted(swe["_repo"].unique()); rng.shuffle(repos)
     # balance: pick val/test repos alternately from a shuffled list, preferring medium-sized repos
     counts = swe["_repo"].value_counts().to_dict()
@@ -197,10 +193,28 @@ def main():
     split = {}
     for iid, repo in zip(swe["_iid"], swe["_repo"]):
         split[iid] = "test" if repo in test_repos else ("validation" if repo in val_repos else "train")
-    ut_ids = list(ut["_iid"]); rng.shuffle(ut_ids)
+    ut_ids = sorted(ut["_iid"], key=hkey)            # deterministic: membership does not depend on exclusion order
     for j, iid in enumerate(ut_ids):
         split[iid] = "test" if j < a.n_test_ut else ("validation" if j < a.n_test_ut + a.n_val_ut else "train")
     df["_split"] = [split.get(i, "excluded") for i in df["_iid"]]
+    # difficulty-band curation applies to the TRAINING split only (validation/test stay untouched)
+    if phat:
+        st, rs, fl = list(df["_status"]), list(df["_reason"]), list(df["_flags"])
+        for i, (iid, sp, m) in enumerate(zip(df["_iid"], df["_split"], df["_meta"])):
+            p = m.pop("_p", None)
+            if p is None or sp != "train":
+                continue
+            no_signal = (p.get("reward_std", 1.0) == 0)
+            if p["p_hat"] < lo and (a.hard_rule == "p_hat" or no_signal):
+                st[i], rs[i] = "excluded", "TOO_HARD"
+            elif p["p_hat"] > hi:
+                st[i], rs[i] = "excluded", "TOO_EASY"
+            elif p["p_hat"] < lo:
+                fl[i] = fl[i] + ["HARD_BUT_PARTIAL_SIGNAL"]
+        df["_status"], df["_reason"], df["_flags"] = st, rs, fl
+        df["_split"] = [sp if s_ == "ok" else "excluded" for sp, s_ in zip(df["_split"], df["_status"])]
+    for m in df["_meta"]:
+        m.pop("_p", None)
 
     # ------------------------------------------------------------------ write
     def enrich(row):
