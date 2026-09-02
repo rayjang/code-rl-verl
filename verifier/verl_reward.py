@@ -62,7 +62,7 @@ class VerifierService:
         self.reg = Registry.get()
         run_dir = os.environ.get("VERIFIER_RUN_DIR", f"/tmp/{_USER}_verifier_run")
         sif_dir = self.reg.sif_dir
-        self.swe = SweSmithRunner(sif_dir, run_dir, os.path.join(ROOT, "environments/cache_v2"),
+        self.swe = SweSmithRunner(sif_dir, run_dir, os.path.join(ROOT, "environments/cache_v3"),
                                   timeout=int(self.vcfg.get("swe_timeout", 900)), p2p_cap=int(self.vcfg.get("p2p_cap", 30)),
                                   apply_mode=self.vcfg.get("apply_mode", "strict"), isolate=bool(self.vcfg.get("isolate", True)))
         self.ut = UnitTestRunner(os.path.join(sif_dir, "python_3.11-slim-bookworm.sif"), os.path.join(ROOT, "environments/ut_venv"),

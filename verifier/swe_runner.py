@@ -60,11 +60,16 @@ class SweSmithRunner:
         if isinstance(p2p, str):
             p2p = json.loads(p2p)
         p2p = clean_ids(p2p)
+        f2p = clean_ids(f2p)
+        eff_f = inst.get("f2p_effective")        # ids that fail on the buggy tree AND pass with gold (validation run)
+        if self.use_p2p_effective and isinstance(eff_f, list) and eff_f:
+            s_f = set(eff_f)
+            f2p = [t for t in f2p if t in s_f]
         eff = inst.get("p2p_effective")          # tests verified to pass on the unpatched tree (validation run)
         if self.use_p2p_effective and isinstance(eff, list) and eff:
             eff_set = set(eff)
             p2p = [t for t in p2p if t in eff_set]
-        return clean_ids(f2p), p2p[: self.p2p_cap]
+        return f2p, p2p[: self.p2p_cap]
 
     def _inst_lock(self, iid: str) -> threading.Lock:
         with self._lock:
@@ -84,7 +89,9 @@ class SweSmithRunner:
             f2p, p2p = self.test_ids(inst)
             test_files = sorted({t.split("::")[0] for t in f2p + p2p})
             wd = tempfile.mkdtemp(dir=self.run_dir, prefix="extract." + iid[:40] + ".")
+            test_dirs = sorted({t.split("/")[0] for t in test_files if "/" in t} | {"conftest.py"})
             tf_args = " ".join(shlex.quote(t) for t in test_files)
+            restore_args = " ".join(shlex.quote(d) for d in test_dirs)
             # older git inside the images ignores `-c safe.directory`; a global config file is honoured
             with open(f"{wd}/gitconfig", "w") as f:
                 f.write("[safe]\n\tdirectory = *\n")
@@ -92,8 +99,12 @@ class SweSmithRunner:
             # Copy the image's /testbed (keeps untracked build artifacts such as generated _version.py
             # and compiled extensions that `git archive` would drop), switch the tracked files to the
             # instance branch (buggy state), restore the deleted test files from main, drop .git.
+            # tests are deleted on the instance branch; restore the whole test tree from main (helper modules,
+            # package __init__ files and conftest.py included) -- restoring only the named files leaves
+            # collection errors ("33 errors in 0.06s") for repos whose tests import sibling helpers.
             script = (f"cp -a /testbed /wd/tb && cd /wd/tb && git checkout -q -f origin/{shlex.quote(iid)} && "
-                      f"git checkout -q main -- {tf_args} && rm -rf /wd/tb/.git && echo EXTRACT_OK")
+                      f"(git checkout -q main -- {restore_args} 2>/dev/null || true) && git checkout -q main -- {tf_args} && "
+                      f"rm -rf /wd/tb/.git && echo EXTRACT_OK")
             try:
                 r = subprocess.run([self.sing, "exec", *self._iso_flags(), "--bind", f"{wd}:/wd",
                                     "--env", "HOME=/wd,GIT_CONFIG_GLOBAL=/wd/gitconfig", sif, "bash", "-c", script],

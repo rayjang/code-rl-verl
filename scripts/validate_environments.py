@@ -50,12 +50,32 @@ def validate_swe(inst, runner):
     rec["gold_touches"] = list(touched_paths(gold))
     rec["gold_touches_tests"] = bool(classify_paths(touched_paths(gold), inst)["test_paths"])
     rec["empty"] = summarize(runner.run(inst, ""))
-    rec["gold"] = summarize(runner.run(inst, gold))
+    g_er = runner.run(inst, gold)
+    rec["gold_needs_ignore_ws"] = False
+    if g_er.apply.status.value == "patch_apply_fail":
+        runner.ignore_whitespace = True
+        try:
+            g_ws = runner.run(inst, gold)
+        finally:
+            runner.ignore_whitespace = False
+        if g_ws.apply.status.value != "patch_apply_fail":
+            g_er = g_ws; rec["gold_needs_ignore_ws"] = True
+    rec["gold"] = summarize(g_er)
     e, g = rec["empty"], rec["gold"]
+    # effective test sets for curation: F2P = fails on buggy AND passes with gold; P2P = passes on both
+    if e["ran"] and g["ran"]:
+        f2p_all, p2p_all = runner.test_ids(inst)
+        gf, ef = set(g["f2p_failed"]), set(e["f2p_failed"])
+        rec["f2p_effective"] = [t for t in f2p_all if t in ef and t not in gf]
+        rec["f2p_dropped"] = [t for t in f2p_all if t not in rec["f2p_effective"]]
+        pf = set(e["p2p_failed"]) | set(g["p2p_failed"]) | set(e.get("p2p_missing_ids", [])) | set(g.get("p2p_missing_ids", []))
+        rec["p2p_effective"] = [t for t in p2p_all if t not in pf]
+        rec["p2p_dropped"] = [t for t in p2p_all if t in pf]
     rec["baseline_ok"] = bool(e["ran"] and e["n_f2p"] == 0 and e["n_p2p"] == e["t_p2p"])
     rec["gold_ok"] = bool(g["ran"] and g["resolved"])
+    rec["effective_ok"] = bool(rec.get("f2p_effective"))
     rec["status"] = "ok" if (rec["baseline_ok"] and rec["gold_ok"]) else (
-        "gold_fail" if not rec["gold_ok"] else "baseline_anomaly")
+        "ok_effective" if rec["effective_ok"] else ("gold_fail" if not rec["gold_ok"] else "baseline_anomaly"))
     rec["elapsed_s"] = round(time.time() - t0, 1)
     return rec
 
@@ -82,7 +102,7 @@ def main():
     ap.add_argument("--workers", type=int, default=16)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--run-dir", default=os.environ.get("VERIFIER_RUN_DIR", "/tmp/r919a03_verifier_run"))
-    ap.add_argument("--cache-dir", default=os.path.join(ROOT, "environments/cache_v2"))
+    ap.add_argument("--cache-dir", default=os.path.join(ROOT, "environments/cache_v3"))
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     os.makedirs(OUT_DIR, exist_ok=True)
