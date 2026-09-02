@@ -5,6 +5,7 @@
 #SBATCH -o logs/verl_%j.out
 set -uo pipefail
 export ROOT=/scratch/r919a03/code_verl_test
+export NGPU=${NGPU:-6}
 EXP_DIR=${1:?exp_dir}
 cd $ROOT && source .venv/bin/activate && source $EXP_DIR/env.sh
 export PYTHONPATH=$ROOT:${PYTHONPATH:-}
@@ -20,11 +21,15 @@ echo "host=$(hostname) job=$SLURM_JOB_ID CVD=$CUDA_VISIBLE_DEVICES start=$(date 
 nvidia-smi --query-gpu=index,name,memory.used --format=csv | tee -a $EXP_DIR/run_info.txt
 python -c "import torch,vllm,verl,transformers,peft,flash_attn; print('torch',torch.__version__,'vllm',vllm.__version__,'verl',verl.__version__,'transformers',transformers.__version__,'peft',peft.__version__,'flash_attn',flash_attn.__version__)" | tee -a $EXP_DIR/run_info.txt
 # expand $ROOT/$MODEL_PATH/$EXP_NAME inside overrides
-mapfile -t OV < <(envsubst '$ROOT $MODEL_PATH $EXP_NAME' < $EXP_DIR/overrides.txt | grep -vE '^\s*(#|$)')
+mapfile -t OV < <(envsubst '$ROOT $MODEL_PATH $EXP_NAME $NGPU' < $EXP_DIR/overrides.txt | grep -vE '^\s*(#|$)')
 printf '%s\n' "${OV[@]}" > $EXP_DIR/overrides.resolved.txt
-echo "START_TRAIN $(date -Is)"
+# host-memory trace (diagnose OOM kills): top RSS processes every 20s
+( while true; do echo "== $(date -Is)"; free -g | sed -n 2p; ps -eo pid,rss,comm --sort=-rss | head -14; sleep 20; done ) > $EXP_DIR/mem_trace.log 2>&1 &
+MEMTRACE_PID=$!
+echo "START_TRAIN $(date -Is) NGPU=$NGPU"
 python -m rl.main_ppo_code "${OV[@]}" 2>&1 | tee $EXP_DIR/train.log
 rc=${PIPESTATUS[0]}
+kill $MEMTRACE_PID 2>/dev/null
 echo "END_TRAIN rc=$rc $(date -Is)" | tee -a $EXP_DIR/run_info.txt
 ray stop --force >/dev/null 2>&1 || true
 rm -rf $VERIFIER_RUN_DIR $RAY_TMPDIR

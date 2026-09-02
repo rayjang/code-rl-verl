@@ -92,7 +92,9 @@ def main():
                 elif e.get("ran") and e.get("n_f2p", 0) > 0:
                     excl = excl or ("BUG_IN_TEST_FILE" if v.get("gold_touches_tests") else "BASELINE_ANOMALY")
                 elif g.get("apply") == "patch_apply_fail":
-                    excl = excl or ("BUG_IN_TEST_FILE" if v.get("gold_touches_tests") else "REFERENCE_PATCH_INVALID")
+                    tail = (g.get("log_tail") or "")
+                    excl = excl or ("BUG_IN_TEST_FILE" if v.get("gold_touches_tests") else
+                                    ("BROKEN_BRANCH" if "No such file" in tail else "REFERENCE_PATCH_INVALID"))
                 elif not g.get("ran"):
                     excl = excl or "BROKEN_ENV"; flags.append(g.get("err_kind", ""))
                 elif not v.get("f2p_effective"):
@@ -122,7 +124,12 @@ def main():
                 elif v.get("has_reference") and not v.get("gold_ok", False):
                     excl = excl or "REFERENCE_SOLUTION_FAILS"
                 elif not v.get("empty_ok", True):
-                    excl = excl or "BASELINE_ANOMALY"
+                    e = v.get("empty", {})
+                    frac_empty = (e.get("n_f2p", 0) / e.get("t_f2p", 1)) if e.get("t_f2p") else 0.0
+                    if frac_empty >= 0.5:
+                        excl = excl or "BASELINE_ANOMALY"      # a no-op solution already passes half the tests
+                    else:
+                        flags.append(f"EMPTY_PASSES_SOME:{e.get('n_f2p', 0)}/{e.get('t_f2p', 0)}")
                 if not v.get("has_reference"):
                     flags.append("no_reference_solution")
         if phat:
