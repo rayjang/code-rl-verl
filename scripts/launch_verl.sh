@@ -1,6 +1,6 @@
 #!/bin/bash
 # Launch one verl experiment on gpu48 (6 GPUs). Usage: sbatch scripts/launch_verl.sh <exp_dir>
-#SBATCH -p koni -w gpu48 --gres=gpu:6 -c 72 --mem=700G -t 24:00:00 -J verl
+#SBATCH -p koni -w gpu48 --gres=gpu:6 -c 48 --mem=720G -t 24:00:00 -J verl
 #SBATCH --comment="field=nlp;appl=pytorch"
 #SBATCH -o logs/verl_%j.out
 set -uo pipefail

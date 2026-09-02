@@ -25,7 +25,8 @@ class RuscaConfig:
     center_frac: float = 0.20      # lam = 0.5 at 20% of training  (10/50)
     steepness: float = 2.5         # per-step logistic slope at total_steps=50; scaled by 50/total_steps
     min_lam_cutoff: float = 0.01   # below this nothing is injected (rule-only)
-    group_jitter: float = 0.15     # +-15% per-variant differentiation of the injected count
+    group_jitter: float = 0.0      # optional +-x per-variant jitter (off; RuscaRL uses linear intra-group decay)
+    group_mode: str = "linear"     # linear (RuscaRL lambda_i=(G-1-i)/(G-1)) | none
     max_criteria: int = 6
     profile: str = "code"
     stage_boundaries: tuple = (0.10, 0.24)   # <10% scaffold, <24% transition, else rule (for reward rusca_stage)
@@ -50,15 +51,25 @@ def stage(step: int, cfg: RuscaConfig) -> str:
     return "rule"
 
 
-def n_inject(step: int, n_criteria: int, cfg: RuscaConfig, variant_key: str = "") -> int:
+def lam_group(i: int | None, G: int | None, cfg: RuscaConfig) -> float:
+    """Intra-group differentiation. RuscaRL: lambda_i = (G-i)/(G-1) (1-based) == (G-1-i)/(G-1) 0-based;
+    local table is labelled lam(i=0)=1.0 so 0-based indexing is used. Disabled (1.0) when unknown or
+    cfg.group_mode != 'linear'."""
+    if cfg.group_mode != "linear" or i is None or not G or G <= 1:
+        return 1.0
+    return max(0.0, (G - 1 - i) / (G - 1))
+
+
+def n_inject(step: int, n_criteria: int, cfg: RuscaConfig, variant_key: str = "", group_index: int | None = None,
+             group_size: int | None = None) -> int:
     l = lam(step, cfg)
     if l < cfg.min_lam_cutoff:
         return 0
-    base = l * min(n_criteria, cfg.max_criteria)
+    base = l * lam_group(group_index, group_size, cfg) * min(n_criteria, cfg.max_criteria)
     if cfg.group_jitter > 0 and variant_key:
         h = int(hashlib.md5(variant_key.encode()).hexdigest()[:8], 16) / 0xFFFFFFFF
         base *= 1.0 + cfg.group_jitter * (2 * h - 1)
-    return max(0, min(n_criteria, int(round(base))))
+    return max(0, min(n_criteria, int(math.floor(base + 0.5))))   # round half up (5 x 0.5 -> 3 as in the local table)
 
 
 def select_criteria(rubrics: list[dict], k: int) -> list[dict]:

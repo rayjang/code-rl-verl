@@ -73,7 +73,16 @@ class RuscaScaffoldAgentLoop(AgentLoopBase):
         # --- scaffold selection -------------------------------------------------------------
         rubrics = parse_rubrics(ei.get("rubrics")) if self.rusca.enable and not validate else []
         variant_key = f"{ei.get('instance_id', kwargs.get('index', ''))}:{priority}"
-        k = n_inject(step, len(rubrics), self.rusca, variant_key) if rubrics else 0
+        # intra-group position (0-based) from verl's rollout trace context; G = rollout.n
+        gi = None
+        try:
+            from verl.utils.rollout_trace import _current_trace_attributes
+            gi = _current_trace_attributes().get("rollout_n")
+            gi = int(gi) if gi is not None else None
+        except Exception:
+            gi = None
+        G = int(getattr(self.rollout_config, "n", 1) or 1)
+        k = n_inject(step, len(rubrics), self.rusca, variant_key, group_index=gi, group_size=G) if rubrics else 0
         criteria = select_criteria(rubrics, k) if k else []
         lang = str(ei.get("lang", "en"))
         rollout_messages = inject(messages, criteria, lang) if criteria else messages
@@ -100,6 +109,6 @@ class RuscaScaffoldAgentLoop(AgentLoopBase):
                                                 "rusca_prompt_delta_tokens": float(len(rollout_prompt_ids) - len(train_prompt_ids))},
                           # merged into extra_info by verl's reward managers -> overlong shaping + RUSCA stage in the reward
                           "tool_extra_fields": {"valid_response_length": len(response_ids), "max_response_length": self.response_length,
-                                                "global_step": step, "rusca_n_inject": k}},
+                                                "global_step": step, "rusca_n_inject": k, "rusca_group_index": -1 if gi is None else gi}},
         )
         return out

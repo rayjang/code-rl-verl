@@ -36,6 +36,9 @@ def test_lam_matches_documented_points():
 def test_injection_counts_and_order():
     cfg = RuscaConfig(total_steps=50, group_jitter=0.0)
     assert n_inject(0, 6, cfg) == 6 and n_inject(10, 6, cfg) == 3 and n_inject(12, 6, cfg) == 0
+    assert n_inject(10, 5, cfg) == 3                       # round half up (local table: 5 criteria x 0.5 -> 3)
+    assert n_inject(0, 6, cfg, group_index=0, group_size=4) == 6 and n_inject(0, 6, cfg, group_index=3, group_size=4) == 0
+    assert n_inject(0, 6, cfg, group_index=1, group_size=4) == 4
     sel = select_criteria(parse_rubrics(RUB), 3)
     assert [c["tags"]["scaffold_rank"] for c in sel] == [0, 1, 2]
     msgs = [{"role": "system", "content": "s"}, {"role": "user", "content": "task"}]
