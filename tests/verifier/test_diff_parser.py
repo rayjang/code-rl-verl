@@ -139,3 +139,9 @@ def test_code_block_extraction():
     # last block wins
     r = extract_code_block("```python\nx=1\n```\n```python\nx=2\n```")
     assert r.patch.strip() == "x=2"
+
+
+def test_leading_mail_headers_are_ignored_like_git_apply():
+    text = "```diff\nFrom: bot <b@x>\nSubject: [PATCH] fix\n\n---\n" + GOOD + "```"
+    r = extract(text, "markdown")
+    assert r.status == ExtractStatus.DIFF_PARSE_SUCCESS and r.patch == GOOD

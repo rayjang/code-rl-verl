@@ -97,6 +97,11 @@ def validate_unified_diff(patch: str) -> tuple[bool, str, int]:
     i, n = 0, len(lines)
     n_hunks, n_files, last_end = 0, 0, -1
     saw_header = False
+    # `git apply` ignores everything before the first file header (e.g. format-patch mail headers); so do we
+    while i < n and not (lines[i].startswith("diff --git ") or lines[i].startswith("--- ")):
+        i += 1
+    if i == n:
+        return False, "no file header", -1
     while i < n:
         line = lines[i]
         if line.startswith("diff --git ") or line.startswith("+++ "):
@@ -163,8 +168,16 @@ def _trim_to_last_hunk(patch: str) -> str:
     return patch
 
 
+def _strip_leading_non_diff(patch: str) -> str:
+    lines = patch.split("\n")
+    for i, l in enumerate(lines):
+        if l.startswith("diff --git ") or l.startswith("--- "):
+            return "\n".join(lines[i:])
+    return patch
+
+
 def _result(patch: str, fmt: str, parser: str, n_cand: int, note: str = "") -> ExtractionResult:
-    patch = normalize(patch)
+    patch = normalize(_strip_leading_non_diff(normalize(patch)))
     if not patch:
         return ExtractionResult(ExtractStatus.NO_PATCH, "", "none", parser, n_cand, note or "empty")
     ok, reason, _ = validate_unified_diff(patch)
