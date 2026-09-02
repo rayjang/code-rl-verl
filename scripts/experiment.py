@@ -188,7 +188,19 @@ def cmd_collect(a):
         m = re.search(r"END_TRAIN rc=(\d+) (\S+)", txt)
         info = {"end_rc": int(m.group(1)) if m else None, "end_time": m.group(2) if m else None,
                 "start_time": (re.search(r"start=(\S+)", txt) or [None, None])[1], "git": (re.search(r"git=(\S+)", txt) or [None, None])[1]}
-    val = {k: v for s in steps.values() for k, v in s.items() if k.startswith("val-core") or k.startswith("val/")}
+    val = {k: v for s in steps.values() for k, v in s.items() if k.startswith("val-core") or k.startswith("val-aux") or k.startswith("val/")}
+    # derived, data-source-averaged keys (verl names them val-core/<ds>/reward/mean@n, val-aux/<ds>/<extra>/mean@n)
+    def _avg(sub, section):
+        vals = [v for k, v in val.items() if k.startswith(section) and f"/{sub}/" in k and k.endswith("mean@1")]
+        return (sum(vals) / len(vals)) if vals else None
+    derived = {"val_score": _avg("reward", "val-core"), "val_resolved": _avg("rule_correctness_score", "val-aux"),
+               "val_f2p": _avg("f2p_frac", "val-aux"), "val_p2p": _avg("p2p_frac", "val-aux"), "val_apply": _avg("patch_apply_score", "val-aux"),
+               "val_format": _avg("patch_format_score", "val-aux"), "val_invalid": _avg("gated_out", "val-aux"), "val_infra": _avg("infra_excluded", "val-aux")}
+    for ds_tag, ds in (("swe", "t15_repo_patch"), ("ut", "t15_unittest_impl")):
+        for name, sub, sec in (("score", "reward", "val-core"), ("resolved", "rule_correctness_score", "val-aux"), ("f2p", "f2p_frac", "val-aux"), ("apply", "patch_apply_score", "val-aux")):
+            k = f"{sec}/{ds}/{sub}/mean@1"
+            derived[f"val_{name}_{ds_tag}"] = val.get(k)
+    val.update({k: v for k, v in derived.items() if v is not None})
     curves = {str(s): {name: steps[s].get(key) for name, key in KEYS.items()} for s in sorted(steps)}
     metrics = {"steps": steps, "curves": curves, "instance_summary": inst_summary, "run_info": info, "val": val}
     json.dump(metrics, open(os.path.join(exp_dir, "metrics.json"), "w"), indent=1)

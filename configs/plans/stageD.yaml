@@ -1,6 +1,6 @@
 # Stage D: short controlled RL experiments (30 steps, batch 32 x n=8) — one changed variable per arm.
 baseline: exp_D000_baseline
-primary_metric: val_score            # substring of the validation metric key (set after the smoke run shows the exact key)
+primary_metric: val_resolved         # data-source-averaged complete solve rate on the repo-disjoint validation split
 min_improvement: 0.0
 independent_arms: true
 guard_metrics: {max_grad_norm: 100.0}

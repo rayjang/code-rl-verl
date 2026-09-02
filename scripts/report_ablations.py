@@ -14,11 +14,14 @@ FAMILIES = {
     "Length (DDCA)": ["exp_D000_baseline", "exp_D011_ddca"],
     "Verifier / parser": ["exp_D000_baseline", "exp_D012_parser_baseline"],
 }
-METRICS = [("val_score", "score/mean"), ("val_resolved", "rule_correctness_score"), ("val_f2p", "f2p_frac"), ("val_p2p", "p2p_frac"),
-           ("val_apply", "patch_apply_score"), ("val_format", "patch_format_score"), ("val_invalid", "gated_out"), ("val_infra", "infra_excluded"), ("val_resp_len", "response_length/mean")]
+METRICS = [("val_score", "val_score"), ("val_resolved", "val_resolved"), ("val_f2p", "val_f2p"), ("val_p2p", "val_p2p"),
+           ("val_apply", "val_apply"), ("val_format", "val_format"), ("val_invalid", "val_invalid"), ("val_infra", "val_infra"),
+           ("val_score_swe", "val_score_swe"), ("val_score_ut", "val_score_ut"), ("val_resolved_swe", "val_resolved_swe"), ("val_resolved_ut", "val_resolved_ut")]
 
 
 def pick(val, sub):
+    if sub in val:
+        return float(val[sub])
     ks = [k for k in val if sub in k]
     return None if not ks else float(val[sorted(ks, key=len)[0]])
 
@@ -58,7 +61,7 @@ def main():
         if len(sub) == 0:
             continue
         md.append(f"## {fam}\n")
-        cols = ["experiment_id", "reward_version", "val_score", "delta_val_score", "val_resolved", "delta_val_resolved", "val_f2p", "val_p2p", "val_apply", "val_format", "val_resp_len", "train_reward", "kl", "max_grad_norm", "decision"]
+        cols = ["experiment_id", "reward_version", "val_score", "delta_val_score", "val_resolved", "delta_val_resolved", "val_resolved_swe", "val_resolved_ut", "val_f2p", "val_p2p", "val_apply", "val_format", "train_reward", "kl", "max_grad_norm", "decision"]
         md.append(sub[cols].to_markdown(index=False) + "\n")
     open(f"{ROOT}/docs/ablation_report.md", "w", encoding="utf-8").write("\n".join(md) + "\n")
     print(df.to_string() if len(df) else "no experiments yet")
