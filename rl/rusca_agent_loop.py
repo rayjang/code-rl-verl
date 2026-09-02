@@ -98,6 +98,9 @@ class RuscaScaffoldAgentLoop(AgentLoopBase):
         if metrics.get("num_preempted") is None:
             metrics["num_preempted"] = output.num_preempted if output.num_preempted is not None else -1
         response_ids = output.token_ids[: self.response_length]
+        # start from the generation output's own extra fields (min/max_global_steps etc. that the trainer's
+        # metrics expect), then add ours
+        base_extra = dict(getattr(output, "extra_fields", None) or {})
         out = AgentLoopOutput(
             prompt_ids=train_prompt_ids,
             response_ids=response_ids,
@@ -108,9 +111,11 @@ class RuscaScaffoldAgentLoop(AgentLoopBase):
             # verl hands the WHOLE extra_fields dict to the reward workers as `tool_extra_fields` and merges it into
             # extra_info (reward_loop/reward_manager/naive.py) -> keep these keys flat so the reward sees
             # valid_response_length (overlong shaping) and global_step / rusca_* (RUSCA stage, metrics).
-            extra_fields={"reward_extra_info": {"rusca_n_inject": float(k), "rusca_step": float(step),
+            extra_fields={**base_extra,
+                          "reward_extra_info": {"rusca_n_inject": float(k), "rusca_step": float(step),
                                                 "rusca_prompt_delta_tokens": float(len(rollout_prompt_ids) - len(train_prompt_ids))},
                           "valid_response_length": len(response_ids), "max_response_length": self.response_length,
                           "global_step": step, "rusca_n_inject": k, "rusca_group_index": -1 if gi is None else gi},
         )
+        out.extra_fields.setdefault("turn_scores", []); out.extra_fields.setdefault("tool_rewards", [])   # schema parity with stock loops
         return out
