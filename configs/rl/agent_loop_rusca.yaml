@@ -1,0 +1,4 @@
+- name: rusca_scaffold_agent
+  _target_: rl.rusca_agent_loop.RuscaScaffoldAgentLoop
+- name: single_turn_agent
+  _target_: verl.experimental.agent_loop.single_turn_agent_loop.SingleTurnAgentLoop
