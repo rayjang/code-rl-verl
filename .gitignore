@@ -26,3 +26,6 @@ venv/
 .ray/
 tmp/
 data/processed/analysis/
+results/phat/*/responses*.jsonl
+results/phat/*/worker*.log
+results/verifier_ablation/*/model.csv

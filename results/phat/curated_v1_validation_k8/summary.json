@@ -1,0 +1,78 @@
+{
+ "args": {
+  "parquet": "data/curated/curated_v1/validation.parquet",
+  "out": "results/phat/curated_v1_validation_k8",
+  "k": 8,
+  "limit": 0,
+  "gpus": 0,
+  "model": "/scratch/r919a03/huggingface/hub/models--Qwen--Qwen1.5-MoE-A2.7B-Chat/snapshots/ec052fda178e241c7c443468d2fa1db6618996be",
+  "lora": "",
+  "max_model_len": 32768,
+  "max_tokens": 2048,
+  "max_num_seqs": 64,
+  "temperature": 1.0,
+  "top_p": 1.0,
+  "seed": 0,
+  "concurrency": 12,
+  "keep_text": false,
+  "shard": -1,
+  "nshards": 1,
+  "reward": "",
+  "verifier": ""
+ },
+ "summary": {
+  "swe_32k": {
+   "n_instances": 35,
+   "mean_p_hat": 0.0,
+   "frac_zero": 1.0,
+   "frac_zero_and_no_signal": 0.5714285714285714,
+   "frac_reward_std_zero": 0.5714285714285714,
+   "frac_one": 0.0,
+   "frac_band_0.2_0.8": 0.0,
+   "mean_reward": 0.0032142857142857142,
+   "extract_rate": 0.6178571428571429,
+   "apply_rate": 0.0,
+   "mean_resp_tokens": 550.0357142857143
+  },
+  "ut_function": {
+   "n_instances": 193,
+   "mean_p_hat": 0.2164137675795707,
+   "frac_zero": 0.5181347150259067,
+   "frac_zero_and_no_signal": 0.08290155440414508,
+   "frac_reward_std_zero": 0.10880829015544041,
+   "frac_one": 0.025906735751295335,
+   "frac_band_0.2_0.8": 0.34196891191709844,
+   "mean_reward": 0.33475459418256537,
+   "extract_rate": 0.8922094744633605,
+   "apply_rate": 0.8473353071798667,
+   "mean_resp_tokens": 219.32512953367876
+  },
+  "ut_pytest": {
+   "n_instances": 115,
+   "mean_p_hat": 0.02298136645962733,
+   "frac_zero": 0.8956521739130435,
+   "frac_zero_and_no_signal": 0.21739130434782608,
+   "frac_reward_std_zero": 0.21739130434782608,
+   "frac_one": 0.0,
+   "frac_band_0.2_0.8": 0.034782608695652174,
+   "mean_reward": 0.12319457837723431,
+   "extract_rate": 0.9826086956521739,
+   "apply_rate": 0.8540372670807453,
+   "mean_resp_tokens": 245.0163043478261
+  },
+  "ut_stdio": {
+   "n_instances": 92,
+   "mean_p_hat": 0.03940217391304348,
+   "frac_zero": 0.8695652173913043,
+   "frac_zero_and_no_signal": 0.021739130434782608,
+   "frac_reward_std_zero": 0.021739130434782608,
+   "frac_one": 0.0,
+   "frac_band_0.2_0.8": 0.07608695652173914,
+   "mean_reward": 0.15740443749782554,
+   "extract_rate": 0.8342391304347826,
+   "apply_rate": 0.7635869565217391,
+   "mean_resp_tokens": 232.1548913043478
+  }
+ },
+ "n_responses": 3480
+}

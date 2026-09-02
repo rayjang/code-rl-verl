@@ -1,0 +1,78 @@
+{
+ "synthetic": {
+  "baseline/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 0.853,
+   "raw": 0.853,
+   "raw_prose_after": 0.0,
+   "search_replace": 0.98,
+   "truncated_hunk": 0.06,
+   "two_blocks_example_then_final": 1.0
+  },
+  "fallback/concat_distinct": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 0.853,
+   "raw": 0.853,
+   "raw_prose_after": 0.853,
+   "search_replace": 0.98,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 1.0
+  },
+  "fallback/first": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 1.0,
+   "raw": 1.0,
+   "raw_prose_after": 1.0,
+   "search_replace": 0.98,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 0.0
+  },
+  "fallback/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 0.853,
+   "raw": 0.853,
+   "raw_prose_after": 0.853,
+   "search_replace": 0.98,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 1.0
+  },
+  "markdown/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 0.0,
+   "prose_before_raw": 0.0,
+   "raw": 0.0,
+   "raw_prose_after": 0.0,
+   "search_replace": 0.98,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 1.0
+  },
+  "strict/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 0.0,
+   "fenced_python_lang": 0.0,
+   "prose_before_raw": 0.0,
+   "raw": 0.833,
+   "raw_prose_after": 0.0,
+   "search_replace": 0.0,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 0.0
+  }
+ },
+ "synthetic_overall": {
+  "baseline/last": 0.75,
+  "fallback/concat_distinct": 0.838,
+  "fallback/first": 0.776,
+  "fallback/last": 0.838,
+  "markdown/last": 0.442,
+  "strict/last": 0.204
+ }
+}
