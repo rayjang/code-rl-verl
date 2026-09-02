@@ -190,13 +190,22 @@ class SweSmithRunner:
             with open(f"{wd}/out.log", "w") as f:
                 f.write(out)
             res = parse_summary(out)
+            crashed = ()
             if not res and not pytest_ran(out):
+                # pytest could not even start. The environment itself is validated (gold runs), so on the
+                # patched tree this is the patch's fault (e.g. the package under test is imported by pytest,
+                # as in agronholm__exceptiongroup): every F2P/P2P id counts as failed, flagged `pytest_crashed`.
+                # Genuine environment breakage (image/pytest missing) is still surfaced as infra.
+                low = out.lower()
+            if not res and not pytest_ran(out) and ("no module named pytest" in low or "singularity" in low[:400] or "fatal:" in low[:400]):
                 return ExecutionResult(False, ErrKind.INFRA_ENV, "pytest_did_not_run", apply=ap,
                                        log_tail=out[-2000:], runtime_s=time.time() - t0)
+            if not res and not pytest_ran(out):
+                crashed = ("pytest_crashed",)
             f2p_o = evaluate(res, f2p)
             p2p_o = evaluate(res, p2p)
             return ExecutionResult(True, ErrKind.OK, "", f2p_o, p2p_o, runtime_s=time.time() - t0,
-                                   timed_out=("PYTEST_EXIT=137" in out), log_tail=out[-2500:], apply=ap)
+                                   timed_out=("PYTEST_EXIT=137" in out), log_tail=out[-2500:], apply=ap, hack_flags=crashed)
         finally:
             if not self.keep:
                 shutil.rmtree(wd, ignore_errors=True)

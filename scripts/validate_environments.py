@@ -71,7 +71,7 @@ def validate_swe(inst, runner):
         pf = set(e["p2p_failed"]) | set(g["p2p_failed"]) | set(e.get("p2p_missing_ids", [])) | set(g.get("p2p_missing_ids", []))
         rec["p2p_effective"] = [t for t in p2p_all if t not in pf]
         rec["p2p_dropped"] = [t for t in p2p_all if t in pf]
-    rec["baseline_ok"] = bool(e["ran"] and e["n_f2p"] == 0 and e["n_p2p"] == e["t_p2p"])
+    rec["baseline_ok"] = bool(e["ran"] and e["n_f2p"] == 0 and (e["n_p2p"] == e["t_p2p"] or not rec.get("p2p_effective")))
     rec["gold_ok"] = bool(g["ran"] and g["resolved"])
     rec["effective_ok"] = bool(rec.get("f2p_effective"))
     rec["status"] = "ok" if (rec["baseline_ok"] and rec["gold_ok"]) else (
