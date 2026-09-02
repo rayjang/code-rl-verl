@@ -98,7 +98,9 @@ def main():
     reg = Registry.get()
     valid_ids = [json.loads(l)["instance_id"] for l in open(a.validation) if json.loads(l).get("status") in ("ok", "ok_effective")]
     syn = run_synthetic(reg, a.n_synthetic, a.seed, valid_ids); syn.to_csv(f"{out}/synthetic.csv", index=False)
-    summ = {"synthetic": syn.groupby(["parser", "select", "wrapping"])["recovered_gold"].mean().unstack().round(3).to_dict(orient="index")}
+    tab = syn.groupby(["parser", "select", "wrapping"])["recovered_gold"].mean().unstack().round(3)
+    tab.index = [f"{p}/{s}" for p, s in tab.index]
+    summ = {"synthetic": tab.to_dict(orient="index"), "synthetic_overall": {k: round(float(v), 3) for k, v in tab.mean(axis=1).items()}}
     if a.responses:
         resp = [json.loads(l) for l in open(a.responses)]
         mdf = run_model(reg, resp, a.execute, a.seed, "")

@@ -212,8 +212,8 @@ def search_replace_to_diff(text: str, buggy_files: Optional[dict]) -> tuple[str,
 # candidate parsers
 # ----------------------------------------------------------------------------------------------
 def parse_strict(text: str, *, buggy_files=None, select: str = "last", allow_search_replace: bool = False) -> ExtractionResult:
-    t = (text or "").replace("\r\n", "\n").strip()
-    if not t:
+    t = (text or "").replace("\r\n", "\n").strip("\n")   # never strip spaces: blank context lines are " "
+    if not t.strip():
         return ExtractionResult(ExtractStatus.NO_PATCH, "", "none", "strict", 0, "empty response")
     fmt = "raw"
     m = re.fullmatch(r"```[ \t]*(diff|patch)?[ \t]*\n(.*?)\n?```", t, re.S)
@@ -268,13 +268,15 @@ def parse_fallback(text: str, *, buggy_files=None, select: str = "last", allow_s
         d, note = search_replace_to_diff(t, buggy_files)
         return _result(d, "search_replace", "fallback", 1, note) if d else \
             ExtractionResult(ExtractStatus.DIFF_PARSE_FAIL, "", "search_replace", "fallback", 1, note)
+    # unfenced diff: several `diff --git` headers are almost always ONE multi-file patch -> start at the
+    # first header (the baseline's "last header" rule silently drops earlier files of multi-file patches)
     ms = list(GIT_HDR_RE.finditer(t))
     if ms:
-        region = t[(ms[0] if select == "first" else ms[-1]).start():]
+        region = t[ms[0].start():]
         return _result(_trim_to_last_hunk(normalize(region)), "raw_git", "fallback", len(ms))
     ms = list(UNI_HDR_RE.finditer(t))
     if ms:
-        region = t[(ms[0] if select == "first" else ms[-1]).start():]
+        region = t[ms[0].start():]
         return _result(_trim_to_last_hunk(normalize(region)), "raw_unified", "fallback", len(ms))
     if DIFF_SIG_RE.search(t):
         return ExtractionResult(ExtractStatus.DIFF_PARSE_FAIL, "", "fragment", "fallback", 1, "hunk without file header")
