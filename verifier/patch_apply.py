@@ -37,12 +37,13 @@ def git_apply_check(patch: str, tree_dir: str, timeout: int = 60) -> ApplyResult
                        r.stderr.decode("utf-8", "replace")[-800:])
 
 
-def apply_patch(patch: str, tree_dir: str, mode: str = "strict", reverse: bool = False, timeout: int = 120) -> ApplyResult:
+def apply_patch(patch: str, tree_dir: str, mode: str = "strict", reverse: bool = False, timeout: int = 120,
+                ignore_whitespace: bool = False) -> ApplyResult:
     """Apply `patch` in-place under tree_dir. Returns ApplyResult with final status."""
     files = touched_paths(patch)
     if not patch.strip():
         return ApplyResult(ApplyStatus.PATCH_APPLY_FAIL, files, "empty patch")
-    rflag = ["-R"] if reverse else []
+    rflag = (["-R"] if reverse else []) + (["--ignore-whitespace"] if ignore_whitespace else [])
     try:
         chk = _run(["git", "apply", "--check", "--unsafe-paths", "-p1", *rflag, "-"], tree_dir, timeout, patch.encode())
         if chk.returncode == 0:

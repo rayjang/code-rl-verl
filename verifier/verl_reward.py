@@ -22,18 +22,21 @@ import threading
 import time
 from dataclasses import asdict
 
-from .anti_hacking import inspect_patch
-from .diff_parser import extract, extract_code_block, touched_paths
-from .registry import Registry
-from .reward import RewardConfig, compute_reward
-from .rubric import evaluate_rubric, parse_rubrics
-from .rusca import RuscaConfig, stage as rusca_stage
-from .schemas import (ApplyResult, ApplyStatus, ErrKind, ExecutionResult, ExtractStatus, ExtractionResult, RewardComponents,
-                      components_to_dict)
-from .swe_runner import SweSmithRunner
-from .ut_runner import UnitTestRunner
-
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import sys  # noqa: E402
+if ROOT not in sys.path:      # verl loads this file by path (not as a package) -> absolute imports
+    sys.path.insert(0, ROOT)
+
+from verifier.anti_hacking import inspect_patch  # noqa: E402
+from verifier.diff_parser import extract, extract_code_block, touched_paths  # noqa: E402
+from verifier.registry import Registry  # noqa: E402
+from verifier.reward import RewardConfig, compute_reward  # noqa: E402
+from verifier.rubric import evaluate_rubric, parse_rubrics  # noqa: E402
+from verifier.rusca import RuscaConfig, stage as rusca_stage  # noqa: E402
+from verifier.schemas import (ApplyResult, ApplyStatus, ErrKind, ExecutionResult, ExtractStatus, ExtractionResult,  # noqa: E402
+                              RewardComponents, components_to_dict)
+from verifier.swe_runner import SweSmithRunner  # noqa: E402
+from verifier.ut_runner import UnitTestRunner  # noqa: E402
 _USER = os.environ.get("USER", "user")
 
 
@@ -59,7 +62,7 @@ class VerifierService:
         self.reg = Registry.get()
         run_dir = os.environ.get("VERIFIER_RUN_DIR", f"/tmp/{_USER}_verifier_run")
         sif_dir = self.reg.sif_dir
-        self.swe = SweSmithRunner(sif_dir, run_dir, os.path.join(ROOT, "environments/cache"),
+        self.swe = SweSmithRunner(sif_dir, run_dir, os.path.join(ROOT, "environments/cache_v2"),
                                   timeout=int(self.vcfg.get("swe_timeout", 900)), p2p_cap=int(self.vcfg.get("p2p_cap", 30)),
                                   apply_mode=self.vcfg.get("apply_mode", "strict"), isolate=bool(self.vcfg.get("isolate", True)))
         self.ut = UnitTestRunner(os.path.join(sif_dir, "python_3.11-slim-bookworm.sif"), os.path.join(ROOT, "environments/ut_venv"),

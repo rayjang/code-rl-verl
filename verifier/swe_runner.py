@@ -33,10 +33,11 @@ SING = os.environ.get("SINGULARITY_BIN") or shutil.which("apptainer") or shutil.
 class SweSmithRunner:
     def __init__(self, sif_dir: str, run_dir: str, cache_dir: str, *, timeout: int = 900, extract_timeout: int = 300,
                  p2p_cap: int = 30, apply_mode: str = "strict", isolate: bool = True, keep_workdir: bool = False,
-                 singularity_bin: str = SING):
+                 singularity_bin: str = SING, ignore_whitespace: bool = False, use_p2p_effective: bool = True):
         self.sif_dir, self.run_dir, self.cache_dir = sif_dir, run_dir, cache_dir
         self.timeout, self.extract_timeout, self.p2p_cap = timeout, extract_timeout, p2p_cap
         self.apply_mode, self.isolate, self.keep = apply_mode, isolate, keep_workdir
+        self.ignore_whitespace, self.use_p2p_effective = ignore_whitespace, use_p2p_effective
         self.sing = singularity_bin
         self._locks: dict = {}
         self._lock = threading.Lock()
@@ -58,7 +59,12 @@ class SweSmithRunner:
             f2p = json.loads(f2p)
         if isinstance(p2p, str):
             p2p = json.loads(p2p)
-        return clean_ids(f2p), clean_ids(p2p)[: self.p2p_cap]
+        p2p = clean_ids(p2p)
+        eff = inst.get("p2p_effective")          # tests verified to pass on the unpatched tree (validation run)
+        if self.use_p2p_effective and isinstance(eff, list) and eff:
+            eff_set = set(eff)
+            p2p = [t for t in p2p if t in eff_set]
+        return clean_ids(f2p), p2p[: self.p2p_cap]
 
     def _inst_lock(self, iid: str) -> threading.Lock:
         with self._lock:
@@ -78,14 +84,16 @@ class SweSmithRunner:
             f2p, p2p = self.test_ids(inst)
             test_files = sorted({t.split("::")[0] for t in f2p + p2p})
             wd = tempfile.mkdtemp(dir=self.run_dir, prefix="extract." + iid[:40] + ".")
-            os.makedirs(f"{wd}/tb", exist_ok=True)
             tf_args = " ".join(shlex.quote(t) for t in test_files)
             # older git inside the images ignores `-c safe.directory`; a global config file is honoured
             with open(f"{wd}/gitconfig", "w") as f:
                 f.write("[safe]\n\tdirectory = *\n")
             shutil.copy(f"{wd}/gitconfig", f"{wd}/.gitconfig")
-            script = (f"cd /testbed && git archive origin/{shlex.quote(iid)} | tar -x -C /wd/tb && "
-                      f"git archive main -- {tf_args} | tar -x -C /wd/tb && echo EXTRACT_OK")
+            # Copy the image's /testbed (keeps untracked build artifacts such as generated _version.py
+            # and compiled extensions that `git archive` would drop), switch the tracked files to the
+            # instance branch (buggy state), restore the deleted test files from main, drop .git.
+            script = (f"cp -a /testbed /wd/tb && cd /wd/tb && git checkout -q -f origin/{shlex.quote(iid)} && "
+                      f"git checkout -q main -- {tf_args} && rm -rf /wd/tb/.git && echo EXTRACT_OK")
             try:
                 r = subprocess.run([self.sing, "exec", *self._iso_flags(), "--bind", f"{wd}:/wd",
                                     "--env", "HOME=/wd,GIT_CONFIG_GLOBAL=/wd/gitconfig", sif, "bash", "-c", script],
@@ -127,7 +135,7 @@ class SweSmithRunner:
             tree = os.path.join(wd, "tb")
             # ---- host-side apply (strict) ----
             if patch.strip():
-                ap = apply_patch(patch, tree, mode=self.apply_mode, reverse=reverse)
+                ap = apply_patch(patch, tree, mode=self.apply_mode, reverse=reverse, ignore_whitespace=self.ignore_whitespace)
             else:
                 ap = ApplyResult(ApplyStatus.PATCH_APPLY_SUCCESS, (), "empty patch (no-op)")
             if ap.status == ApplyStatus.PATCH_APPLY_FAIL:

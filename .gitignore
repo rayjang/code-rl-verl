@@ -25,3 +25,4 @@ venv/
 # runtime
 .ray/
 tmp/
+data/processed/analysis/
