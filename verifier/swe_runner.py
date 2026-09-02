@@ -24,6 +24,8 @@ from typing import Optional
 
 from .patch_apply import apply_patch
 from .pytest_parse import clean_ids, evaluate, parse_summary, pytest_ran
+import re
+TESTISH_RE = re.compile(r"(^|/)(tests?|testing)/|(^|/)test_[^/]*\.py$|_test\.py$|(^|/)conftest\.py$")
 from .schemas import ApplyResult, ApplyStatus, ErrKind, ExecutionResult, TestOutcome
 
 SING = os.environ.get("SINGULARITY_BIN") or shutil.which("apptainer") or shutil.which("singularity") \
@@ -89,9 +91,14 @@ class SweSmithRunner:
             f2p, p2p = self.test_ids(inst)
             test_files = sorted({t.split("::")[0] for t in f2p + p2p})
             wd = tempfile.mkdtemp(dir=self.run_dir, prefix="extract." + iid[:40] + ".")
-            test_dirs = sorted({t.split("/")[0] for t in test_files if "/" in t} | {"conftest.py"})
-            tf_args = " ".join(shlex.quote(t) for t in test_files)
-            restore_args = " ".join(shlex.quote(d) for d in test_dirs)
+            # Restore ONLY test material: test-pattern files named by the ids, the test directories that
+            # contain them, and the root conftest.py. Ids that point at source modules (doctest ids such as
+            # `inflect/__init__.py::inflect.engine.compare`) are NOT restored -- restoring them would revert
+            # the injected bug (observed on jaraco__inflect, 40/40 gold apply failures).
+            testish = [t for t in test_files if TESTISH_RE.search(t)]
+            test_dirs = sorted({t.split("/")[0] for t in testish if "/" in t and t.split("/")[0] in ("tests", "test", "testing")})
+            tf_args = " ".join(shlex.quote(t) for t in testish)
+            restore_args = " ".join(shlex.quote(d) for d in test_dirs + ["conftest.py"])
             # older git inside the images ignores `-c safe.directory`; a global config file is honoured
             with open(f"{wd}/gitconfig", "w") as f:
                 f.write("[safe]\n\tdirectory = *\n")
@@ -103,8 +110,9 @@ class SweSmithRunner:
             # package __init__ files and conftest.py included) -- restoring only the named files leaves
             # collection errors ("33 errors in 0.06s") for repos whose tests import sibling helpers.
             script = (f"cp -a /testbed /wd/tb && cd /wd/tb && git checkout -q -f origin/{shlex.quote(iid)} && "
-                      f"(git checkout -q main -- {restore_args} 2>/dev/null || true) && git checkout -q main -- {tf_args} && "
-                      f"rm -rf /wd/tb/.git && echo EXTRACT_OK")
+                      f"(git checkout -q main -- {restore_args} 2>/dev/null || true) && "
+                      + (f"git checkout -q main -- {tf_args} && " if tf_args else "")
+                      + "rm -rf /wd/tb/.git && echo EXTRACT_OK")
             try:
                 r = subprocess.run([self.sing, "exec", *self._iso_flags(), "--bind", f"{wd}:/wd",
                                     "--env", "HOME=/wd,GIT_CONFIG_GLOBAL=/wd/gitconfig", sif, "bash", "-c", script],
@@ -116,7 +124,7 @@ class SweSmithRunner:
                 err = (r.stderr or r.stdout)[-400:]
                 shutil.rmtree(wd, ignore_errors=True)
                 return None, f"branch_extract_fail: {err}"
-            missing = [t for t in test_files if not os.path.exists(os.path.join(wd, "tb", t))]
+            missing = [t for t in testish if not os.path.exists(os.path.join(wd, "tb", t))]
             if missing:
                 shutil.rmtree(wd, ignore_errors=True)
                 return None, f"test files missing after restore: {missing[:3]}"
@@ -153,13 +161,14 @@ class SweSmithRunner:
                 return ExecutionResult(False, ErrKind.FORMAT_APPLY_FAIL, "patch_apply_fail", apply=ap,
                                        log_tail=ap.stderr_tail, runtime_s=time.time() - t0)
             tests = " ".join(shlex.quote(t) for t in (f2p + p2p))
+            doctest_flag = " --doctest-modules" if any(not TESTISH_RE.search(t.split("::")[0]) for t in (f2p + p2p)) else ""
             env_lines = "".join(f"export {k}={shlex.quote(str(v))}\n" for k, v in (extra_env or {}).items())
             runner = ("#!/bin/bash\n"
                       "source /opt/miniconda3/bin/activate testbed 2>/dev/null || export PATH=/opt/miniconda3/envs/testbed/bin:$PATH\n"
                       f"{env_lines}"
                       "export PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 PYTEST_DISABLE_PLUGIN_AUTOLOAD=${PYTEST_DISABLE_PLUGIN_AUTOLOAD:-0}\n"
                       "cd /testbed\n"
-                      f"timeout -s KILL {max(30, self.timeout - 15)} python -m pytest -rA --tb=no --color=no -p no:cacheprovider -q {tests} 2>&1\n"
+                      f"timeout -s KILL {max(30, self.timeout - 15)} python -m pytest -rA --tb=no --color=no -p no:cacheprovider{doctest_flag} -q {tests} 2>&1\n"
                       "echo PYTEST_EXIT=$?\n")
             with open(f"{wd}/runner.sh", "w") as f:
                 f.write(runner)

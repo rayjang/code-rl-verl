@@ -33,7 +33,7 @@ def summarize(er):
             "f2p_failed": list(er.f2p.failed)[:50], "p2p_failed": list(er.p2p.failed)[:50], "p2p_missing_ids": list(er.p2p.missing)[:50],
             "f2p_missing": len(er.f2p.missing), "n_p2p": er.p2p.n_passed, "t_p2p": er.p2p.total, "p2p_missing": len(er.p2p.missing),
             "resolved": er.resolved, "runtime_s": round(er.runtime_s, 1), "timed_out": er.timed_out,
-            "apply": er.apply.status.value, "log_tail": er.log_tail[-600:] if not er.ran else ""}
+            "apply": er.apply.status.value, "log_tail": er.log_tail[-600:] if not er.ran else (er.log_tail[-1500:] if not er.resolved else "")}
 
 
 def validate_swe(inst, runner):
@@ -102,7 +102,7 @@ def main():
     ap.add_argument("--workers", type=int, default=16)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--run-dir", default=os.environ.get("VERIFIER_RUN_DIR", "/tmp/r919a03_verifier_run"))
-    ap.add_argument("--cache-dir", default=os.path.join(ROOT, "environments/cache_v3"))
+    ap.add_argument("--cache-dir", default=os.path.join(ROOT, "environments/cache_v4"))
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     os.makedirs(OUT_DIR, exist_ok=True)
