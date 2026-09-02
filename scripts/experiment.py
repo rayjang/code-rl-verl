@@ -126,10 +126,11 @@ def cmd_new(a):
 # -------------------------------------------------------------------------------------------- submit
 def cmd_submit(a):
     exp_dir = os.path.join(ROOT, "experiments", a.id)
-    cmd = ["sbatch", "-c", str(a.cpus), f"--mem={a.mem}", "-t", a.time, "-J", a.id[:12], os.path.join(ROOT, "scripts/launch_verl.sh"), exp_dir]
+    cmd = ["sbatch", f"--gres=gpu:{a.gpus}", f"--export=ALL,NGPU={a.gpus}", "-c", str(a.cpus), f"--mem={a.mem}", "-t", a.time, "-J", a.id[:12],
+           os.path.join(ROOT, "scripts/launch_verl.sh"), exp_dir]
     out = subprocess.check_output(cmd, cwd=ROOT, text=True).strip()
     job = re.findall(r"\d+", out)[-1]
-    append({"id": a.id, "status": "submitted", "slurm_job": job, "submitted_at": now(), "git_commit": git_sha()})
+    append({"id": a.id, "status": "submitted", "slurm_job": job, "submitted_at": now(), "git_commit": git_sha(), "gpu": f"gpu48:{a.gpus}xH200"})
     print(out)
 
 
@@ -221,6 +222,7 @@ def main():
     p.add_argument("--set", action="append"); p.add_argument("--seed", type=int, default=0); p.add_argument("--stage", default="D")
     p.add_argument("--concurrency", type=int, default=6); p.set_defaults(fn=cmd_new)
     p = sub.add_parser("submit"); p.add_argument("--id", required=True); p.add_argument("--cpus", type=int, default=40)
+    p.add_argument("--gpus", type=int, default=int(os.environ.get("NGPU", "4")))
     p.add_argument("--mem", default="500G"); p.add_argument("--time", default="06:00:00"); p.set_defaults(fn=cmd_submit)
     p = sub.add_parser("collect"); p.add_argument("--id", required=True); p.set_defaults(fn=cmd_collect)
     p = sub.add_parser("decide"); p.add_argument("--id", required=True); g = p.add_mutually_exclusive_group(required=True)

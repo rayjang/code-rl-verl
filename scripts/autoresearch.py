@@ -64,7 +64,8 @@ def ensure(exp, plan, common):
         p = sh(args); print(p.stdout.strip(), p.stderr.strip()[-300:])
         reg = load_registry(); r = reg[exp["id"]]
     if r.get("status") == "created" or ("slurm_job" not in r and r.get("status") not in ("collected",)):
-        p = sh(["submit", "--id", exp["id"], "--cpus", str(common.get("cpus", 48)), "--mem", common.get("mem", "620G"), "--time", common.get("time", "08:00:00")])
+        p = sh(["submit", "--id", exp["id"], "--cpus", str(common.get("cpus", 40)), "--mem", common.get("mem", "480G"), "--time", common.get("time", "08:00:00"),
+                "--gpus", str(common.get("gpus", int(os.environ.get("NGPU", "4"))))])
         print(p.stdout.strip(), p.stderr.strip()[-300:])
     return load_registry()[exp["id"]]
 
