@@ -57,7 +57,7 @@ def main():
         if "model" in d:
             md.append("On real policy samples: " + json.dumps({k: {kk: vv for kk, vv in v.items() if kk != "fmt"} for k, v in d["model"].items()}) + "\n")
     for fam in FAMILIES:
-        sub = df[df["family"] == fam]
+        sub = df[df["family"] == fam] if "family" in df.columns else df
         if len(sub) == 0:
             continue
         md.append(f"## {fam}\n")

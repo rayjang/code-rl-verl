@@ -105,10 +105,12 @@ class RuscaScaffoldAgentLoop(AgentLoopBase):
             response_logprobs=None,                       # scaffold-conditioned; never reuse as old log-probs
             num_turns=2,
             metrics=metrics,
+            # verl hands the WHOLE extra_fields dict to the reward workers as `tool_extra_fields` and merges it into
+            # extra_info (reward_loop/reward_manager/naive.py) -> keep these keys flat so the reward sees
+            # valid_response_length (overlong shaping) and global_step / rusca_* (RUSCA stage, metrics).
             extra_fields={"reward_extra_info": {"rusca_n_inject": float(k), "rusca_step": float(step),
                                                 "rusca_prompt_delta_tokens": float(len(rollout_prompt_ids) - len(train_prompt_ids))},
-                          # merged into extra_info by verl's reward managers -> overlong shaping + RUSCA stage in the reward
-                          "tool_extra_fields": {"valid_response_length": len(response_ids), "max_response_length": self.response_length,
-                                                "global_step": step, "rusca_n_inject": k, "rusca_group_index": -1 if gi is None else gi}},
+                          "valid_response_length": len(response_ids), "max_response_length": self.response_length,
+                          "global_step": step, "rusca_n_inject": k, "rusca_group_index": -1 if gi is None else gi},
         )
         return out
