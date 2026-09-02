@@ -63,6 +63,10 @@ class SweSmithRunner:
             p2p = json.loads(p2p)
         p2p = clean_ids(p2p)
         f2p = clean_ids(f2p)
+        # ids inside a package __init__.py cannot be selected by path::id (pytest treats the file as a package
+        # marker and errors the whole session, observed on joke2k__faker): drop them from both sets
+        f2p = [t for t in f2p if not t.split("::")[0].endswith("__init__.py")]
+        p2p = [t for t in p2p if not t.split("::")[0].endswith("__init__.py")]
         eff_f = inst.get("f2p_effective")        # ids that fail on the buggy tree AND pass with gold (validation run)
         if self.use_p2p_effective and isinstance(eff_f, list) and eff_f:
             s_f = set(eff_f)
@@ -166,7 +170,9 @@ class SweSmithRunner:
             runner = ("#!/bin/bash\n"
                       "source /opt/miniconda3/bin/activate testbed 2>/dev/null || export PATH=/opt/miniconda3/envs/testbed/bin:$PATH\n"
                       f"{env_lines}"
-                      "export PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 PYTEST_DISABLE_PLUGIN_AUTOLOAD=${PYTEST_DISABLE_PLUGIN_AUTOLOAD:-0}\n"
+                      # NOTE: never export PYTEST_DISABLE_PLUGIN_AUTOLOAD here -- pytest disables autoload on ANY non-empty
+                      # value (even "0"); repos such as Red-DiscordBot (pytest-asyncio) and typeguard (own plugin) need plugins.
+                      "export PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0; unset PYTEST_DISABLE_PLUGIN_AUTOLOAD\n"
                       "cd /testbed\n"
                       f"timeout -s KILL {max(30, self.timeout - 15)} python -m pytest -rA --tb=no --color=no -p no:cacheprovider{doctest_flag} -q {tests} 2>&1\n"
                       "echo PYTEST_EXIT=$?\n")

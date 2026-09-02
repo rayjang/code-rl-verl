@@ -1,0 +1,23 @@
+# rw_v012_rubric_heavy
+version: rw_v012_rubric_heavy
+mode: ladder
+s_no_patch: 0.0
+s_parse_fail: 0.0
+s_invalid: 0.0
+s_apply_fail: 0.05
+s_applies: 0.10
+w_partial: 0.60
+s_f2p_all_regressed: 0.85
+s_resolved: 1.0
+floor_after_p2p: 0.05
+f2p_mode: pow
+f2p_gamma: 1.5
+p2p_mode: pow
+p2p_max: 0.75
+p2p_gamma: 1.5
+rubric_weight: 0.4
+rusca_stage: scaffold
+overlong_buffer: 0
+max_response_length: 4096
+infra_score: 0.0
+notes: "rubric-heavy: checkable rubric enters the reward with weight 0.4 (never decays)"

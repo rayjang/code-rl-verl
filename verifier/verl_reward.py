@@ -64,7 +64,9 @@ class VerifierService:
         sif_dir = self.reg.sif_dir
         self.swe = SweSmithRunner(sif_dir, run_dir, os.path.join(ROOT, "environments/cache_v4"),
                                   timeout=int(self.vcfg.get("swe_timeout", 900)), p2p_cap=int(self.vcfg.get("p2p_cap", 30)),
-                                  apply_mode=self.vcfg.get("apply_mode", "strict"), isolate=bool(self.vcfg.get("isolate", True)))
+                                  apply_mode=self.vcfg.get("apply_mode", "strict"), isolate=bool(self.vcfg.get("isolate", True)),
+                                  ignore_whitespace=bool(self.vcfg.get("ignore_whitespace", False)),
+                                  use_p2p_effective=bool(self.vcfg.get("use_effective_tests", True)))
         self.ut = UnitTestRunner(os.path.join(sif_dir, "python_3.11-slim-bookworm.sif"), os.path.join(ROOT, "environments/ut_venv"),
                                  run_dir, isolate=bool(self.vcfg.get("isolate", True)), canary=bool(self.vcfg.get("canary", True)))
         self.sem = threading.Semaphore(int(os.environ.get("VERIFIER_CONCURRENCY", "8")))
