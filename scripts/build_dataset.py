@@ -41,6 +41,8 @@ def main():
     ap.add_argument("--verifier_version", default="vf_v001")
     ap.add_argument("--reward_version", default="rw_v001_baseline")
     ap.add_argument("--rubric_version", default="rb_v001_code_hint")
+    ap.add_argument("--fix_entry_point", action="store_true", help="append the names the hidden tests import/call to unit-test prompts (PROMPT_FIX_ENTRY_POINT)")
+    ap.add_argument("--hard_rule", default="no_signal", choices=["p_hat", "no_signal"], help="TOO_HARD when p_hat<lo (p_hat) or when p_hat<lo AND reward_std==0 (no_signal)")
     a = ap.parse_args()
     rng = random.Random(a.seed)
     out_dir = f"{ROOT}/data/curated/{a.version}"
@@ -64,6 +66,42 @@ def main():
             phat[r["instance_id"]] = r
     lo, hi = (float(x) for x in a.band.split(","))
     swe_full = {r["instance_id"]: r for r in load_jsonl(f"{SRC}/index/t15_code_swesmith.full.jsonl")}
+    ut_full = {}
+    if a.fix_entry_point:
+        import re as _re
+        for fn in ("t15_code_unittest.full.jsonl", "t15_code_unittest_ext.full.jsonl"):
+            for r in load_jsonl(f"{SRC}/index/{fn}"):
+                ut_full[r["instance_id"]] = r
+
+    def required_names(inst):
+        """Names the hidden tests need: pytest -> `from solution import a, b`; function -> called names in assertions."""
+        names = []
+        h = inst.get("harness")
+        tests = inst.get("tests") or []
+        if h == "pytest":
+            for t in tests:
+                for m in _re.finditer(r"^\s*from solution import ([^\n]+)", t.get("assertion") or "", _re.M):
+                    names += [x.strip().split(" as ")[0] for x in m.group(1).split(",") if x.strip()]
+                for m in _re.finditer(r"^\s*import solution", t.get("assertion") or "", _re.M):
+                    pass
+        elif h == "function":
+            ep = inst.get("entry_point")
+            if ep:
+                names += [x.strip() for x in str(ep).split(",")]
+            for t in tests:
+                for m in _re.finditer(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(", t.get("assertion") or ""):
+                    n = m.group(1)
+                    if n not in ("assert", "print", "len", "str", "int", "float", "list", "dict", "set", "tuple", "sorted", "abs", "round", "range",
+                                 "isinstance", "type", "max", "min", "sum", "any", "all", "bool", "repr", "hash", "iter", "next", "map", "filter",
+                                 "zip", "enumerate", "reversed", "open", "Exception", "ValueError", "TypeError", "KeyError", "IndexError", "pytest",
+                                 "raises", "approx", "frozenset", "bytes", "chr", "ord", "divmod", "pow", "format", "callable", "getattr", "hasattr",
+                                 "math", "np", "array", "Decimal", "Fraction", "datetime", "date", "timedelta", "deque", "Counter", "defaultdict", "OrderedDict"):
+                        names.append(n)
+        out = []
+        for n in names:
+            if n and n not in out:
+                out.append(n)
+        return out[:6]
 
     # ------------------------------------------------------------------ per-row quality decision
     seen_prompt = {}
@@ -136,10 +174,13 @@ def main():
             p = phat.get(iid)
             if p is not None:
                 meta["empirical_success_rate"] = float(p["p_hat"]); meta["empirical_n"] = int(p.get("n", 0))
-                if p["p_hat"] < lo:
+                no_signal = (p.get("reward_std", 1.0) == 0)
+                if p["p_hat"] < lo and (a.hard_rule == "p_hat" or no_signal):
                     excl = excl or "TOO_HARD"
                 elif p["p_hat"] > hi:
                     excl = excl or "TOO_EASY"
+                elif p["p_hat"] < lo:
+                    flags.append("HARD_BUT_PARTIAL_SIGNAL")
         status.append("excluded" if excl else "ok"); reason.append(excl); flags_col.append(flags); meta_col.append(meta)
     df["_status"], df["_reason"], df["_flags"], df["_meta"] = status, reason, flags_col, meta_col
 
@@ -175,6 +216,26 @@ def main():
                   "difficulty": e.get("difficulty_band", ""), "base_commit": (row["_iid"].split(".")[1] if row["_variant"].startswith("swe") and "." in row["_iid"] else ""),
                   "branch": row["_iid"] if row["_variant"].startswith("swe") else ""})
         return e
+    if a.fix_entry_point:
+        fixed = 0
+        new_prompts = []
+        for _, row in df.iterrows():
+            msgs = [dict(m) for m in row["prompt"]]
+            iid = row["_iid"]
+            inst = ut_full.get(iid)
+            names = required_names(inst) if (inst and not row["_variant"].startswith("swe")) else []
+            if names:
+                lang_ko = row["_lang"] == "ko"
+                line = ("\n\n테스트가 사용하는 이름을 정확히 이 이름으로 정의하세요: " if lang_ko else "\n\nThe hidden tests use exactly these names; define them: ") + ", ".join(f"`{n}`" for n in names)
+                for i in range(len(msgs) - 1, -1, -1):
+                    if msgs[i].get("role") == "user":
+                        msgs[i]["content"] = msgs[i]["content"].rstrip() + line
+                        break
+                fixed += 1
+                row["_flags"].append("PROMPT_FIX_ENTRY_POINT")
+            new_prompts.append(msgs)
+        df["prompt"] = new_prompts
+        print(f"prompt fix applied to {fixed} unit-test rows")
     df["extra_info"] = [enrich(r) for _, r in df.iterrows()]
     cols = ["data_source", "prompt", "ability", "reward_model", "extra_info"]
     manifest = {"version": a.version, "seed": a.seed, "include_ext": a.include_ext, "phat_file": a.phat, "band": [lo, hi],

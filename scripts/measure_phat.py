@@ -84,9 +84,13 @@ def aggregate(a):
     phat, summ = [], collections.defaultdict(list)
     for iid, rs in by.items():
         n = len(rs); ok = [r for r in rs if not r.get("infra_excluded")]
+        rw = [r["final_reward"] for r in ok]
+        mu = sum(rw) / max(1, len(rw))
         rec = {"instance_id": iid, "variant_type": rs[0]["variant_type"], "n": len(ok), "n_infra": n - len(ok),
                "p_hat": sum(r["rule_correctness_score"] for r in ok) / max(1, len(ok)),
-               "mean_reward": sum(r["final_reward"] for r in ok) / max(1, len(ok)),
+               "mean_reward": mu, "reward_std": (sum((x - mu) ** 2 for x in rw) / max(1, len(rw))) ** 0.5,
+               "frac_partial": sum(1 for r in ok if 0 < r["f2p_frac"] < 1) / max(1, len(ok)),
+               "max_f2p_frac": max([r["f2p_frac"] for r in ok] or [0.0]),
                "mean_f2p_frac": sum(r["f2p_frac"] for r in ok) / max(1, len(ok)),
                "extract_rate": sum(r["patch_extraction_score"] for r in ok) / max(1, len(ok)),
                "format_rate": sum(r["patch_format_score"] for r in ok) / max(1, len(ok)),
@@ -101,6 +105,8 @@ def aggregate(a):
     for vt, rs in summ.items():
         ps = [r["p_hat"] for r in rs]
         summary[vt] = {"n_instances": len(rs), "mean_p_hat": sum(ps) / len(ps), "frac_zero": sum(p == 0 for p in ps) / len(ps),
+                       "frac_zero_and_no_signal": sum(1 for r in rs if r["p_hat"] == 0 and r["reward_std"] == 0) / len(rs),
+                       "frac_reward_std_zero": sum(1 for r in rs if r["reward_std"] == 0) / len(rs),
                        "frac_one": sum(p == 1 for p in ps) / len(ps), "frac_band_0.2_0.8": sum(0.2 <= p <= 0.8 for p in ps) / len(ps),
                        "mean_reward": sum(r["mean_reward"] for r in rs) / len(rs), "extract_rate": sum(r["extract_rate"] for r in rs) / len(rs),
                        "apply_rate": sum(r["apply_rate"] for r in rs) / len(rs), "mean_resp_tokens": sum(r["mean_resp_tokens"] for r in rs) / len(rs)}
