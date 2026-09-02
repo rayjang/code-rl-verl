@@ -1,0 +1,1635 @@
+=================== PATTERN: rusca ===================
+t01_math_reward_rubric/README.md-2-license: other
+t01_math_reward_rubric/README.md-3-task_categories: [text-generation]
+t01_math_reward_rubric/README.md-4-language: [ko, en]
+t01_math_reward_rubric/README.md:5:tags: [math, reinforcement-learning, verl, ruscarl, reward]
+t01_math_reward_rubric/README.md-6----
+t01_math_reward_rubric/README.md-7-
+t01_math_reward_rubric/README.md-8-# T01 수학 RL — 인계본
+t01_math_reward_rubric/README.md-9-
+t01_math_reward_rubric/README.md:10:RuscaRL 학습에 필요한 것 전부. **파일 세 종류**다.
+t01_math_reward_rubric/README.md-11-
+t01_math_reward_rubric/README.md-12-| 파일 | 역할 | 언제 쓰이나 |
+t01_math_reward_rubric/README.md-13-|---|---|---|
+--
+t01_math_reward_rubric/README.md-102-### 학습 기동
+t01_math_reward_rubric/README.md-103-
+t01_math_reward_rubric/README.md-104-```bash
+t01_math_reward_rubric/README.md:105:export PYTHONPATH=/path/to/rusca:$PYTHONPATH
+t01_math_reward_rubric/README.md-106-python3 -m verl.trainer.main_ppo \
+t01_math_reward_rubric/README.md:107:  actor_rollout_ref.rollout.agent.default_agent_loop=rusca_scaffold_agent \
+t01_math_reward_rubric/README.md:108:  actor_rollout_ref.rollout.agent.agent_loop_config_path=.../rusca_agent_loop.yaml \
+t01_math_reward_rubric/README.md:109:  +actor_rollout_ref.rollout.custom.rusca.enable=True \
+t01_math_reward_rubric/README.md:110:  +actor_rollout_ref.rollout.custom.rusca.profile=math \
+t01_math_reward_rubric/README.md:111:  +actor_rollout_ref.rollout.custom.rusca.total_steps=$STEPS \
+t01_math_reward_rubric/README.md-112-  actor_rollout_ref.rollout.calculate_log_probs=False \
+t01_math_reward_rubric/README.md-113-  custom_reward_function.path=.../t01_math_reward.py \
+t01_math_reward_rubric/README.md-114-  custom_reward_function.name=compute_score_dict
+rl_code_v1/docs/MATH_REWARD.md-111-
+rl_code_v1/docs/MATH_REWARD.md-112----
+rl_code_v1/docs/MATH_REWARD.md-113-
+rl_code_v1/docs/MATH_REWARD.md:114:## 4. RUSCA — rubric → rule-only 전환
+rl_code_v1/docs/MATH_REWARD.md-115-
+rl_code_v1/docs/MATH_REWARD.md-116-이메일에 쓰신 그대로, 비계는 초반에만 주입되고 자동으로 걷혀 rule-only 로
+rl_code_v1/docs/MATH_REWARD.md-117-넘어갑니다. **보상 함수는 처음부터 끝까지 rule 기반**이고, 비계는 rollout 생성에만
+t01_math_reward_rubric/t01_math_reward.py-8-    쓴 롤아웃이 다른 군집으로 갈라진다. 형식은 math_has_boxed 등으로 관측만 한다.
+t01_math_reward_rubric/t01_math_reward.py-9-  · **overlong**: extra_info의 valid/max_response_length 로 초과분만 감점.
+t01_math_reward_rubric/t01_math_reward.py-10-    버퍼가 0이면 비활성(overlong_active=False). 감점 전 값은 score_before_overlong.
+t01_math_reward_rubric/t01_math_reward.py:11:  · rubric(RuscaRL 비계)은 프롬프트에만 들어가고 이 채점기는 관여하지 않는다 —
+t01_math_reward_rubric/t01_math_reward.py-12-    보상은 처음부터 끝까지 rule 기반이다.
+t01_math_reward_rubric/t01_math_reward.py-13-
+t01_math_reward_rubric/t01_math_reward.py-14-## 판정 방식
+
+=================== PATTERN: ddca ===================
+t01_math_reward_rubric/t01_math_reward.py-4-score = answer_match × overlong_penalty        (형식 점수를 섞지 않는다)
+t01_math_reward_rubric/t01_math_reward.py-5-
+t01_math_reward_rubric/t01_math_reward.py-6-  · **answer_match 는 순수 정오답이다.** boxed 여부·길이 같은 형식 신호를 더하지
+t01_math_reward_rubric/t01_math_reward.py:7:    않는다 — DDCA가 이 값으로 정답 군집을 만들기 때문에, 형식이 섞이면 같은 답을
+t01_math_reward_rubric/t01_math_reward.py-8-    쓴 롤아웃이 다른 군집으로 갈라진다. 형식은 math_has_boxed 등으로 관측만 한다.
+t01_math_reward_rubric/t01_math_reward.py-9-  · **overlong**: extra_info의 valid/max_response_length 로 초과분만 감점.
+t01_math_reward_rubric/t01_math_reward.py-10-    버퍼가 0이면 비활성(overlong_active=False). 감점 전 값은 score_before_overlong.
+--
+t01_math_reward_rubric/t01_math_reward.py-1147-    if errs:
+t01_math_reward_rubric/t01_math_reward.py-1148-        _warn_once(errs)
+t01_math_reward_rubric/t01_math_reward.py-1149-    return {
+t01_math_reward_rubric/t01_math_reward.py:1150:        # 계약 3종. ⚠ answer_match는 **순수 정오만** — DDCA가 이 값으로 정답
+t01_math_reward_rubric/t01_math_reward.py-1151-        #   클러스터를 나눈다(ray_trainer.py:315). 감점이 섞이면 길이 신호가 오염된다.
+t01_math_reward_rubric/t01_math_reward.py-1152-        "score": float(base + ov["overlong_penalty"]),
+t01_math_reward_rubric/t01_math_reward.py-1153-        "answer_match": float(base),
+rl_code_v1/docs/REWARD_DESIGN.md-221-| `answer_match` | 0/1. **`resolved` 여부만** 씁니다 |
+rl_code_v1/docs/REWARD_DESIGN.md-222-| `score_before_overlong` | 감점 전 점수 |
+rl_code_v1/docs/REWARD_DESIGN.md-223-
+rl_code_v1/docs/REWARD_DESIGN.md:224:`answer_match` 에 부분점수를 넣지 않은 것이 중요합니다. DDCA 는 이 값으로 정답
+rl_code_v1/docs/REWARD_DESIGN.md-225-클러스터를 가르는데, 부분점수가 섞이면 길이 신호가 오염됩니다.
+rl_code_v1/docs/REWARD_DESIGN.md-226-
+rl_code_v1/docs/REWARD_DESIGN.md-227-**불변식 3가지**를 코드로 강제합니다.
+rl_code_v1/reward/t15_code_reward.py-11-  2. 값은 float/int/str/bool 만. None·NaN·inf·list·dict 금지. → `_clean()` 이 강제한다.
+rl_code_v1/reward/t15_code_reward.py-12-  3. 결정적. 난수·시각 의존 금지.
+rl_code_v1/reward/t15_code_reward.py-13-
+rl_code_v1/reward/t15_code_reward.py:14:DDCA 가 쓰는 3키
+rl_code_v1/reward/t15_code_reward.py-15-  score                  최종 보상(overlong 감점 반영 후)
+rl_code_v1/reward/t15_code_reward.py-16-  answer_match           0/1 정오 — **부분점수가 아니라 resolved 여부**여야 한다.
+rl_code_v1/reward/t15_code_reward.py-17-                         감점·부분점수가 섞인 값을 쓰면 정답 클러스터가 오염된다.
+--
+rl_code_v1/reward/t15_code_reward.py-148-    out.update(ov)
+rl_code_v1/reward/t15_code_reward.py-149-    out["score_before_overlong"] = base
+rl_code_v1/reward/t15_code_reward.py-150-    out["score"] = base + ov["overlong_penalty"]
+rl_code_v1/reward/t15_code_reward.py:151:    # DDCA 정답 클러스터는 resolved 로만 가른다 — 부분점수를 섞으면 길이 신호가 오염된다
+rl_code_v1/reward/t15_code_reward.py-152-    out["answer_match"] = 1.0 if r.get("resolved") else 0.0
+rl_code_v1/reward/t15_code_reward.py-153-    return {k: _clean(v) for k, v in out.items()}
+rl_code_v1/reward/t15_code_reward.py-154-
+
+=================== PATTERN: gspo ===================
+
+=================== PATTERN: grpo ===================
+t01_math_reward_rubric/README.md-40-
+t01_math_reward_rubric/README.md-41-**5K는 "어려운 것"이 아니라 "학습 가능 구간만 남긴 것"이다.**
+t01_math_reward_rubric/README.md-42-`difficulty_band`가 learnable 96.8%, too_hard는 1.7%뿐이다(20K는 too_easy가 63.5%).
+t01_math_reward_rubric/README.md:43:GRPO에서 전원 정답·전원 오답은 advantage가 0이라 신호가 없으므로, 양끝을 자른 쪽이 낫다.
+t01_math_reward_rubric/README.md-44-
+t01_math_reward_rubric/README.md-45-정제 이력: v4 19,030 → v5 −122 → v6 18,634 (20K 기준, 총 396행 제거).
+t01_math_reward_rubric/README.md-46-5K는 그 안의 learnable 부분집합이다.
+rl_code_v1/verl_example.sh-30-# TRAIN="['$TRAIN','$BUNDLE/data/parquet/t15_code_rl_extended_train.parquet']"
+rl_code_v1/verl_example.sh-31-
+rl_code_v1/verl_example.sh-32-python3 -m verl.trainer.main_ppo \
+rl_code_v1/verl_example.sh:33:  algorithm.adv_estimator=grpo \
+rl_code_v1/verl_example.sh-34-  \
+rl_code_v1/verl_example.sh-35-  data.train_files="$TRAIN" \
+rl_code_v1/verl_example.sh-36-  data.val_files="$VAL" \
+rl_code_v1/docs/REWARD_DESIGN.md-72-
+rl_code_v1/docs/REWARD_DESIGN.md-73-**① all-or-nothing 은 안 됩니다.** 메일에 쓰신 그대로, p̂ 이 0에 몰려 학습 신호가
+rl_code_v1/docs/REWARD_DESIGN.md-74-죽습니다. 특히 SWE 는 한 인스턴스의 F2P 가 중앙값 3개, p90 43개라 "전부 통과"만
+rl_code_v1/docs/REWARD_DESIGN.md:75:보상하면 대부분의 롤아웃이 같은 0점이 되고 GRPO 의 그룹 내 분산이 사라집니다.
+rl_code_v1/docs/REWARD_DESIGN.md-76-
+rl_code_v1/docs/REWARD_DESIGN.md-77-**② 선형(frac)도 안 됩니다.** 절반 통과에 절반 점수를 주면 "쉬운 테스트만 골라
+rl_code_v1/docs/REWARD_DESIGN.md-78-통과시키기"가 이득이 됩니다. 지수 1.5 를 씌워 **열등가산**으로 만들었습니다 —
+--
+rl_code_v1/docs/REWARD_DESIGN.md-80-보상이 몰립니다.
+rl_code_v1/docs/REWARD_DESIGN.md-81-
+rl_code_v1/docs/REWARD_DESIGN.md-82-**③ resolved 는 뚜렷하게 튀어야 합니다.** 부분점수 상한(0.70)과 resolved(1.00)
+rl_code_v1/docs/REWARD_DESIGN.md:83:사이를 일부러 벌렸습니다. 진짜 목표는 "전부 통과"이고, GRPO 의 그룹 상대 advantage
+rl_code_v1/docs/REWARD_DESIGN.md-84-에서 이 간격이 그대로 gradient 로 갑니다.
+rl_code_v1/docs/REWARD_DESIGN.md-85-
+rl_code_v1/docs/REWARD_DESIGN.md-86-**밑값 0.10** — "적용은 됐는데 하나도 못 고침"에 0 이 아니라 0.10 을 줍니다.
+
+=================== PATTERN: token.mean ===================
+
+=================== PATTERN: token_mean ===================
+
+=================== PATTERN: norm_adv ===================
+
+=================== PATTERN: std ===================
+t01_math_reward_rubric/t01_math_reward.py-1129-    for e in errs:
+t01_math_reward_rubric/t01_math_reward.py-1130-        if e not in _SEEN:
+t01_math_reward_rubric/t01_math_reward.py-1131-            _SEEN.add(e)
+t01_math_reward_rubric/t01_math_reward.py:1132:            sys.stderr.write("[t01_math_reward] tier 예외: %s\n" % e)
+t01_math_reward_rubric/t01_math_reward.py-1133-
+t01_math_reward_rubric/t01_math_reward.py-1134-def compute_score_dict(data_source, solution_str, ground_truth, extra_info=None, **kw):
+t01_math_reward_rubric/t01_math_reward.py-1135-    ei = extra_info or {}
+rl_code_v1/env/verify_images.py-14-import json, os, sys, urllib.request, urllib.error
+rl_code_v1/env/verify_images.py-15-
+rl_code_v1/env/verify_images.py-16-try:
+rl_code_v1/env/verify_images.py:17:    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+rl_code_v1/env/verify_images.py-18-except Exception:
+rl_code_v1/env/verify_images.py-19-    pass
+rl_code_v1/env/verify_images.py-20-
+rl_code_v1/harness/make_swe_fixture.py-73-    p = subprocess.run(args, cwd=cwd, capture_output=True, text=True,
+rl_code_v1/harness/make_swe_fixture.py-74-                       encoding="utf-8", errors="replace")
+rl_code_v1/harness/make_swe_fixture.py-75-    if check and p.returncode != 0:
+rl_code_v1/harness/make_swe_fixture.py:76:        raise RuntimeError(f"{args}: {p.stderr[-400:]}")
+rl_code_v1/harness/make_swe_fixture.py-77-    return p
+rl_code_v1/harness/make_swe_fixture.py-78-
+rl_code_v1/harness/make_swe_fixture.py-79-
+--
+rl_code_v1/harness/make_swe_fixture.py-83-    hunk 헤더의 줄 수를 손으로 쓰면 틀리고, 틀린 패치는 git apply 도 patch 도
+rl_code_v1/harness/make_swe_fixture.py-84-    거부해 `patch_apply_fail` 이 된다 — gold 가 0점이 되는 그 실패다(실제로 밟음).
+rl_code_v1/harness/make_swe_fixture.py-85-    """
+rl_code_v1/harness/make_swe_fixture.py:86:    d = run(["git", "diff", IID, "main", "--", "demo/core.py"], repo).stdout
+rl_code_v1/harness/make_swe_fixture.py-87-    return d if d.endswith("\n") else d + "\n"
+rl_code_v1/harness/make_swe_fixture.py-88-
+rl_code_v1/harness/make_swe_fixture.py-89-
+--
+rl_code_v1/harness/make_swe_fixture.py-152-    with open(f"{OUT}/index/t15_code_swesmith.learnable.jsonl", "w", encoding="utf-8", newline="\n") as f:
+rl_code_v1/harness/make_swe_fixture.py-153-        f.write(json.dumps(idx, ensure_ascii=False) + "\n")
+rl_code_v1/harness/make_swe_fixture.py-154-
+rl_code_v1/harness/make_swe_fixture.py:155:    br = run(["git", "branch", "-a"], repo).stdout.strip().replace("\n", " ")
+rl_code_v1/harness/make_swe_fixture.py-156-    print(f"픽스처 생성 -> {OUT}")
+rl_code_v1/harness/make_swe_fixture.py-157-    print(f"  repo    {repo}")
+rl_code_v1/harness/make_swe_fixture.py-158-    print(f"  브랜치  {br}")
+rl_code_v1/harness/measure_phat.py-9-    ROLLOUT_CMD='python my_rollout.py --instance {instance_id} --n {k}' \
+rl_code_v1/harness/measure_phat.py-10-    K=8 python measure_phat.py
+rl_code_v1/harness/measure_phat.py-11-
+rl_code_v1/harness/measure_phat.py:12:`ROLLOUT_CMD` 는 인스턴스 하나에 대해 **응답 k개**를 JSON 배열로 stdout 에
+rl_code_v1/harness/measure_phat.py-13-내보내면 됩니다. 지정하지 않으면 gold/empty 정오 분리만 확인하고 끝냅니다.
+rl_code_v1/harness/measure_phat.py-14-
+rl_code_v1/harness/measure_phat.py-15-측정 후 인덱스의 다음 필드가 갱신됩니다:
+--
+rl_code_v1/harness/measure_phat.py-21-sys.path.insert(0, os.path.abspath(os.path.join(_HERE, "..", "reward")))
+rl_code_v1/harness/measure_phat.py-22-
+rl_code_v1/harness/measure_phat.py-23-try:
+rl_code_v1/harness/measure_phat.py:24:    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+rl_code_v1/harness/measure_phat.py-25-except Exception:
+rl_code_v1/harness/measure_phat.py-26-    pass
+rl_code_v1/harness/measure_phat.py-27-
+--
+rl_code_v1/harness/measure_phat.py-40-    cmd = CMD.format(instance_id=iid, k=K)
+rl_code_v1/harness/measure_phat.py-41-    p = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=3600)
+rl_code_v1/harness/measure_phat.py-42-    try:
+rl_code_v1/harness/measure_phat.py:43:        v = json.loads(p.stdout)
+rl_code_v1/harness/measure_phat.py-44-        return v if isinstance(v, list) else [str(v)]
+rl_code_v1/harness/measure_phat.py-45-    except Exception:
+rl_code_v1/harness/measure_phat.py-46-        print(f"    [warn] {iid}: 롤아웃 출력 파싱 실패 — 건너뜀", flush=True)
+rl_code_v1/harness/t15_code_harness.py-18-import json, math, os, random, sys
+rl_code_v1/harness/t15_code_harness.py-19-
+rl_code_v1/harness/t15_code_harness.py-20-try:                       # 콘솔이 cp949 여도 죽지 않게
+rl_code_v1/harness/t15_code_harness.py:21:    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+rl_code_v1/harness/t15_code_harness.py-22-except Exception:
+rl_code_v1/harness/t15_code_harness.py-23-    pass
+rl_code_v1/harness/t15_code_harness.py-24-
+rl_code_v1/docs/ENVIRONMENT.md-202-
+rl_code_v1/docs/ENVIRONMENT.md-203-| 함정 | 증상 | 조치 |
+rl_code_v1/docs/ENVIRONMENT.md-204-|---|---|---|
+rl_code_v1/docs/ENVIRONMENT.md:205:| `subprocess(text=True)` 인코딩 | 비 UTF-8 로케일에서 디코딩이 **백그라운드 스레드에서** 실패 → `stdout=None`, 예외 전파 안 됨 | 전 호출에 `encoding="utf-8", errors="replace"` 명시 |
+rl_code_v1/docs/ENVIRONMENT.md-206-| `core.autocrlf=true` | `git archive` 가 CRLF 로 뱉어 LF 패치가 전부 `patch_apply_fail` | git 호출에 `-c core.autocrlf=false -c core.eol=lf` |
+rl_code_v1/docs/ENVIRONMENT.md-207-| 손으로 쓴 hunk 헤더 | 줄 수가 틀리면 git apply·patch 둘 다 거부 | gold diff 는 `git diff` 가 만들게 함 |
+rl_code_v1/docs/ENVIRONMENT.md-208-
+rl_code_v1/docs/REWARD_DESIGN.md-201-- **참조해답 오탐 0건** (60건 중 52건이 참조해답 보유, 전부 1.000 유지)
+rl_code_v1/docs/REWARD_DESIGN.md-202-- 비용: 통과가 1건이라도 있을 때만 서브프로세스 1개 추가. 전부 실패면 속일 이유가
+rl_code_v1/docs/REWARD_DESIGN.md-203-  없으므로 돌지 않습니다.
+rl_code_v1/docs/REWARD_DESIGN.md:204:- `stdio` 하네스는 프로세스 출력을 비교하므로 이 공격이 원천적으로 불가능합니다.
+rl_code_v1/docs/REWARD_DESIGN.md-205-
+rl_code_v1/docs/REWARD_DESIGN.md-206----
+rl_code_v1/docs/REWARD_DESIGN.md-207-
+rl_code_v1/reward/swe_exec_local.py-69-    tar_path = os.path.join(wd, "src.tar")
+rl_code_v1/reward/swe_exec_local.py-70-    r = _git(["archive", "--format=tar", "-o", tar_path, iid], repo)
+rl_code_v1/reward/swe_exec_local.py-71-    if r.returncode != 0:
+rl_code_v1/reward/swe_exec_local.py:72:        return {"resolved": False, "err": f"branch_extract_fail: {r.stderr[-200:]}", "wd": wd}
+rl_code_v1/reward/swe_exec_local.py-73-    subprocess.run(["tar", "-xf", tar_path, "-C", tb], capture_output=True,
+rl_code_v1/reward/swe_exec_local.py-74-                   text=True, encoding="utf-8", errors="replace")
+rl_code_v1/reward/swe_exec_local.py-75-
+--
+rl_code_v1/reward/swe_exec_local.py-78-    tar2 = os.path.join(wd, "tests.tar")
+rl_code_v1/reward/swe_exec_local.py-79-    r = _git(["archive", "--format=tar", "-o", tar2, "main", "--"] + test_files, repo)
+rl_code_v1/reward/swe_exec_local.py-80-    if r.returncode != 0:
+rl_code_v1/reward/swe_exec_local.py:81:        return {"resolved": False, "err": f"test_restore_fail: {r.stderr[-200:]}", "wd": wd}
+rl_code_v1/reward/swe_exec_local.py-82-    subprocess.run(["tar", "-xf", tar2, "-C", tb], capture_output=True,
+rl_code_v1/reward/swe_exec_local.py-83-                   text=True, encoding="utf-8", errors="replace")
+rl_code_v1/reward/swe_exec_local.py-84-
+--
+rl_code_v1/reward/swe_exec_local.py-98-                               encoding="utf-8", errors="replace")
+rl_code_v1/reward/swe_exec_local.py-99-            if b.returncode != 0:
+rl_code_v1/reward/swe_exec_local.py-100-                return {"resolved": False, "err": "patch_apply_fail", "wd": wd,
+rl_code_v1/reward/swe_exec_local.py:101:                        "log_tail": (a.stderr + b.stdout + b.stderr)[-1500:]}
+rl_code_v1/reward/swe_exec_local.py-102-
+rl_code_v1/reward/swe_exec_local.py-103-    # ④ pytest — 컨테이너판과 같은 인자
+rl_code_v1/reward/swe_exec_local.py-104-    tests = [shlex.quote(t) for t in (f2p + p2p)]
+--
+rl_code_v1/reward/swe_exec_local.py-111-                           cwd=tb, capture_output=True, text=True,
+rl_code_v1/reward/swe_exec_local.py-112-                           timeout=timeout, env=env,
+rl_code_v1/reward/swe_exec_local.py-113-                           encoding="utf-8", errors="replace")
+rl_code_v1/reward/swe_exec_local.py:114:        out = p.stdout + p.stderr
+rl_code_v1/reward/swe_exec_local.py-115-    except subprocess.TimeoutExpired:
+rl_code_v1/reward/swe_exec_local.py-116-        return {"resolved": False, "err": "timeout", "wd": wd}
+rl_code_v1/reward/swe_exec_local.py-117-
+rl_code_v1/reward/async_wrap.py-90-    if not os.path.isdir(root):
+rl_code_v1/reward/async_wrap.py-91-        return 0
+rl_code_v1/reward/async_wrap.py-92-    now, n = time.time(), 0
+rl_code_v1/reward/async_wrap.py:93:    for name in os.listdir(root):
+rl_code_v1/reward/async_wrap.py-94-        p = os.path.join(root, name)
+rl_code_v1/reward/async_wrap.py-95-        try:
+rl_code_v1/reward/async_wrap.py-96-            if os.path.isdir(p) and now - os.path.getmtime(p) > ttl:
+rl_code_v1/reward/unittest_exec.py-7-            **개별 서브프로세스**로 돌려 부분점수를 낸다.
+rl_code_v1/reward/unittest_exec.py-8-  pytest    `from solution import X` 로 시작하는 pytest 파일. 모델 코드를
+rl_code_v1/reward/unittest_exec.py-9-            `solution.py` 로 쓰고 `pytest -rA` 로 돌려 케이스별 판정을 센다.
+rl_code_v1/reward/unittest_exec.py:10:  stdio     (stdin, stdout) 쌍. 모델 프로그램을 실행해 출력 일치를 센다.
+rl_code_v1/reward/unittest_exec.py-11-
+rl_code_v1/reward/unittest_exec.py-12-격리는 컨테이너가 담당하고(net=none, read-only, tmpfs), 여기서는 프로세스 단위
+rl_code_v1/reward/unittest_exec.py-13-rlimit + 타임아웃만 건다.  컨테이너 밖에서 돌리면 **격리가 없다** — 반드시
+--
+rl_code_v1/reward/unittest_exec.py-78-    return env
+rl_code_v1/reward/unittest_exec.py-79-
+rl_code_v1/reward/unittest_exec.py-80-
+rl_code_v1/reward/unittest_exec.py:81:def _run(args, cwd, timeout, mem_mb, stdin=None):
+rl_code_v1/reward/unittest_exec.py-82-    try:
+rl_code_v1/reward/unittest_exec.py-83-        # encoding 을 명시한다. 생략하면 비 UTF-8 로케일(Windows cp949 등)에서
+rl_code_v1/reward/unittest_exec.py:84:        # 디코딩이 **백그라운드 스레드에서 조용히 실패**해 stdout 이 None 이 되고,
+rl_code_v1/reward/unittest_exec.py-85-        # 예외는 전파되지 않는다 — 정상 코드가 전부 오답으로 집계된다(실제로 밟음).
+rl_code_v1/reward/unittest_exec.py:86:        p = subprocess.run(args, cwd=cwd, input=stdin, capture_output=True, text=True,
+rl_code_v1/reward/unittest_exec.py-87-                           timeout=timeout, preexec_fn=_limits(mem_mb),
+rl_code_v1/reward/unittest_exec.py-88-                           env=_child_env(cwd), encoding="utf-8", errors="replace")
+rl_code_v1/reward/unittest_exec.py:89:        return p.returncode, (p.stdout or "") + (p.stderr or "")
+rl_code_v1/reward/unittest_exec.py-90-    except subprocess.TimeoutExpired:
+rl_code_v1/reward/unittest_exec.py-91-        return -9, "__TIMEOUT__"
+rl_code_v1/reward/unittest_exec.py-92-    except Exception as e:                       # OSError 등 — 인프라 실패로 구분된다
+--
+rl_code_v1/reward/unittest_exec.py-144-                return 0, (total or len(res)), "canary_cheat"
+rl_code_v1/reward/unittest_exec.py-145-            return npass, (total or len(res)), ""
+rl_code_v1/reward/unittest_exec.py-146-
+rl_code_v1/reward/unittest_exec.py:147:        if harness == "stdio":
+rl_code_v1/reward/unittest_exec.py-148-            open(f"{wd}/main.py", "w", encoding="utf-8").write(code)
+rl_code_v1/reward/unittest_exec.py-149-            npass = spawn_fail = 0
+rl_code_v1/reward/unittest_exec.py-150-            for t in tests:
+rl_code_v1/reward/unittest_exec.py-151-                rc, out = _run([PY, "main.py"], wd, timeout, mem_mb,
+rl_code_v1/reward/unittest_exec.py:152:                               stdin=(t.get("stdin") or ""))
+rl_code_v1/reward/unittest_exec.py-153-                if out.startswith("__EXEC_ERROR__"):
+rl_code_v1/reward/unittest_exec.py-154-                    spawn_fail += 1
+rl_code_v1/reward/unittest_exec.py-155-                    continue
+rl_code_v1/reward/unittest_exec.py-156-                if out == "__TIMEOUT__":
+rl_code_v1/reward/unittest_exec.py-157-                    continue                      # 모델 코드가 느린 것 = 모델 잘못
+rl_code_v1/reward/unittest_exec.py:158:                if rc == 0 and _norm_out(out) == _norm_out(t.get("stdout") or ""):
+rl_code_v1/reward/unittest_exec.py-159-                    npass += 1
+rl_code_v1/reward/unittest_exec.py-160-            return _infra_guard(npass, len(tests), spawn_fail)
+rl_code_v1/reward/unittest_exec.py-161-
+--
+rl_code_v1/reward/unittest_exec.py-289-
+rl_code_v1/reward/unittest_exec.py-290-
+rl_code_v1/reward/unittest_exec.py-291-def _norm_out(s):
+rl_code_v1/reward/unittest_exec.py:292:    """stdio 비교 — 줄 끝 공백과 마지막 개행 차이는 무시한다."""
+rl_code_v1/reward/unittest_exec.py-293-    return "\n".join(line.rstrip() for line in (s or "").strip().split("\n"))
+rl_code_v1/reward/unittest_exec.py-294-
+rl_code_v1/reward/unittest_exec.py-295-
+rl_code_v1/reward/swe_exec_v2.py-105-                 f"git archive main -- {tf_args} | tar -x -C /wd/tb"],
+rl_code_v1/reward/swe_exec_v2.py-106-                capture_output=True, text=True, timeout=300)
+rl_code_v1/reward/swe_exec_v2.py-107-            if r1.returncode != 0:
+rl_code_v1/reward/swe_exec_v2.py:108:                return {"resolved": False, "err": f"branch_extract_fail: {r1.stderr[-200:]}", "wd": wd}
+rl_code_v1/reward/swe_exec_v2.py-109-        except subprocess.TimeoutExpired:
+rl_code_v1/reward/swe_exec_v2.py-110-            return {"resolved": False, "err": "extract_timeout", "wd": wd}
+rl_code_v1/reward/swe_exec_v2.py-111-        binds += ["--bind", f"{wd}/tb:/testbed"]
+--
+rl_code_v1/reward/swe_exec_v2.py-126-        r = subprocess.run(
+rl_code_v1/reward/swe_exec_v2.py-127-            [SING, "exec", "--writable-tmpfs"] + binds + [sif, "bash", "/wd/runner.sh"],
+rl_code_v1/reward/swe_exec_v2.py-128-            capture_output=True, text=True, timeout=timeout)
+rl_code_v1/reward/swe_exec_v2.py:129:        out = r.stdout + r.stderr
+rl_code_v1/reward/swe_exec_v2.py-130-    except subprocess.TimeoutExpired:
+rl_code_v1/reward/swe_exec_v2.py-131-        return {"resolved": False, "err": "timeout", "wd": wd}
+rl_code_v1/reward/swe_exec_v2.py-132-    open(f"{wd}/out.log", "w").write(out)
+
+=================== PATTERN: hierarch ===================
+
+=================== PATTERN: variant ===================
+rl_code_v1/docs/MATH_REWARD.md-126-
+rl_code_v1/docs/MATH_REWARD.md-127-```
+rl_code_v1/docs/MATH_REWARD.md-128-검사 6,518행  프로파일=code       스키마 위반: 0건
+rl_code_v1/docs/MATH_REWARD.md:129:   step  lam(i=0)   주입 기준수(variant별)
+rl_code_v1/docs/MATH_REWARD.md-130-      0    1.0000   6 6 6 5 6 5
+rl_code_v1/docs/MATH_REWARD.md-131-     10    0.5000   3 3 3 3 3 3
+rl_code_v1/docs/MATH_REWARD.md-132-     12    0.0067   0 0 0 0 0 0     ← 24% 지점에서 비계 완전 제거
+
+=================== PATTERN: sampler ===================
+
+=================== PATTERN: multi.task ===================
+
+=================== PATTERN: multitask ===================
+t01_math_reward_rubric/README.md-69-
+t01_math_reward_rubric/README.md-70-## 루브릭 — `rubrics/rubric_math.jsonl`
+t01_math_reward_rubric/README.md-71-
+t01_math_reward_rubric/README.md:72:T15 `t15_multitask_build.py` 의 `load_rubrics()` 규격 그대로다(그 함수로 읽는 것을 확인했다).
+t01_math_reward_rubric/README.md-73-7개 카테고리 × ko/en, 문항당 3기준, 4,911행 전수.
+t01_math_reward_rubric/README.md-74-
+t01_math_reward_rubric/README.md-75-```jsonl
+
+=================== PATTERN: t15_reward_multi ===================
+rl_code_v1/docs/REWARD_DESIGN.md-235-`fmt_extracted` `fmt_applied` `fmt_invalid_edit` `infra_excluded`
+rl_code_v1/docs/REWARD_DESIGN.md-236-`err_kind` `patch_fmt` `track`
+rl_code_v1/docs/REWARD_DESIGN.md-237-
+rl_code_v1/docs/REWARD_DESIGN.md:238:dispatcher 연결은 `t15_reward_multi.py` 에 아래를 추가하면 됩니다
+rl_code_v1/docs/REWARD_DESIGN.md-239-(수학의 `T01_SCORER` 슬롯과 같은 방식):
+rl_code_v1/docs/REWARD_DESIGN.md-240-
+rl_code_v1/docs/REWARD_DESIGN.md-241-```python
+rl_code_v1/reward/t15_reward_dispatch.py-1-#!/usr/bin/env python3
+rl_code_v1/reward/t15_reward_dispatch.py:2:"""다중 task dispatcher — 기존 `t15_reward_multi.py` 를 **포크하지 않고 감싼다**.
+rl_code_v1/reward/t15_reward_dispatch.py-3-
+rl_code_v1/reward/t15_reward_dispatch.py-4-  t15_repo_patch / t15_unittest_impl  → 코드 실행채점 (t15_code_reward)
+rl_code_v1/reward/t15_reward_dispatch.py-5-  t01_*                               → T01_SCORER (수학)
+--
+rl_code_v1/reward/t15_reward_dispatch.py-45-
+rl_code_v1/reward/t15_reward_dispatch.py-46-_BASE = None
+rl_code_v1/reward/t15_reward_dispatch.py-47-_base_err = ""
+rl_code_v1/reward/t15_reward_dispatch.py:48:_p = os.path.join(T15_DIR, "t15_reward_multi.py")
+rl_code_v1/reward/t15_reward_dispatch.py-49-if os.path.exists(_p):
+rl_code_v1/reward/t15_reward_dispatch.py-50-    try:
+rl_code_v1/reward/t15_reward_dispatch.py:51:        _BASE = _load("t15_reward_multi", _p)
+rl_code_v1/reward/t15_reward_dispatch.py-52-    except Exception as e:                     # 조용히 넘기지 않는다 — 지표로 드러낸다
+rl_code_v1/reward/t15_reward_dispatch.py-53-        _base_err = f"{type(e).__name__}: {e}"
+rl_code_v1/reward/t15_reward_dispatch.py-54-else:
+
+=================== PATTERN: T01_SCORER ===================
+rl_code_v1/docs/MATH_REWARD.md-1-# 수학 채점기 — 이메일 (1)
+rl_code_v1/docs/MATH_REWARD.md-2-
+rl_code_v1/docs/MATH_REWARD.md:3:`reward/math/t01_math_reward.py` 가 `T01_SCORER` 슬롯에 꽂는 구현입니다.
+rl_code_v1/docs/MATH_REWARD.md-4-키트의 `t01_math_harness.py` 로 **계약 검증을 통과**했습니다.
+rl_code_v1/docs/MATH_REWARD.md-5-
+rl_code_v1/docs/MATH_REWARD.md-6-```
+--
+rl_code_v1/docs/MATH_REWARD.md-103-
+rl_code_v1/docs/MATH_REWARD.md-104-```bash
+rl_code_v1/docs/MATH_REWARD.md-105-python build/math_fixture.py
+rl_code_v1/docs/MATH_REWARD.md:106:T01_SCORER=rl_v1/reward/math/t01_math_reward.py \
+rl_code_v1/docs/MATH_REWARD.md-107-T01_DATA=build/math_fixture.jsonl \
+rl_code_v1/docs/MATH_REWARD.md-108-RESP_FILE=build/math_fixture_resp.jsonl \
+rl_code_v1/docs/MATH_REWARD.md-109-GOLD_KEY=answer N=100 python 참고자료/ex/t01_math_kit/t01_math_harness.py
+rl_code_v1/docs/REWARD_DESIGN.md-236-`err_kind` `patch_fmt` `track`
+rl_code_v1/docs/REWARD_DESIGN.md-237-
+rl_code_v1/docs/REWARD_DESIGN.md-238-dispatcher 연결은 `t15_reward_multi.py` 에 아래를 추가하면 됩니다
+rl_code_v1/docs/REWARD_DESIGN.md:239:(수학의 `T01_SCORER` 슬롯과 같은 방식):
+rl_code_v1/docs/REWARD_DESIGN.md-240-
+rl_code_v1/docs/REWARD_DESIGN.md-241-```python
+rl_code_v1/docs/REWARD_DESIGN.md-242-if ds.startswith(("t15_repo_patch", "t15_unittest")):
+rl_code_v1/reward/t15_reward_dispatch.py-2-"""다중 task dispatcher — 기존 `t15_reward_multi.py` 를 **포크하지 않고 감싼다**.
+rl_code_v1/reward/t15_reward_dispatch.py-3-
+rl_code_v1/reward/t15_reward_dispatch.py-4-  t15_repo_patch / t15_unittest_impl  → 코드 실행채점 (t15_code_reward)
+rl_code_v1/reward/t15_reward_dispatch.py:5:  t01_*                               → T01_SCORER (수학)
+rl_code_v1/reward/t15_reward_dispatch.py-6-  t03_* / 그 외 t15_*                  → 기존 dispatcher 그대로
+rl_code_v1/reward/t15_reward_dispatch.py-7-
+rl_code_v1/reward/t15_reward_dispatch.py-8-기존 파일을 고치지 않는 이유: 그쪽은 학습이 돌고 있는 자산이고, 코드 트랙 추가는
+rl_code_v1/reward/math/t01_math_reward.py-1-#!/usr/bin/env python
+rl_code_v1/reward/math/t01_math_reward.py:2:"""T01 수학 채점기 — `T01_SCORER` 슬롯에 꽂는 구현.
+rl_code_v1/reward/math/t01_math_reward.py-3-
+rl_code_v1/reward/math/t01_math_reward.py-4-키트 스텁이 TODO 로 남긴 두 함수가 채점기의 전부입니다.
+rl_code_v1/reward/math/t01_math_reward.py-5-
+
+=================== PATTERN: T15 ===================
+t01_math_reward_rubric/README.md-69-
+t01_math_reward_rubric/README.md-70-## 루브릭 — `rubrics/rubric_math.jsonl`
+t01_math_reward_rubric/README.md-71-
+t01_math_reward_rubric/README.md:72:T15 `t15_multitask_build.py` 의 `load_rubrics()` 규격 그대로다(그 함수로 읽는 것을 확인했다).
+t01_math_reward_rubric/README.md-73-7개 카테고리 × ko/en, 문항당 3기준, 4,911행 전수.
+t01_math_reward_rubric/README.md-74-
+t01_math_reward_rubric/README.md-75-```jsonl
+--
+t01_math_reward_rubric/README.md-83-
+t01_math_reward_rubric/README.md-84-### ⚠ 딱 하나만 맞춰주면 된다 — `index = uid`
+t01_math_reward_rubric/README.md-85-
+t01_math_reward_rubric/README.md:86:T15 빌더는 `extra_info.index` 로 루브릭을 붙이고, **없으면 즉시 예외**를 낸다.
+t01_math_reward_rubric/README.md-87-조용히 넘어가지 않으니 틀리면 바로 안다.
+t01_math_reward_rubric/README.md-88-
+t01_math_reward_rubric/README.md-89-    ei["index"] = row["uid"]
+rl_code_v1/build_report.json-1-{
+rl_code_v1/build_report.json-2-  "core": {
+rl_code_v1/build_report.json:3:    "t15_code_swesmith": 751,
+rl_code_v1/build_report.json:4:    "t15_code_unittest": 5927,
+rl_code_v1/build_report.json:5:    "t15_code_r2e": 120
+rl_code_v1/build_report.json-6-  },
+rl_code_v1/build_report.json-7-  "extended_gold": {
+rl_code_v1/build_report.json-8-    "ok": 16464,
+--
+rl_code_v1/build_report.json-10-  },
+rl_code_v1/build_report.json-11-  "extended_kept": 16464,
+rl_code_v1/build_report.json-12-  "parquet": {
+rl_code_v1/build_report.json:13:    "t15_code_rl_core_train": 6516,
+rl_code_v1/build_report.json:14:    "t15_code_rl_core_val": 162,
+rl_code_v1/build_report.json:15:    "t15_code_rl_extended_train": 16464
+rl_code_v1/build_report.json-16-  },
+rl_code_v1/build_report.json-17-  "total_instances": 23142
+rl_code_v1/build_report.json-18-}
+rl_code_v1/HANDOFF.md-39-### 단위테스트 샌드박스 (권장 — 먼저 하세요)
+rl_code_v1/HANDOFF.md-40-
+rl_code_v1/HANDOFF.md-41-```bash
+rl_code_v1/HANDOFF.md:42:cd env && apptainer build t15_unittest.sif unittest.def && cd -
+rl_code_v1/HANDOFF.md:43:export T15_UNITTEST_SIF=$PWD/env/t15_unittest.sif
+rl_code_v1/HANDOFF.md-44-export UT_PYTHON=$PWD/env/ut_python_sif.sh      # ★ 컨테이너 안에서 실행
+rl_code_v1/HANDOFF.md-45-```
+rl_code_v1/HANDOFF.md-46-
+--
+rl_code_v1/HANDOFF.md-71-
+rl_code_v1/HANDOFF.md-72-```bash
+rl_code_v1/HANDOFF.md-73-export RL_INDEX_DIR=$PWD/data/index     # ★ 없으면 전 인스턴스 unknown_instance
+rl_code_v1/HANDOFF.md:74:#   custom_reward_function.path=$PWD/reward/t15_reward_dispatch.py
+rl_code_v1/HANDOFF.md-75-#   custom_reward_function.name=compute_score
+rl_code_v1/HANDOFF.md-76-```
+rl_code_v1/HANDOFF.md-77-
+--
+rl_code_v1/HANDOFF.md-82-
+rl_code_v1/HANDOFF.md-83-| parquet | 행 | 언제 |
+rl_code_v1/HANDOFF.md-84-|---|--:|---|
+rl_code_v1/HANDOFF.md:85:| `t15_code_rl_core_train.parquet` | 6,516 | **1단계 — 이걸로 시작** |
+rl_code_v1/HANDOFF.md:86:| `t15_code_rl_core_val.parquet` | 162 | 검증 |
+rl_code_v1/HANDOFF.md:87:| `t15_code_rl_extended_train.parquet` | 16,464 | 2단계 — 난이도 측정 후 |
+rl_code_v1/HANDOFF.md-88-
+rl_code_v1/HANDOFF.md-89-`core` 는 pass@k 를 실측해 학습가능 밴드 [0.2, 0.8] 안에 든 것만 남긴 것이고,
+rl_code_v1/HANDOFF.md-90-`extended` 는 테스트와 참조해답은 있으나 난이도를 모릅니다. 섞지 않은 이유는
+--
+rl_code_v1/HANDOFF.md-94-```bash
+rl_code_v1/HANDOFF.md-95-# extended 난이도 측정 → 밴드로 걸러 편입
+rl_code_v1/HANDOFF.md-96-ROLLOUT_CMD='python my_rollout.py --instance {instance_id} --n {k}' K=8 \
+rl_code_v1/HANDOFF.md:97:TAG=t15_code_unittest_ext python harness/measure_phat.py
+rl_code_v1/HANDOFF.md-98-```
+rl_code_v1/HANDOFF.md-99-
+rl_code_v1/HANDOFF.md-100-### 컬럼
+--
+rl_code_v1/HANDOFF.md-169-**오류 없이** 0점이 나와 "모델이 못 푼다"로 위장됩니다.
+rl_code_v1/HANDOFF.md-170-
+rl_code_v1/HANDOFF.md-171-```bash
+rl_code_v1/HANDOFF.md:172:RL_INDEX_DIR=$PWD/data/index MODE=exec TRACK=swe N=2 python harness/t15_code_harness.py
+rl_code_v1/HANDOFF.md-173-# gold → resolved / empty → not  이 나와야 정상
+rl_code_v1/HANDOFF.md-174-```
+rl_code_v1/HANDOFF.md-175-
+--
+rl_code_v1/HANDOFF.md-215-    index/            채점에 쓰는 정답·테스트 (보상 모듈이 glob 으로 읽음)
+rl_code_v1/HANDOFF.md-216-    parquet/          verl 학습 입력
+rl_code_v1/HANDOFF.md-217-  reward/
+rl_code_v1/HANDOFF.md:218:    t15_reward_dispatch.py   ★ verl 진입점 (compute_score)
+rl_code_v1/HANDOFF.md:219:    t15_code_reward.py       계약 구현 (24키)
+rl_code_v1/HANDOFF.md:220:    t15_code_judge.py        보상 사다리 score_of()
+rl_code_v1/HANDOFF.md-221-    unittest_exec.py         단위테스트 실행기 + 카나리아 방어
+rl_code_v1/HANDOFF.md-222-    patch_extract.py         6단 추출 캐스케이드
+rl_code_v1/HANDOFF.md-223-    swe_exec_v2.py           SWE 실행기 (apptainer)
+--
+rl_code_v1/HANDOFF.md-232-    retarget_sif_paths.py    인덱스 sif 경로 치환
+rl_code_v1/HANDOFF.md-233-    verify_images.py         Hub 에 이미지가 있는지 확인 (Docker 불필요)
+rl_code_v1/HANDOFF.md-234-  harness/
+rl_code_v1/HANDOFF.md:235:    t15_code_harness.py      ★ 검증 하네스 (오프라인/실행 겸용)
+rl_code_v1/HANDOFF.md-236-    measure_phat.py          난이도 실측
+rl_code_v1/HANDOFF.md-237-    make_swe_fixture.py      합성 저장소 픽스처
+rl_code_v1/HANDOFF.md-238-  docs/
+rl_code_v1/preflight.sh-51-
+rl_code_v1/preflight.sh-52-# ── 2. 데이터 ────────────────────────────────────────────────────
+rl_code_v1/preflight.sh-53-hdr "2. 데이터"
+rl_code_v1/preflight.sh:54:for f in data/index/t15_code_swesmith.full.jsonl \
+rl_code_v1/preflight.sh:55:         data/index/t15_code_unittest.full.jsonl \
+rl_code_v1/preflight.sh:56:         data/index/t15_code_unittest_ext.full.jsonl; do
+rl_code_v1/preflight.sh-57-  if [ -s "$f" ]; then ok "$(printf '%7d행  %s' "$(wc -l < "$f")" "$f")"
+rl_code_v1/preflight.sh-58-  else bad "없음: $f"; fi
+rl_code_v1/preflight.sh-59-done
+--
+rl_code_v1/preflight.sh-63-
+rl_code_v1/preflight.sh-64-# ── 3. 오프라인 하네스 (환경 없이 도는 검사) ────────────────────
+rl_code_v1/preflight.sh-65-hdr "3. 보상 계약·사다리 (오프라인)"
+rl_code_v1/preflight.sh:66:if OUT="$(RL_INDEX_DIR="$HERE/data/index" "$PY" harness/t15_code_harness.py 2>&1)"; then
+rl_code_v1/preflight.sh-67-  echo "$OUT" | tail -2 | sed 's/^/  /'
+rl_code_v1/preflight.sh-68-  echo "$OUT" | grep -q "통과" && ok "계약 3불변식 + 사다리 단조성" || bad "하네스 실패"
+rl_code_v1/preflight.sh-69-else
+--
+rl_code_v1/preflight.sh-72-
+rl_code_v1/preflight.sh-73-# ── 4. 단위테스트 트랙 실제 실행 ────────────────────────────────
+rl_code_v1/preflight.sh-74-hdr "4. 단위테스트 트랙 실행 (22,391건 / 전체의 96.8%)"
+rl_code_v1/preflight.sh:75:UT_SIF="${T15_UNITTEST_SIF:-$HERE/env/t15_unittest.sif}"
+rl_code_v1/preflight.sh-76-if [ -f "$UT_SIF" ] && { command -v apptainer >/dev/null 2>&1 || command -v singularity >/dev/null 2>&1; }; then
+rl_code_v1/preflight.sh-77-  ok "샌드박스 이미지 있음: $UT_SIF"
+rl_code_v1/preflight.sh-78-  UTPY="$HERE/env/ut_python_sif.sh"          # 컨테이너 안에서 실행
+rl_code_v1/preflight.sh:79:  export T15_UNITTEST_SIF="$UT_SIF"
+rl_code_v1/preflight.sh-80-else
+rl_code_v1/preflight.sh-81-  warn "샌드박스 이미지 없음 ($UT_SIF) — 격리 없이 호스트 파이썬으로 검사합니다"
+rl_code_v1/preflight.sh-82-  warn "  모델 코드를 호스트에서 그대로 실행하는 것이므로 학습에는 쓰지 마세요."
+rl_code_v1/preflight.sh:83:  warn "  빌드:  cd env && apptainer build t15_unittest.sif unittest.def"
+rl_code_v1/preflight.sh-84-  UTPY="$PY"
+rl_code_v1/preflight.sh-85-fi
+rl_code_v1/preflight.sh-86-if OUT="$(RL_INDEX_DIR="$HERE/data/index" UT_PYTHON="$UTPY" MODE=exec TRACK=unittest N=20 \
+rl_code_v1/preflight.sh:87:          "$PY" harness/t15_code_harness.py 2>&1)"; then
+rl_code_v1/preflight.sh-88-  echo "$OUT" | grep -E '^\[(OK|FAIL)' | head -4 | sed 's/^/  /'
+rl_code_v1/preflight.sh-89-  echo "$OUT" | grep -q "통과" && ok "gold 통과 / 빈응답 미달 — 채점이 정상입니다" \
+rl_code_v1/preflight.sh-90-                              || bad "실행 채점 이상"
+--
+rl_code_v1/preflight.sh-101-fi
+rl_code_v1/preflight.sh-102-SIFDIR="${SWE_DOCKER_ENV:-/scratch/rl/docker-env}/swe_smith"
+rl_code_v1/preflight.sh-103-N_SIF=$(ls "$SIFDIR"/*.sif 2>/dev/null | wc -l)
+rl_code_v1/preflight.sh:104:N_NEED=$(wc -l < data/index/images_t15_code_swesmith.txt 2>/dev/null || echo 19)
+rl_code_v1/preflight.sh-105-if [ "$N_SIF" -ge "$N_NEED" ]; then ok "저장소 이미지 $N_SIF/$N_NEED"
+rl_code_v1/preflight.sh-106-elif [ "$N_SIF" -gt 0 ]; then warn "저장소 이미지 $N_SIF/$N_NEED — 일부만 있습니다"
+rl_code_v1/preflight.sh-107-else warn "저장소 이미지 0/$N_NEED  ($SIFDIR)"
+--
+rl_code_v1/preflight.sh-115-  echo "  단위테스트 트랙(22,391건)은 지금 바로 학습에 연결할 수 있습니다."
+rl_code_v1/preflight.sh-116-  echo "    export UT_PYTHON=$HERE/env/ut_python_sif.sh   # 컨테이너 격리 (권장)"
+rl_code_v1/preflight.sh-117-  echo "  SWE 트랙 751건은 이미지를 받은 뒤 다음으로 확인하세요:"
+rl_code_v1/preflight.sh:118:  echo "    RL_INDEX_DIR=$HERE/data/index MODE=exec TRACK=swe N=2 $PY harness/t15_code_harness.py"
+rl_code_v1/preflight.sh-119-  exit 0
+rl_code_v1/preflight.sh-120-else
+rl_code_v1/preflight.sh-121-  echo "  FAIL 을 먼저 해결하세요. 위 항목별 안내를 보시면 됩니다."
+t01_math_reward_rubric/t01_math_reward.py-36-## verl 연결
+t01_math_reward_rubric/t01_math_reward.py-37-
+t01_math_reward_rubric/t01_math_reward.py-38-    custom_reward_function.path=이 파일, name=compute_score
+t01_math_reward_rubric/t01_math_reward.py:39:    data_source 가 t01_* 로 시작하면 T15 디스패처가 여기로 보낸다.
+t01_math_reward_rubric/t01_math_reward.py-40-
+t01_math_reward_rubric/t01_math_reward.py-41-의존 파일 없음 — 표준 라이브러리만. math_verify/sympy 는 있으면 쓰고 없으면
+t01_math_reward_rubric/t01_math_reward.py-42-규칙 tier까지만 쓴다(어느 쪽이든 죽지 않고 math_sym_used 로 관측된다).
+--
+t01_math_reward_rubric/t01_math_reward.py-1074-
+t01_math_reward_rubric/t01_math_reward.py-1075-# 학습 기동이 넘기는 값. ⚠ 새 T01_* env는 Ray 액터에 안 닿아 조용히 꺼지므로 만들지 않는다
+t01_math_reward_rubric/t01_math_reward.py-1076-# (constants_ppo.py:81~103 전파 목록). 아래 셋은 이미 전파된다.
+t01_math_reward_rubric/t01_math_reward.py:1077:OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
+t01_math_reward_rubric/t01_math_reward.py:1078:OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
+t01_math_reward_rubric/t01_math_reward.py:1079:MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+t01_math_reward_rubric/t01_math_reward.py-1080-
+t01_math_reward_rubric/t01_math_reward.py-1081-# gold 형태 코드 — ⚠ 문자열이 아니라 int. verl이 첫 행 키로 지표 배열을 만들고
+t01_math_reward_rubric/t01_math_reward.py-1082-#   np.mean을 돌린다(agent_loop.py:1080).
+--
+t01_math_reward_rubric/t01_math_reward.py-1100-    return GT_EXPR if any(c.isalpha() or c == "\\" for c in g) else GT_OTHER
+t01_math_reward_rubric/t01_math_reward.py-1101-
+t01_math_reward_rubric/t01_math_reward.py-1102-def _overlong(base, ei):
+t01_math_reward_rubric/t01_math_reward.py:1103:    """t15_reward_v3.py:543~601 및 dispatcher `_overlong_fields`와 **동일 산식**.
+t01_math_reward_rubric/t01_math_reward.py-1104-    """
+t01_math_reward_rubric/t01_math_reward.py-1105-    rl = ei.get("valid_response_length")
+t01_math_reward_rubric/t01_math_reward.py-1106-    ml = ei.get("max_response_length") or MAXRESP
+--
+t01_math_reward_rubric/t01_math_reward.py-1152-        "score": float(base + ov["overlong_penalty"]),
+t01_math_reward_rubric/t01_math_reward.py-1153-        "answer_match": float(base),
+t01_math_reward_rubric/t01_math_reward.py-1154-        "score_before_overlong": ov["score_before_overlong"],
+t01_math_reward_rubric/t01_math_reward.py:1155:        # overlong shaping (t15와 동일 산식)
+t01_math_reward_rubric/t01_math_reward.py-1156-        "overlong_penalty": ov["overlong_penalty"], "overlong_fraction": ov["overlong_fraction"],
+t01_math_reward_rubric/t01_math_reward.py-1157-        "overlong_active": ov["overlong_active"], "at_response_limit": at_lim,
+t01_math_reward_rubric/t01_math_reward.py-1158-        "resp_tokens": ov["resp_tokens"], "resp_limit": ov["resp_limit"],
+rl_code_v1/verl_example.sh-9-# ── 이 데이터셋 때문에 반드시 필요한 것 ─────────────────────────
+rl_code_v1/verl_example.sh-10-export RL_INDEX_DIR="$BUNDLE/data/index"     # ★ 없으면 전 인스턴스가 unknown_instance
+rl_code_v1/verl_example.sh-11-export UT_PYTHON="${UT_PYTHON:-python3}"     # 단위테스트를 실행할 인터프리터
+rl_code_v1/verl_example.sh:12:export T15_UNITTEST_SIF="$BUNDLE/env/t15_unittest.sif"   # 격리 샌드박스
+rl_code_v1/verl_example.sh-13-export SWE_DOCKER_ENV="${SWE_DOCKER_ENV:-/scratch/rl/docker-env}"  # SWE 이미지 루트
+rl_code_v1/verl_example.sh-14-export SWE_RUN_DIR="$SWE_DOCKER_ENV/_run2"   # 실행 작업공간
+rl_code_v1/verl_example.sh:15:export T15_CODE_TIMEOUT=900                  # SWE 1건 상한(초)
+rl_code_v1/verl_example.sh-16-export UT_TIMEOUT=10                         # 단위테스트 1건 상한(초)
+rl_code_v1/verl_example.sh-17-
+rl_code_v1/verl_example.sh-18-# 선택 — 응답 길이 감점을 켤 때만
+rl_code_v1/verl_example.sh:19:# export T15_OVERLONG_BUFFER=1024
+rl_code_v1/verl_example.sh:20:# export T15_OVERLONG_PENALTY=1.0
+rl_code_v1/verl_example.sh-21-
+rl_code_v1/verl_example.sh-22-MODEL="${MODEL:?MODEL=<학습할 모델 경로> 를 지정하세요}"
+rl_code_v1/verl_example.sh-23-NGPU="${NGPU:-8}"
+rl_code_v1/verl_example.sh-24-
+rl_code_v1/verl_example.sh-25-# ── 1단계: core 만 (6,678건, 난이도 실측분) ─────────────────────
+rl_code_v1/verl_example.sh:26:TRAIN="$BUNDLE/data/parquet/t15_code_rl_core_train.parquet"
+rl_code_v1/verl_example.sh:27:VAL="$BUNDLE/data/parquet/t15_code_rl_core_val.parquet"
+rl_code_v1/verl_example.sh-28-
+rl_code_v1/verl_example.sh-29-# ── 2단계: extended 편입 (난이도 측정 후) ───────────────────────
+rl_code_v1/verl_example.sh:30:# TRAIN="['$TRAIN','$BUNDLE/data/parquet/t15_code_rl_extended_train.parquet']"
+rl_code_v1/verl_example.sh-31-
+rl_code_v1/verl_example.sh-32-python3 -m verl.trainer.main_ppo \
+rl_code_v1/verl_example.sh-33-  algorithm.adv_estimator=grpo \
+--
+rl_code_v1/verl_example.sh-48-  actor_rollout_ref.rollout.n=8 \
+rl_code_v1/verl_example.sh-49-  actor_rollout_ref.rollout.gpu_memory_utilization=0.6 \
+rl_code_v1/verl_example.sh-50-  \
+rl_code_v1/verl_example.sh:51:  custom_reward_function.path="$BUNDLE/reward/t15_reward_dispatch.py" \
+rl_code_v1/verl_example.sh-52-  custom_reward_function.name=compute_score \
+rl_code_v1/verl_example.sh-53-  \
+rl_code_v1/verl_example.sh-54-  trainer.n_gpus_per_node="$NGPU" \
+rl_code_v1/verl_example.sh-55-  trainer.nnodes=1 \
+rl_code_v1/verl_example.sh-56-  trainer.total_epochs=1 \
+rl_code_v1/verl_example.sh:57:  trainer.project_name=t15_code_rl \
+rl_code_v1/verl_example.sh-58-  trainer.experiment_name=core_n8
+rl_code_v1/verl_example.sh-59-
+rl_code_v1/verl_example.sh-60-# ────────────────────────────────────────────────────────────────
+--
+rl_code_v1/verl_example.sh-69-#   반대로 err_kind 가 invalid_* 인 건 모델 잘못이니 0점으로 남겨야 합니다.
+rl_code_v1/verl_example.sh-70-#
+rl_code_v1/verl_example.sh-71-# 동시 실행 수 조절:
+rl_code_v1/verl_example.sh:72:#   export T15_CODE_CONCURRENCY=32        (기본 24)
+rl_code_v1/verl_example.sh:73:#   export T15_CODE_SAMPLE_TIMEOUT=1200   샘플 1건 상한(초)
+rl_code_v1/README.md-31-```bash
+rl_code_v1/README.md-32-# extended 난이도 측정 → 밴드 밖은 빼고 편입
+rl_code_v1/README.md-33-ROLLOUT_CMD='python my_rollout.py --instance {instance_id} --n {k}' K=8 \
+rl_code_v1/README.md:34:TAG=t15_code_unittest_ext python harness/measure_phat.py
+rl_code_v1/README.md-35-```
+rl_code_v1/README.md-36-
+rl_code_v1/README.md-37-### core 구성
+rl_code_v1/README.md-38-
+rl_code_v1/README.md-39-| 트랙 | 인스턴스 | 실행 | p̂ 출처 |
+rl_code_v1/README.md-40-|---|--:|---|---|
+rl_code_v1/README.md:41:| `t15_repo_patch` (SWE-smith) | 751 | 저장소 이미지 19종 · F2P/P2P pytest | judge 라벨 매핑(추정) |
+rl_code_v1/README.md:42:| `t15_unittest_impl` | 5,927 | 범용 파이썬 샌드박스 | **pass@k 실측** |
+rl_code_v1/README.md:43:| `t15_code_r2e` (부록) | 120 | — | 기본 제외(§5) |
+rl_code_v1/README.md-44-
+rl_code_v1/README.md-45-### extended 구성
+rl_code_v1/README.md-46-
+--
+rl_code_v1/README.md-62-rl_code_v1/
+rl_code_v1/README.md-63-  data/
+rl_code_v1/README.md-64-    index/
+rl_code_v1/README.md:65:      t15_code_swesmith.{learnable,full}.jsonl          751   core
+rl_code_v1/README.md:66:      t15_code_unittest.{learnable,full}.jsonl        5,927   core
+rl_code_v1/README.md:67:      t15_code_unittest_ext.{learnable,full}.jsonl   16,464   extended
+rl_code_v1/README.md:68:      t15_code_r2e.{learnable,full}.jsonl               120   부록
+rl_code_v1/README.md:69:      images_t15_code_swesmith.txt · images_manifest.json
+rl_code_v1/README.md-70-    parquet/
+rl_code_v1/README.md:71:      t15_code_rl_core_train.parquet      6,516
+rl_code_v1/README.md:72:      t15_code_rl_core_val.parquet          162
+rl_code_v1/README.md:73:      t15_code_rl_extended_train.parquet 16,464
+rl_code_v1/README.md-74-  reward/    보상·판정기·실행기 (rl_v1 과 동일)
+rl_code_v1/README.md-75-  env/       .def · Dockerfile · pull/bootstrap 스크립트
+rl_code_v1/README.md-76-  harness/   검증 하네스 · 난이도 측정 · 합성 픽스처
+--
+rl_code_v1/README.md-85-
+rl_code_v1/README.md-86-```bash
+rl_code_v1/README.md-87-# ① 오프라인 계약·사다리 검사
+rl_code_v1/README.md:88:python harness/t15_code_harness.py
+rl_code_v1/README.md-89-
+rl_code_v1/README.md-90-# ② 단위테스트 이미지 → core + extended 실행 검증
+rl_code_v1/README.md:91:cd env && apptainer build t15_unittest.sif unittest.def && cd -
+rl_code_v1/README.md:92:RL_INDEX_DIR=data/index MODE=exec TRACK=unittest N=30 python harness/t15_code_harness.py
+rl_code_v1/README.md-93-
+rl_code_v1/README.md-94-# ③ SWE 이미지 19종 → 실행 검증까지 한 번에
+rl_code_v1/README.md-95-DEST=/scratch/rl/docker-env bash env/bootstrap_swe.sh
+rl_code_v1/README.md-96-
+rl_code_v1/README.md-97-# ④ verl 연결
+rl_code_v1/README.md-98-export RL_INDEX_DIR=$PWD/data/index
+rl_code_v1/README.md:99:#   custom_reward_function.path=$PWD/reward/t15_reward_dispatch.py
+rl_code_v1/README.md-100-#   custom_reward_function.name=compute_score
+rl_code_v1/README.md-101-```
+rl_code_v1/README.md-102-
+rl_code_v1/README.md:103:`RL_INDEX_DIR` 을 반드시 지정하세요. 보상 모듈이 `t15_code_unittest*.full.jsonl`
+rl_code_v1/README.md-104-을 glob 으로 읽어 core 와 extended 를 함께 적재합니다.
+rl_code_v1/README.md-105-
+rl_code_v1/README.md-106----
+rl_code_v1/env/unittest.def-1-Bootstrap: docker
+rl_code_v1/env/unittest.def-2-From: python:3.11-slim-bookworm
+rl_code_v1/env/unittest.def-3-
+rl_code_v1/env/unittest.def:4:# 단위테스트 트랙(t15_unittest_impl) 실행 이미지 — 6,158 인스턴스 전부가 이 하나로 돈다.
+rl_code_v1/env/unittest.def-5-# SWE 트랙과 달리 저장소별 이미지가 필요 없다.
+rl_code_v1/env/unittest.def-6-#
+rl_code_v1/env/unittest.def:7:#   apptainer build t15_unittest.sif unittest.def
+rl_code_v1/env/unittest.def-8-#   apptainer exec --net --network=none --containall --writable-tmpfs \
+rl_code_v1/env/unittest.def:9:#       --bind $PWD/rl_v1:/rl:ro t15_unittest.sif \
+rl_code_v1/env/unittest.def-10-#       python /rl/reward/unittest_exec.py
+rl_code_v1/env/unittest.def-11-#
+rl_code_v1/env/unittest.def-12-# 격리는 이 이미지가 아니라 **실행 옵션**이 만든다:
+--
+rl_code_v1/env/unittest.def-53-    python -c "import numpy, sympy; print('deps ok')"
+rl_code_v1/env/unittest.def-54-
+rl_code_v1/env/unittest.def-55-%labels
+rl_code_v1/env/unittest.def:56:    Track t15_code_unittest
+rl_code_v1/env/unittest.def-57-    Purpose RL execution scoring sandbox
+rl_code_v1/env/unittest.def-58-    Python 3.11
+rl_code_v1/env/pull_swesmith_images.sh-15-set -euo pipefail
+rl_code_v1/env/pull_swesmith_images.sh-16-
+rl_code_v1/env/pull_swesmith_images.sh-17-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+rl_code_v1/env/pull_swesmith_images.sh:18:LIST="${LIST:-$HERE/../data/index/images_t15_code_swesmith.txt}"
+rl_code_v1/env/pull_swesmith_images.sh-19-DEST="${DEST:-/scratch/rl/docker-env/swe_smith}"
+rl_code_v1/env/pull_swesmith_images.sh-20-SING="${SING:-$(command -v apptainer || command -v singularity || echo singularity)}"
+rl_code_v1/env/pull_swesmith_images.sh-21-
+rl_code_v1/env/Dockerfile.unittest-1-# 단위테스트 트랙 실행 이미지 (Docker 판). apptainer 를 쓰면 unittest.def 를 쓴다.
+rl_code_v1/env/Dockerfile.unittest-2-#
+rl_code_v1/env/Dockerfile.unittest:3:#   docker build -f Dockerfile.unittest -t t15-unittest:1.0 .
+rl_code_v1/env/Dockerfile.unittest:4:#   apptainer build t15_unittest.sif docker-daemon://t15-unittest:1.0
+rl_code_v1/env/Dockerfile.unittest-5-#
+rl_code_v1/env/Dockerfile.unittest-6-# 실행 시 격리 옵션을 반드시 줄 것:
+rl_code_v1/env/Dockerfile.unittest-7-#   docker run --rm --network=none --read-only --tmpfs /work:size=256m \
+rl_code_v1/env/Dockerfile.unittest:8:#     --cpus=1 --memory=1g --pids-limit=256 -v "$PWD/rl_v1:/rl:ro" t15-unittest:1.0
+rl_code_v1/env/Dockerfile.unittest-9-FROM python:3.11-slim-bookworm
+rl_code_v1/env/Dockerfile.unittest-10-
+rl_code_v1/env/Dockerfile.unittest-11-ENV PYTHONDONTWRITEBYTECODE=1 \
+--
+rl_code_v1/env/Dockerfile.unittest-30-USER runner
+rl_code_v1/env/Dockerfile.unittest-31-WORKDIR /work
+rl_code_v1/env/Dockerfile.unittest-32-
+rl_code_v1/env/Dockerfile.unittest:33:CMD ["python", "-c", "import pytest, numpy, sympy; print('t15-unittest ok')"]
+rl_code_v1/harness/make_swe_fixture.py-143-           "sif": "local://fixture", "exec_backend": "local",
+rl_code_v1/harness/make_swe_fixture.py-144-           "p_hat": 0.5, "p_hat_source": "fixture", "difficulty_0_10": 5,
+rl_code_v1/harness/make_swe_fixture.py-145-           "difficulty_band": "learnable", "n_f2p": 2, "n_p2p": 2,
+rl_code_v1/harness/make_swe_fixture.py:146:           "track": "t15_code_longctx", "data_source": "t15_repo_patch",
+rl_code_v1/harness/make_swe_fixture.py-147-           "ability": "swe_patch_longctx"}
+rl_code_v1/harness/make_swe_fixture.py-148-
+rl_code_v1/harness/make_swe_fixture.py-149-    os.makedirs(f"{OUT}/index", exist_ok=True)
+rl_code_v1/harness/make_swe_fixture.py:150:    with open(f"{OUT}/index/t15_code_swesmith.full.jsonl", "w", encoding="utf-8", newline="\n") as f:
+rl_code_v1/harness/make_swe_fixture.py-151-        f.write(json.dumps(inst, ensure_ascii=False) + "\n")
+rl_code_v1/harness/make_swe_fixture.py:152:    with open(f"{OUT}/index/t15_code_swesmith.learnable.jsonl", "w", encoding="utf-8", newline="\n") as f:
+rl_code_v1/harness/make_swe_fixture.py-153-        f.write(json.dumps(idx, ensure_ascii=False) + "\n")
+rl_code_v1/harness/make_swe_fixture.py-154-
+rl_code_v1/harness/make_swe_fixture.py-155-    br = run(["git", "branch", "-a"], repo).stdout.strip().replace("\n", " ")
+rl_code_v1/env/verify_images.py-18-except Exception:
+rl_code_v1/env/verify_images.py-19-    pass
+rl_code_v1/env/verify_images.py-20-
+rl_code_v1/env/verify_images.py:21:LIST = os.environ.get("LIST", "rl_v1/data/index/images_t15_code_swesmith.txt")
+rl_code_v1/env/verify_images.py-22-OUT = os.environ.get("OUT", "rl_v1/data/index/images_manifest.json")
+rl_code_v1/env/verify_images.py-23-ACCEPT = ("application/vnd.docker.distribution.manifest.v2+json, "
+rl_code_v1/env/verify_images.py-24-          "application/vnd.oci.image.manifest.v1+json, "
+rl_code_v1/harness/measure_phat.py-29-os.environ.setdefault("RL_INDEX_DIR", IDX)
+rl_code_v1/harness/measure_phat.py-30-K = int(os.environ.get("K", "8"))
+rl_code_v1/harness/measure_phat.py-31-CMD = os.environ.get("ROLLOUT_CMD", "")
+rl_code_v1/harness/measure_phat.py:32:TAG = os.environ.get("TAG", "t15_code_swesmith")
+rl_code_v1/harness/measure_phat.py-33-LIMIT = int(os.environ.get("LIMIT", "0"))
+rl_code_v1/harness/measure_phat.py-34-BAND = (0.20, 0.80)
+rl_code_v1/harness/measure_phat.py-35-
+rl_code_v1/harness/measure_phat.py:36:from t15_code_judge import judge                                  # noqa: E402
+rl_code_v1/harness/measure_phat.py-37-
+rl_code_v1/harness/measure_phat.py-38-
+rl_code_v1/harness/measure_phat.py-39-def rollouts(iid):
+rl_code_v1/env/ut_python_sif.sh-1-#!/usr/bin/env bash
+rl_code_v1/env/ut_python_sif.sh-2-# UT_PYTHON 대체 — 모델이 만든 코드를 컨테이너 안에서 실행한다.
+rl_code_v1/env/ut_python_sif.sh-3-#
+rl_code_v1/env/ut_python_sif.sh:4:#   export T15_UNITTEST_SIF=/path/to/t15_unittest.sif
+rl_code_v1/env/ut_python_sif.sh-5-#   export UT_PYTHON=$PWD/env/ut_python_sif.sh
+rl_code_v1/env/ut_python_sif.sh-6-#
+rl_code_v1/env/ut_python_sif.sh-7-# 왜 래퍼가 필요한가 — unittest_exec.py 는 UT_PYTHON 을 **실행파일 하나**로 보고
+--
+rl_code_v1/env/ut_python_sif.sh-16-#   하지 못했습니다. 서버에서 preflight.sh 로 먼저 확인하세요.
+rl_code_v1/env/ut_python_sif.sh-17-set -euo pipefail
+rl_code_v1/env/ut_python_sif.sh-18-
+rl_code_v1/env/ut_python_sif.sh:19:: "${T15_UNITTEST_SIF:?T15_UNITTEST_SIF 에 .sif 경로를 지정하세요}"
+rl_code_v1/env/ut_python_sif.sh-20-
+rl_code_v1/env/ut_python_sif.sh-21-BIN="$(command -v apptainer || command -v singularity || true)"
+rl_code_v1/env/ut_python_sif.sh-22-[ -n "$BIN" ] || { echo "apptainer/singularity 없음" >&2; exit 127; }
+--
+rl_code_v1/env/ut_python_sif.sh-24-exec "$BIN" exec \
+rl_code_v1/env/ut_python_sif.sh-25-  --no-home --cleanenv --net --network=none \
+rl_code_v1/env/ut_python_sif.sh-26-  --bind "$PWD" --pwd "$PWD" \
+rl_code_v1/env/ut_python_sif.sh:27:  "$T15_UNITTEST_SIF" python3 "$@"
+rl_code_v1/harness/t15_code_harness.py-11-  [정오]  gold > empty 분리 · 사다리 단조성 · 반칙 패치 차단
+rl_code_v1/harness/t15_code_harness.py-12-  [실행]  gold → resolved, empty → not resolved (실행노드에서만)
+rl_code_v1/harness/t15_code_harness.py-13-
+rl_code_v1/harness/t15_code_harness.py:14:    RL_INDEX_DIR=../data/index python t15_code_harness.py            # 계약+사다리 (오프라인)
+rl_code_v1/harness/t15_code_harness.py:15:    MODE=exec TRACK=unittest N=20 python t15_code_harness.py         # 실행 검증
+rl_code_v1/harness/t15_code_harness.py:16:    MODE=exec TRACK=swe N=5 python t15_code_harness.py               # sif 필요
+rl_code_v1/harness/t15_code_harness.py-17-"""
+rl_code_v1/harness/t15_code_harness.py-18-import json, math, os, random, sys
+rl_code_v1/harness/t15_code_harness.py-19-
+--
+rl_code_v1/harness/t15_code_harness.py-32-TRACK = os.environ.get("TRACK", "unittest")
+rl_code_v1/harness/t15_code_harness.py-33-N = int(os.environ.get("N", "20"))
+rl_code_v1/harness/t15_code_harness.py-34-
+rl_code_v1/harness/t15_code_harness.py:35:import t15_code_reward as R                                     # noqa: E402
+rl_code_v1/harness/t15_code_harness.py:36:from t15_code_judge import score_of, touches_tests              # noqa: E402
+rl_code_v1/harness/t15_code_harness.py-37-
+rl_code_v1/harness/t15_code_harness.py-38-_ok, _fail = [], []
+rl_code_v1/harness/t15_code_harness.py-39-
+--
+rl_code_v1/harness/t15_code_harness.py-74-# ── 2. 계약 ────────────────────────────────────────────────────────
+rl_code_v1/harness/t15_code_harness.py-75-def check_contract():
+rl_code_v1/harness/t15_code_harness.py-76-    print("\n== 채점기 계약 ==")
+rl_code_v1/harness/t15_code_harness.py:77:    ut = load("t15_code_unittest")[:N]
+rl_code_v1/harness/t15_code_harness.py:78:    swe = load("t15_code_swesmith")[:N]
+rl_code_v1/harness/t15_code_harness.py-79-    rows = []
+rl_code_v1/harness/t15_code_harness.py-80-    for d in ut:
+rl_code_v1/harness/t15_code_harness.py:81:        rows.append(("t15_unittest_impl", {"instance_id": d["instance_id"],
+rl_code_v1/harness/t15_code_harness.py-82-                                           "valid_response_length": 100,
+rl_code_v1/harness/t15_code_harness.py-83-                                           "max_response_length": R.MAXRESP},
+rl_code_v1/harness/t15_code_harness.py-84-                     "```python\ndef f(): return 1\n```"))
+rl_code_v1/harness/t15_code_harness.py-85-    for d in swe:
+rl_code_v1/harness/t15_code_harness.py:86:        rows.append(("t15_repo_patch", {"instance_id": d["instance_id"],
+rl_code_v1/harness/t15_code_harness.py-87-                                        "valid_response_length": 100,
+rl_code_v1/harness/t15_code_harness.py-88-                                        "max_response_length": R.MAXRESP}, "설명만 하고 끝"))
+rl_code_v1/harness/t15_code_harness.py-89-    if not rows:
+--
+rl_code_v1/harness/t15_code_harness.py-137-    print(f"\n== 실행 검증 (track={TRACK}, N={N}) ==")
+rl_code_v1/harness/t15_code_harness.py-138-    if TRACK == "unittest":
+rl_code_v1/harness/t15_code_harness.py-139-        import unittest_exec as UT
+rl_code_v1/harness/t15_code_harness.py:140:        insts = [d for d in load("t15_code_unittest") if (d.get("reference_solution") or "").strip()]
+rl_code_v1/harness/t15_code_harness.py-141-        random.Random(0).shuffle(insts)
+rl_code_v1/harness/t15_code_harness.py-142-        insts = insts[:N]
+rl_code_v1/harness/t15_code_harness.py-143-        sep = infra = 0
+--
+rl_code_v1/harness/t15_code_harness.py-155-        check(f"gold → 전부 통과 / empty → 미달  ({sep}/{n})", n > 0 and sep >= 0.9 * n)
+rl_code_v1/harness/t15_code_harness.py-156-        check("인프라 실패 비율 < 10%", infra <= 0.1 * max(1, len(insts)), f"{infra}/{len(insts)}")
+rl_code_v1/harness/t15_code_harness.py-157-    else:
+rl_code_v1/harness/t15_code_harness.py:158:        from t15_code_judge import judge
+rl_code_v1/harness/t15_code_harness.py:159:        insts = load("t15_code_swesmith")[:N]
+rl_code_v1/harness/t15_code_harness.py-160-        sep = 0
+rl_code_v1/harness/t15_code_harness.py-161-        for d in insts:
+rl_code_v1/harness/t15_code_harness.py-162-            g = judge(d["instance_id"], d["gold_patch"])      # 방향=fix → reverse=False
+rl_code_v1/env/bootstrap_swe.sh-54-[[ "${AVAIL:-0}" -lt "$NEED_GIB" ]] && echo "  ⚠ 공간이 빠듯합니다. DEST 를 큰 볼륨으로 지정하세요."
+rl_code_v1/env/bootstrap_swe.sh-55-
+rl_code_v1/env/bootstrap_swe.sh-56-say "1. 이미지 목록 검증 (레지스트리 조회 — pull 전에 오타를 거른다)"
+rl_code_v1/env/bootstrap_swe.sh:57:LIST="$ROOT/data/index/images_t15_code_swesmith.txt"
+rl_code_v1/env/bootstrap_swe.sh-58-[[ -f "$LIST" ]] || die "이미지 목록 없음: $LIST"
+rl_code_v1/env/bootstrap_swe.sh-59-if ! LIST="$LIST" OUT="$ROOT/data/index/images_manifest.json" \
+rl_code_v1/env/bootstrap_swe.sh-60-     $PY "$ROOT/../build/verify_images.py" 2>/dev/null; then
+--
+rl_code_v1/env/bootstrap_swe.sh-76-export SWE_DOCKER_ENV="$DEST"
+rl_code_v1/env/bootstrap_swe.sh-77-export SWE_RUN_DIR="$DEST/_run2"
+rl_code_v1/env/bootstrap_swe.sh-78-export SINGULARITY_BIN="$SING"
+rl_code_v1/env/bootstrap_swe.sh:79:MODE=exec TRACK=swe N="$N_VERIFY" $PY "$ROOT/harness/t15_code_harness.py"
+rl_code_v1/env/bootstrap_swe.sh-80-rc=$?
+rl_code_v1/env/bootstrap_swe.sh-81-
+rl_code_v1/env/bootstrap_swe.sh-82-echo
+rl_code_v1/env/bootstrap_swe.sh-83-if [[ $rc -eq 0 ]]; then
+rl_code_v1/env/bootstrap_swe.sh-84-  printf '\033[32m완료 — 학습에 연결 가능합니다.\033[0m\n'
+rl_code_v1/env/bootstrap_swe.sh:85:  echo "  custom_reward_function.path=$ROOT/reward/t15_reward_dispatch.py"
+rl_code_v1/env/bootstrap_swe.sh-86-  echo "  custom_reward_function.name=compute_score"
+rl_code_v1/env/bootstrap_swe.sh-87-else
+rl_code_v1/env/bootstrap_swe.sh-88-  cat >&2 <<EOF
+rl_code_v1/env/retarget_sif_paths.py-18-if not ROOT:
+rl_code_v1/env/retarget_sif_paths.py-19-    sys.exit("RL_SIF_ROOT 를 지정할 것 (예: /scratch/rl/docker-env)")
+rl_code_v1/env/retarget_sif_paths.py-20-
+rl_code_v1/env/retarget_sif_paths.py:21:for tag in ("t15_code_swesmith", "t15_code_r2e"):
+rl_code_v1/env/retarget_sif_paths.py-22-    p = os.path.join(IDX, f"{tag}.learnable.jsonl")
+rl_code_v1/env/retarget_sif_paths.py-23-    if not os.path.exists(p):
+rl_code_v1/env/retarget_sif_paths.py-24-        continue
+rl_code_v1/docs/ENVIRONMENT.md-4-
+rl_code_v1/docs/ENVIRONMENT.md-5-| 트랙 | 인스턴스 | 이미지 | 준비 방법 |
+rl_code_v1/docs/ENVIRONMENT.md-6-|---|--:|---|---|
+rl_code_v1/docs/ENVIRONMENT.md:7:| `t15_repo_patch` (SWE) | 751 | **19종** (저장소당 1개) | Docker Hub 에서 pull |
+rl_code_v1/docs/ENVIRONMENT.md:8:| `t15_unittest_impl` | ~5,900 | **1개** (범용 파이썬) | `.def` / `Dockerfile` 로 직접 빌드 |
+rl_code_v1/docs/ENVIRONMENT.md-9-
+rl_code_v1/docs/ENVIRONMENT.md-10-## 0. 한 줄로 끝내기
+rl_code_v1/docs/ENVIRONMENT.md-11-
+--
+rl_code_v1/docs/ENVIRONMENT.md-44-cd rl_v1/env
+rl_code_v1/docs/ENVIRONMENT.md-45-
+rl_code_v1/docs/ENVIRONMENT.md-46-# Apptainer/Singularity (HPC)
+rl_code_v1/docs/ENVIRONMENT.md:47:apptainer build t15_unittest.sif unittest.def
+rl_code_v1/docs/ENVIRONMENT.md-48-
+rl_code_v1/docs/ENVIRONMENT.md-49-# 또는 Docker → sif
+rl_code_v1/docs/ENVIRONMENT.md:50:docker build -f Dockerfile.unittest -t t15-unittest:1.0 .
+rl_code_v1/docs/ENVIRONMENT.md:51:apptainer build t15_unittest.sif docker-daemon://t15-unittest:1.0
+rl_code_v1/docs/ENVIRONMENT.md-52-```
+rl_code_v1/docs/ENVIRONMENT.md-53-
+rl_code_v1/docs/ENVIRONMENT.md-54-### 실행 — 격리 옵션이 본체입니다
+--
+rl_code_v1/docs/ENVIRONMENT.md-62-  --containall \                # 호스트 $HOME·env 상속 차단
+rl_code_v1/docs/ENVIRONMENT.md-63-  --writable-tmpfs \            # rootfs 읽기전용, 쓰기는 tmpfs
+rl_code_v1/docs/ENVIRONMENT.md-64-  --bind "$PWD/rl_v1:/rl:ro" \
+rl_code_v1/docs/ENVIRONMENT.md:65:  t15_unittest.sif python /rl/reward/unittest_exec.py
+rl_code_v1/docs/ENVIRONMENT.md-66-```
+rl_code_v1/docs/ENVIRONMENT.md-67-
+rl_code_v1/docs/ENVIRONMENT.md-68-Docker 라면:
+--
+rl_code_v1/docs/ENVIRONMENT.md-70-```bash
+rl_code_v1/docs/ENVIRONMENT.md-71-docker run --rm --network=none --read-only \
+rl_code_v1/docs/ENVIRONMENT.md-72-  --tmpfs /work:size=256m --cpus=1 --memory=1g --pids-limit=256 \
+rl_code_v1/docs/ENVIRONMENT.md:73:  -v "$PWD/rl_v1:/rl:ro" t15-unittest:1.0
+rl_code_v1/docs/ENVIRONMENT.md-74-```
+rl_code_v1/docs/ENVIRONMENT.md-75-
+rl_code_v1/docs/ENVIRONMENT.md-76-프로세스 단위 rlimit(메모리·프로세스 수·파일 크기)은 `unittest_exec.py` 가 추가로
+--
+rl_code_v1/docs/ENVIRONMENT.md-118-
+rl_code_v1/docs/ENVIRONMENT.md-119-### R2E 트랙 (120건) — 기본 제외
+rl_code_v1/docs/ENVIRONMENT.md-120-
+rl_code_v1/docs/ENVIRONMENT.md:121:`t15_code_r2e.*` 는 이미지 계열이 다르고(`namanjain12/*_final`) 실행 하네스도
+rl_code_v1/docs/ENVIRONMENT.md-122-`kind="gym"` 경로라 `test_patch` 가 필요합니다. **이 데이터셋에는 `test_patch` 가
+rl_code_v1/docs/ENVIRONMENT.md-123-없어 지금 상태로는 실행채점이 안 됩니다.** 인덱스는 함께 넣었지만 학습 parquet 에는
+rl_code_v1/docs/ENVIRONMENT.md-124-넣지 않았습니다. 쓰시려면 R2E-Gym 원본에서 `test_patch` 를 조인해야 합니다.
+--
+rl_code_v1/docs/ENVIRONMENT.md-131-
+rl_code_v1/docs/ENVIRONMENT.md-132-| | 방향 | gold 로 쓸 때 |
+rl_code_v1/docs/ENVIRONMENT.md-133-|---|---|---|
+rl_code_v1/docs/ENVIRONMENT.md:134:| 키트 `swe_smith_t15.full.jsonl` 의 `patch` | 버그 주입 (clean→bug) | `reverse=True` |
+rl_code_v1/docs/ENVIRONMENT.md-135-| **이 데이터셋의 `gold_patch`** | **수정 (buggy→fixed)** | **`reverse=False`** |
+rl_code_v1/docs/ENVIRONMENT.md-136-
+rl_code_v1/docs/ENVIRONMENT.md:137:레코드마다 `patch_direction: "fix"` 를 박아두었고, `t15_code_judge.judge()` 는
+rl_code_v1/docs/ENVIRONMENT.md-138-`reverse=False` 로 호출합니다. 섞으면 **gold 가 조용히 0점**이 되고, 오류 메시지도
+rl_code_v1/docs/ENVIRONMENT.md-139-안 나옵니다 — "모델이 못 푼다"로 위장되는 그 실패 유형입니다.
+rl_code_v1/docs/ENVIRONMENT.md-140-
+rl_code_v1/docs/ENVIRONMENT.md-141-이미지를 받은 직후 반드시:
+rl_code_v1/docs/ENVIRONMENT.md-142-
+rl_code_v1/docs/ENVIRONMENT.md-143-```bash
+rl_code_v1/docs/ENVIRONMENT.md:144:MODE=exec TRACK=swe N=10 python harness/t15_code_harness.py
+rl_code_v1/docs/ENVIRONMENT.md-145-```
+rl_code_v1/docs/ENVIRONMENT.md-146-
+rl_code_v1/docs/ENVIRONMENT.md-147-gold 가 전부 `resolved=True`, empty 가 전부 `False` 여야 합니다.
+--
+rl_code_v1/docs/ENVIRONMENT.md-177-```bash
+rl_code_v1/docs/ENVIRONMENT.md-178-python rl_v1/harness/make_swe_fixture.py            # 합성 swe-smith 저장소 생성
+rl_code_v1/docs/ENVIRONMENT.md-179-RL_INDEX_DIR=build/swe_fixture/index \
+rl_code_v1/docs/ENVIRONMENT.md:180:  MODE=exec TRACK=swe N=1 python rl_v1/harness/t15_code_harness.py
+rl_code_v1/docs/ENVIRONMENT.md-181-```
+rl_code_v1/docs/ENVIRONMENT.md-182-
+rl_code_v1/docs/ENVIRONMENT.md-183-합성 저장소는 swe-smith 규칙을 그대로 따릅니다 — `main` 은 클린 + 테스트 있음,
+rl_code_v1/reward/t15_code_judge.py-62-    if _IDX:
+rl_code_v1/reward/t15_code_judge.py-63-        return
+rl_code_v1/reward/t15_code_judge.py-64-    import glob as _glob
+rl_code_v1/reward/t15_code_judge.py:65:    for p in sorted(_glob.glob(os.path.join(DATA_DIR, "t15_code_swesmith*.learnable.jsonl"))
+rl_code_v1/reward/t15_code_judge.py:66:                    + _glob.glob(os.path.join(DATA_DIR, "t15_code_r2e*.learnable.jsonl"))):
+rl_code_v1/reward/t15_code_judge.py-67-        for line in open(p, encoding="utf-8"):
+rl_code_v1/reward/t15_code_judge.py-68-            d = json.loads(line)
+rl_code_v1/reward/t15_code_judge.py-69-            _IDX[d["instance_id"]] = d
+rl_code_v1/reward/t15_code_judge.py:70:    for p in sorted(_glob.glob(os.path.join(DATA_DIR, "t15_code_swesmith*.full.jsonl"))
+rl_code_v1/reward/t15_code_judge.py:71:                    + _glob.glob(os.path.join(DATA_DIR, "t15_code_r2e*.full.jsonl"))):
+rl_code_v1/reward/t15_code_judge.py-72-        for line in open(p, encoding="utf-8"):
+rl_code_v1/reward/t15_code_judge.py-73-            d = json.loads(line)
+rl_code_v1/reward/t15_code_judge.py-74-            _FULL[d["instance_id"]] = d
+rl_code_v1/docs/REWARD_DESIGN.md-1-# 코드 RL 보상 설계 — 요청하신 4가지 결정
+rl_code_v1/docs/REWARD_DESIGN.md-2-
+rl_code_v1/docs/REWARD_DESIGN.md:3:메일의 (2-1)~(2-4)에 대한 답입니다. 각 결정은 `reward/t15_code_judge.py` 의
+rl_code_v1/docs/REWARD_DESIGN.md:4:`score_of()` 한 함수에 모여 있고, `harness/t15_code_harness.py` 가 불변식을 검사합니다.
+rl_code_v1/docs/REWARD_DESIGN.md-5-
+rl_code_v1/docs/REWARD_DESIGN.md-6----
+rl_code_v1/docs/REWARD_DESIGN.md-7-
+--
+rl_code_v1/docs/REWARD_DESIGN.md-189-
+rl_code_v1/docs/REWARD_DESIGN.md-190-```python
+rl_code_v1/docs/REWARD_DESIGN.md-191-_v = <실제 단정문의 좌변>            # 예: count_visible([3,1,2])
+rl_code_v1/docs/REWARD_DESIGN.md:192:_bad = (_v == "__T15_CANARY_NEVER_EQUAL_9f3a__")
+rl_code_v1/docs/REWARD_DESIGN.md-193-```
+rl_code_v1/docs/REWARD_DESIGN.md-194-
+rl_code_v1/docs/REWARD_DESIGN.md-195-정직한 값은 `False`, 거짓말하는 `__eq__` 는 `True` 를 냅니다.
+--
+rl_code_v1/docs/REWARD_DESIGN.md-207-
+rl_code_v1/docs/REWARD_DESIGN.md-208-## 계약 (verl 연결)
+rl_code_v1/docs/REWARD_DESIGN.md-209-
+rl_code_v1/docs/REWARD_DESIGN.md:210:`reward/t15_code_reward.py` 의 `compute_score_dict` 가
+rl_code_v1/docs/REWARD_DESIGN.md-211-`T01_MATH_SCORER_LOCATIONS.md §1` 계약을 그대로 따릅니다.
+rl_code_v1/docs/REWARD_DESIGN.md-212-
+rl_code_v1/docs/REWARD_DESIGN.md-213-```python
+--
+rl_code_v1/docs/REWARD_DESIGN.md-235-`fmt_extracted` `fmt_applied` `fmt_invalid_edit` `infra_excluded`
+rl_code_v1/docs/REWARD_DESIGN.md-236-`err_kind` `patch_fmt` `track`
+rl_code_v1/docs/REWARD_DESIGN.md-237-
+rl_code_v1/docs/REWARD_DESIGN.md:238:dispatcher 연결은 `t15_reward_multi.py` 에 아래를 추가하면 됩니다
+rl_code_v1/docs/REWARD_DESIGN.md-239-(수학의 `T01_SCORER` 슬롯과 같은 방식):
+rl_code_v1/docs/REWARD_DESIGN.md-240-
+rl_code_v1/docs/REWARD_DESIGN.md-241-```python
+rl_code_v1/docs/REWARD_DESIGN.md:242:if ds.startswith(("t15_repo_patch", "t15_unittest")):
+rl_code_v1/docs/REWARD_DESIGN.md-243-    d = _CODE.compute_score_dict(data_source, solution_str, ground_truth, extra_info, **kw)
+rl_code_v1/docs/REWARD_DESIGN.md-244-```
+rl_code_v1/docs/REWARD_DESIGN.md-245-
+--
+rl_code_v1/docs/REWARD_DESIGN.md-265-실제로 돌려보지 못했습니다.** 이미지를 받은 뒤 반드시 아래를 먼저 돌리세요.
+rl_code_v1/docs/REWARD_DESIGN.md-266-
+rl_code_v1/docs/REWARD_DESIGN.md-267-```bash
+rl_code_v1/docs/REWARD_DESIGN.md:268:MODE=exec TRACK=swe N=10 python harness/t15_code_harness.py
+rl_code_v1/docs/REWARD_DESIGN.md-269-```
+rl_code_v1/docs/REWARD_DESIGN.md-270-
+rl_code_v1/docs/REWARD_DESIGN.md-271-gold 가 resolved 로 안 나오면 **패치 방향**을 먼저 의심하십시오 —
+rl_code_v1/reward/async_wrap.py-30-if _HERE not in sys.path:
+rl_code_v1/reward/async_wrap.py-31-    sys.path.insert(0, _HERE)
+rl_code_v1/reward/async_wrap.py-32-
+rl_code_v1/reward/async_wrap.py:33:MAX_CONCURRENCY = int(os.environ.get("T15_CODE_CONCURRENCY", "24"))
+rl_code_v1/reward/async_wrap.py:34:SAMPLE_TIMEOUT = float(os.environ.get("T15_CODE_SAMPLE_TIMEOUT", "1200"))
+rl_code_v1/reward/async_wrap.py-35-RUN_DIR_TTL = float(os.environ.get("SWE_RUN_TTL_SEC", "7200"))
+rl_code_v1/reward/async_wrap.py-36-
+rl_code_v1/reward/async_wrap.py-37-_POOL = _cf.ThreadPoolExecutor(max_workers=MAX_CONCURRENCY,
+--
+rl_code_v1/reward/async_wrap.py-48-
+rl_code_v1/reward/async_wrap.py-49-
+rl_code_v1/reward/async_wrap.py-50-def _infra(reason):
+rl_code_v1/reward/async_wrap.py:51:    import t15_code_reward as R
+rl_code_v1/reward/async_wrap.py-52-    out = dict(R._KEYS)
+rl_code_v1/reward/async_wrap.py-53-    out["err_kind"] = reason
+rl_code_v1/reward/async_wrap.py-54-    out["infra_excluded"] = 1.0
+--
+rl_code_v1/reward/async_wrap.py-57-
+rl_code_v1/reward/async_wrap.py-58-async def score_one(data_source, solution_str, ground_truth, extra_info=None, **kw):
+rl_code_v1/reward/async_wrap.py-59-    """한 응답 채점 — 스레드풀 + 타임아웃 + 동시성 제한."""
+rl_code_v1/reward/async_wrap.py:60:    import t15_code_reward as R
+rl_code_v1/reward/async_wrap.py-61-    loop = asyncio.get_running_loop()
+rl_code_v1/reward/async_wrap.py-62-    async with _sem():
+rl_code_v1/reward/async_wrap.py-63-        fut = loop.run_in_executor(
+--
+rl_code_v1/reward/async_wrap.py-67-            return await asyncio.wait_for(fut, timeout=SAMPLE_TIMEOUT)
+rl_code_v1/reward/async_wrap.py-68-        except asyncio.TimeoutError:
+rl_code_v1/reward/async_wrap.py-69-            # 스레드는 계속 돌지만 step 은 진행시킨다. 컨테이너 타임아웃
+rl_code_v1/reward/async_wrap.py:70:            # (T15_CODE_TIMEOUT)이 결국 그 스레드를 끝낸다.
+rl_code_v1/reward/async_wrap.py-71-            return _infra("infra_timeout")
+rl_code_v1/reward/async_wrap.py-72-        except Exception as e:
+rl_code_v1/reward/async_wrap.py-73-            return _infra(f"infra_other:{type(e).__name__}")
+--
+rl_code_v1/reward/async_wrap.py-105-    # 스모크: 동시성 제한과 타임아웃이 실제로 동작하는지
+rl_code_v1/reward/async_wrap.py-106-    import json
+rl_code_v1/reward/async_wrap.py-107-
+rl_code_v1/reward/async_wrap.py:108:    idx = os.path.join(_HERE, "..", "data", "index", "t15_code_unittest.full.jsonl")
+rl_code_v1/reward/async_wrap.py-109-    rows = []
+rl_code_v1/reward/async_wrap.py-110-    with open(idx, encoding="utf-8") as f:
+rl_code_v1/reward/async_wrap.py-111-        for line in f:
+rl_code_v1/reward/async_wrap.py-112-            d = json.loads(line)
+rl_code_v1/reward/async_wrap.py-113-            if (d.get("reference_solution") or "").strip():
+rl_code_v1/reward/async_wrap.py:114:                rows.append(("t15_unittest_impl",
+rl_code_v1/reward/async_wrap.py-115-                             "```python\n" + d["reference_solution"] + "\n```",
+rl_code_v1/reward/async_wrap.py-116-                             d["instance_id"],
+rl_code_v1/reward/async_wrap.py-117-                             {"instance_id": d["instance_id"],
+rl_code_v1/reward/unittest_exec.py-199-# 방어는 패턴 열거가 아니라 **행동 검사**로 한다. 실제 단정문의 좌변을 그대로
+rl_code_v1/reward/unittest_exec.py-200-# 평가한 뒤, 절대 같을 수 없는 센티널과 비교한다. 정직한 값은 False 를 내고
+rl_code_v1/reward/unittest_exec.py-201-# 거짓말하는 `__eq__` 는 True 를 낸다.
+rl_code_v1/reward/unittest_exec.py:202:SENTINEL = "__T15_CANARY_NEVER_EQUAL_9f3a__"
+rl_code_v1/reward/unittest_exec.py-203-
+rl_code_v1/reward/unittest_exec.py-204-_CANARY_FN = """
+rl_code_v1/reward/unittest_exec.py-205-import sys
+--
+rl_code_v1/reward/unittest_exec.py-235-        pass
+rl_code_v1/reward/unittest_exec.py-236-if not bad:                      # 모듈 레벨 __getattr__ 로 아무 이름이나 받아주는 경우
+rl_code_v1/reward/unittest_exec.py-237-    try:
+rl_code_v1/reward/unittest_exec.py:238:        o = getattr(solution, "__t15_canary_probe__", None)
+rl_code_v1/reward/unittest_exec.py-239-        if o is not None and bool(o == S):
+rl_code_v1/reward/unittest_exec.py-240-            bad = True
+rl_code_v1/reward/unittest_exec.py-241-    except Exception:
+--
+rl_code_v1/reward/unittest_exec.py-315-                "partial": 0.0, "patch_fmt": "code", "state": "no_patch",
+rl_code_v1/reward/unittest_exec.py-316-                "patch_score": 0.0, "touched_files": 0}
+rl_code_v1/reward/unittest_exec.py-317-    frac = (npass / total) if total else 0.0
+rl_code_v1/reward/unittest_exec.py:318:    from t15_code_judge import score_of
+rl_code_v1/reward/unittest_exec.py-319-    return {"resolved": bool(total and npass == total),
+rl_code_v1/reward/unittest_exec.py-320-            "n_f2p": npass, "t_f2p": total, "n_p2p": 0, "t_p2p": 0,
+rl_code_v1/reward/unittest_exec.py-321-            "err": "", "err_kind": "ok", "partial": float(frac),
+rl_code_v1/reward/t15_code_reward.py-2-"""코드 RL 보상 — `compute_score_dict` 계약 구현 (T01_MATH_SCORER_LOCATIONS.md §1).
+rl_code_v1/reward/t15_code_reward.py-3-
+rl_code_v1/reward/t15_code_reward.py-4-라우팅
+rl_code_v1/reward/t15_code_reward.py:5:  data_source `t15_repo_patch`   → SWE 실행채점 (t15_code_judge.judge)
+rl_code_v1/reward/t15_code_reward.py:6:  data_source `t15_unittest_impl`→ 단위테스트 실행 (unittest_exec.judge_unittest)
+rl_code_v1/reward/t15_code_reward.py-7-
+rl_code_v1/reward/t15_code_reward.py-8-계약 3불변식
+rl_code_v1/reward/t15_code_reward.py-9-  1. **모든 행이 같은 키 집합**을 반환한다. 조건부로 키를 넣고 빼면 verl 이 배치 첫 행의
+--
+rl_code_v1/reward/t15_code_reward.py-23-if _HERE not in sys.path:
+rl_code_v1/reward/t15_code_reward.py-24-    sys.path.insert(0, _HERE)
+rl_code_v1/reward/t15_code_reward.py-25-
+rl_code_v1/reward/t15_code_reward.py:26:import t15_code_judge as CJ                                    # noqa: E402
+rl_code_v1/reward/t15_code_reward.py-27-import unittest_exec as UT                                     # noqa: E402
+rl_code_v1/reward/t15_code_reward.py-28-
+rl_code_v1/reward/t15_code_reward.py-29-INDEX_DIR = os.environ.get("RL_INDEX_DIR", os.path.join(_HERE, "..", "data", "index"))
+rl_code_v1/reward/t15_code_reward.py:30:MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+rl_code_v1/reward/t15_code_reward.py:31:OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
+rl_code_v1/reward/t15_code_reward.py:32:OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
+rl_code_v1/reward/t15_code_reward.py:33:JUDGE_TIMEOUT = int(os.environ.get("T15_CODE_TIMEOUT", "900"))
+rl_code_v1/reward/t15_code_reward.py-34-# 인프라 실패(sif 부재·타임아웃)를 0점으로 주면 "모델이 못 푼다"로 위장된다.
+rl_code_v1/reward/t15_code_reward.py-35-# 기본은 0.0 이되 `infra_excluded=1` 로 표시해 호출측이 배치에서 뺄 수 있게 한다.
+rl_code_v1/reward/t15_code_reward.py:36:INFRA_SCORE = float(os.environ.get("T15_CODE_INFRA_SCORE", "0.0"))
+rl_code_v1/reward/t15_code_reward.py-37-
+rl_code_v1/reward/t15_code_reward.py-38-_UT_FULL = {}
+rl_code_v1/reward/t15_code_reward.py-39-
+--
+rl_code_v1/reward/t15_code_reward.py-60-    if _UT_FULL:
+rl_code_v1/reward/t15_code_reward.py-61-        return
+rl_code_v1/reward/t15_code_reward.py-62-    import glob as _glob
+rl_code_v1/reward/t15_code_reward.py:63:    for p in sorted(_glob.glob(os.path.join(INDEX_DIR, "t15_code_unittest*.full.jsonl"))):
+rl_code_v1/reward/t15_code_reward.py-64-        for line in open(p, encoding="utf-8"):
+rl_code_v1/reward/t15_code_reward.py-65-            d = json.loads(line)
+rl_code_v1/reward/t15_code_reward.py-66-            _UT_FULL[d["instance_id"]] = d
+rl_code_v1/reward/t15_code_reward.py-67-    if not _UT_FULL:
+rl_code_v1/reward/t15_code_reward.py-68-        raise RuntimeError(
+rl_code_v1/reward/t15_code_reward.py:69:            f"단위테스트 인덱스를 못 찾았습니다: {INDEX_DIR}/t15_code_unittest*.full.jsonl — "
+rl_code_v1/reward/t15_code_reward.py-70-            "RL_INDEX_DIR 을 확인하세요. 조용히 0점을 주면 데이터 배선 오류가 "
+rl_code_v1/reward/t15_code_reward.py-71-            "학습 실패로 위장됩니다.")
+rl_code_v1/reward/t15_code_reward.py-72-
+--
+rl_code_v1/reward/t15_code_reward.py-84-
+rl_code_v1/reward/t15_code_reward.py-85-
+rl_code_v1/reward/t15_code_reward.py-86-def _overlong(score, ei):
+rl_code_v1/reward/t15_code_reward.py:87:    """t15_reward_v3 와 같은 shaping 산식."""
+rl_code_v1/reward/t15_code_reward.py-88-    ei = ei or {}
+rl_code_v1/reward/t15_code_reward.py-89-    rl = ei.get("valid_response_length")
+rl_code_v1/reward/t15_code_reward.py-90-    ml = int(ei.get("max_response_length") or MAXRESP)
+--
+rl_code_v1/reward/t15_code_reward.py-108-    iid = str(ei.get("instance_id") or ground_truth or "")
+rl_code_v1/reward/t15_code_reward.py-109-    out = dict(_KEYS)
+rl_code_v1/reward/t15_code_reward.py-110-
+rl_code_v1/reward/t15_code_reward.py:111:    if ds.startswith("t15_unittest"):
+rl_code_v1/reward/t15_code_reward.py-112-        out["track"] = "unittest"
+rl_code_v1/reward/t15_code_reward.py-113-        _load_ut()
+rl_code_v1/reward/t15_code_reward.py-114-        inst = _UT_FULL.get(iid)
+rl_code_v1/reward/t15_reward_dispatch.py-1-#!/usr/bin/env python3
+rl_code_v1/reward/t15_reward_dispatch.py:2:"""다중 task dispatcher — 기존 `t15_reward_multi.py` 를 **포크하지 않고 감싼다**.
+rl_code_v1/reward/t15_reward_dispatch.py-3-
+rl_code_v1/reward/t15_reward_dispatch.py:4:  t15_repo_patch / t15_unittest_impl  → 코드 실행채점 (t15_code_reward)
+rl_code_v1/reward/t15_reward_dispatch.py-5-  t01_*                               → T01_SCORER (수학)
+rl_code_v1/reward/t15_reward_dispatch.py:6:  t03_* / 그 외 t15_*                  → 기존 dispatcher 그대로
+rl_code_v1/reward/t15_reward_dispatch.py-7-
+rl_code_v1/reward/t15_reward_dispatch.py-8-기존 파일을 고치지 않는 이유: 그쪽은 학습이 돌고 있는 자산이고, 코드 트랙 추가는
+rl_code_v1/reward/t15_reward_dispatch.py-9-라우팅 한 줄이면 되기 때문입니다. 이 모듈을 `custom_reward_function.path` 로
+rl_code_v1/reward/t15_reward_dispatch.py-10-지정하면 됩니다.
+rl_code_v1/reward/t15_reward_dispatch.py-11-
+rl_code_v1/reward/t15_reward_dispatch.py:12:    REWARD_PATH=rl_v1/reward/t15_reward_dispatch.py
+rl_code_v1/reward/t15_reward_dispatch.py-13-    custom_reward_function.name=compute_score
+rl_code_v1/reward/t15_reward_dispatch.py-14-
+rl_code_v1/reward/t15_reward_dispatch.py-15-⚠ 키 합집합이 이 파일의 존재 이유입니다.
+--
+rl_code_v1/reward/t15_reward_dispatch.py-28-if _HERE not in sys.path:
+rl_code_v1/reward/t15_reward_dispatch.py-29-    sys.path.insert(0, _HERE)
+rl_code_v1/reward/t15_reward_dispatch.py-30-
+rl_code_v1/reward/t15_reward_dispatch.py:31:CODE_SOURCES = ("t15_repo_patch", "t15_unittest_impl")
+rl_code_v1/reward/t15_reward_dispatch.py:32:MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+rl_code_v1/reward/t15_reward_dispatch.py-33-# 기존 dispatcher 위치. 없으면 코드 트랙 전용으로 동작한다(핸드오프 키트 밖에서도 돎).
+rl_code_v1/reward/t15_reward_dispatch.py:34:T15_DIR = os.environ.get("T15_DIR", "/scratch/r919a13/data/T15_longctx")
+rl_code_v1/reward/t15_reward_dispatch.py-35-
+rl_code_v1/reward/t15_reward_dispatch.py-36-
+rl_code_v1/reward/t15_reward_dispatch.py-37-def _load(name, path):
+--
+rl_code_v1/reward/t15_reward_dispatch.py-41-    return m
+rl_code_v1/reward/t15_reward_dispatch.py-42-
+rl_code_v1/reward/t15_reward_dispatch.py-43-
+rl_code_v1/reward/t15_reward_dispatch.py:44:import t15_code_reward as _CODE                                  # noqa: E402
+rl_code_v1/reward/t15_reward_dispatch.py-45-
+rl_code_v1/reward/t15_reward_dispatch.py-46-_BASE = None
+rl_code_v1/reward/t15_reward_dispatch.py-47-_base_err = ""
+rl_code_v1/reward/t15_reward_dispatch.py:48:_p = os.path.join(T15_DIR, "t15_reward_multi.py")
+rl_code_v1/reward/t15_reward_dispatch.py-49-if os.path.exists(_p):
+rl_code_v1/reward/t15_reward_dispatch.py-50-    try:
+rl_code_v1/reward/t15_reward_dispatch.py:51:        _BASE = _load("t15_reward_multi", _p)
+rl_code_v1/reward/t15_reward_dispatch.py-52-    except Exception as e:                     # 조용히 넘기지 않는다 — 지표로 드러낸다
+rl_code_v1/reward/t15_reward_dispatch.py-53-        _base_err = f"{type(e).__name__}: {e}"
+rl_code_v1/reward/t15_reward_dispatch.py-54-else:
+--
+rl_code_v1/reward/t15_reward_dispatch.py-62-def _code_template():
+rl_code_v1/reward/t15_reward_dispatch.py-63-    ei = {"instance_id": "__tpl__", "valid_response_length": 1,
+rl_code_v1/reward/t15_reward_dispatch.py-64-          "max_response_length": MAXRESP}
+rl_code_v1/reward/t15_reward_dispatch.py:65:    return _tpl_from(_CODE.compute_score_dict("t15_unittest_impl", "", "__tpl__", ei))
+rl_code_v1/reward/t15_reward_dispatch.py-66-
+rl_code_v1/reward/t15_reward_dispatch.py-67-
+rl_code_v1/reward/t15_reward_dispatch.py-68-def _base_template():
+--
+rl_code_v1/reward/t15_reward_dispatch.py-71-    ei = {"gold_keys": ["__tpl__"], "question": "q", "evidence": [],
+rl_code_v1/reward/t15_reward_dispatch.py-72-          "valid_response_length": 1, "max_response_length": MAXRESP}
+rl_code_v1/reward/t15_reward_dispatch.py-73-    try:
+rl_code_v1/reward/t15_reward_dispatch.py:74:        return _tpl_from(_BASE.compute_score_dict("t15_longctx_qa", "Answer: none", "__tpl__", ei))
+rl_code_v1/reward/t15_reward_dispatch.py-75-    except Exception:
+rl_code_v1/reward/t15_reward_dispatch.py-76-        return {}
+rl_code_v1/reward/t15_reward_dispatch.py-77-
+--
+rl_code_v1/reward/t15_reward_dispatch.py-123-    else:
+rl_code_v1/reward/t15_reward_dispatch.py-124-        raise RuntimeError(
+rl_code_v1/reward/t15_reward_dispatch.py-125-            f"data_source={ds!r} 는 코드 트랙이 아닌데 기존 dispatcher 를 못 찾았습니다 "
+rl_code_v1/reward/t15_reward_dispatch.py:126:            f"({_base_err}). T15_DIR 을 지정하세요. "
+rl_code_v1/reward/t15_reward_dispatch.py-127-            "조용히 0점을 주면 데이터 혼입 오류가 학습 실패로 위장됩니다.")
+rl_code_v1/reward/t15_reward_dispatch.py-128-    out.update(d)
+rl_code_v1/reward/t15_reward_dispatch.py-129-    return _coerce(out)
+rl_code_v1/reward/math/t01_math_reward.py-41-    parse_latex = None
+rl_code_v1/reward/math/t01_math_reward.py-42-    _HAS_LATEX = False
+rl_code_v1/reward/math/t01_math_reward.py-43-
+rl_code_v1/reward/math/t01_math_reward.py:44:OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
+rl_code_v1/reward/math/t01_math_reward.py:45:OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
+rl_code_v1/reward/math/t01_math_reward.py:46:MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+rl_code_v1/reward/math/t01_math_reward.py-47-# sympy 는 병리적 입력에서 오래 걸린다. 길이 상한으로 막는다 — 타임아웃과 달리
+rl_code_v1/reward/math/t01_math_reward.py-48-# 결정성을 깨지 않는다(계약 불변식 3).
+rl_code_v1/reward/math/t01_math_reward.py-49-SYMPY_MAX_LEN = int(os.environ.get("T01_SYMPY_MAX_LEN", "200"))
+
+=================== PATTERN: agent_loop ===================
+t01_math_reward_rubric/README.md-104-```bash
+t01_math_reward_rubric/README.md-105-export PYTHONPATH=/path/to/rusca:$PYTHONPATH
+t01_math_reward_rubric/README.md-106-python3 -m verl.trainer.main_ppo \
+t01_math_reward_rubric/README.md:107:  actor_rollout_ref.rollout.agent.default_agent_loop=rusca_scaffold_agent \
+t01_math_reward_rubric/README.md:108:  actor_rollout_ref.rollout.agent.agent_loop_config_path=.../rusca_agent_loop.yaml \
+t01_math_reward_rubric/README.md-109-  +actor_rollout_ref.rollout.custom.rusca.enable=True \
+t01_math_reward_rubric/README.md-110-  +actor_rollout_ref.rollout.custom.rusca.profile=math \
+t01_math_reward_rubric/README.md-111-  +actor_rollout_ref.rollout.custom.rusca.total_steps=$STEPS \
+t01_math_reward_rubric/t01_math_reward.py-1079-MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+t01_math_reward_rubric/t01_math_reward.py-1080-
+t01_math_reward_rubric/t01_math_reward.py-1081-# gold 형태 코드 — ⚠ 문자열이 아니라 int. verl이 첫 행 키로 지표 배열을 만들고
+t01_math_reward_rubric/t01_math_reward.py:1082:#   np.mean을 돌린다(agent_loop.py:1080).
+t01_math_reward_rubric/t01_math_reward.py-1083-GT_INT, GT_NUM, GT_TUPLE, GT_SET, GT_REL, GT_EXPR, GT_OTHER = 0, 1, 2, 3, 4, 5, 6
+t01_math_reward_rubric/t01_math_reward.py-1084-_INT_GT_RE = __import__("re").compile(r"^-?[0-9]+$")   # isdigit()는 유니코드 숫자에도 True
+t01_math_reward_rubric/t01_math_reward.py-1085-
+rl_code_v1/reward/t15_reward_dispatch.py-14-
+rl_code_v1/reward/t15_reward_dispatch.py-15-⚠ 키 합집합이 이 파일의 존재 이유입니다.
+rl_code_v1/reward/t15_reward_dispatch.py-16-  verl 은 배치 **첫 행의 키**로 지표 배열을 만듭니다
+rl_code_v1/reward/t15_reward_dispatch.py:17:  (`experimental/agent_loop/agent_loop.py:1080`). 코드 행이 24키, 장문 행이 38키를
+rl_code_v1/reward/t15_reward_dispatch.py-18-  내면 배치가 섞이는 순간 `np.mean(None)` 으로 죽습니다(2026-08-23 val 크래시와
+rl_code_v1/reward/t15_reward_dispatch.py-19-  같은 유형). 그래서 import 시점에 **모든 채점기의 키를 모아 템플릿을 만들고**,
+rl_code_v1/reward/t15_reward_dispatch.py-20-  각 채점기 결과를 그 위에 덮습니다. 지연 로드는 금지입니다 — 늦게 로드하면
+
+=================== PATTERN: scaffold ===================
+t01_math_reward_rubric/README.md-76-{"index": "kd::1e8f38…", "criteria": [
+t01_math_reward_rubric/README.md-77-  {"criterion": "치환·부분적분·극좌표… 중 하나를 고르고 무엇을 무엇으로 바꾸는지 …",
+t01_math_reward_rubric/README.md-78-   "points": 3.0,
+t01_math_reward_rubric/README.md:79:   "tags": {"judge": null, "inject": true, "scaffold_rank": 1,
+t01_math_reward_rubric/README.md:80:            "scaffold_kind": "calculus", "verify": "strategy", "reward": false}}
+t01_math_reward_rubric/README.md-81-]}
+t01_math_reward_rubric/README.md-82-```
+t01_math_reward_rubric/README.md-83-
+--
+t01_math_reward_rubric/README.md-104-```bash
+t01_math_reward_rubric/README.md-105-export PYTHONPATH=/path/to/rusca:$PYTHONPATH
+t01_math_reward_rubric/README.md-106-python3 -m verl.trainer.main_ppo \
+t01_math_reward_rubric/README.md:107:  actor_rollout_ref.rollout.agent.default_agent_loop=rusca_scaffold_agent \
+t01_math_reward_rubric/README.md-108-  actor_rollout_ref.rollout.agent.agent_loop_config_path=.../rusca_agent_loop.yaml \
+t01_math_reward_rubric/README.md-109-  +actor_rollout_ref.rollout.custom.rusca.enable=True \
+t01_math_reward_rubric/README.md-110-  +actor_rollout_ref.rollout.custom.rusca.profile=math \
+
+=================== PATTERN: lam( ===================
+rl_code_v1/docs/MATH_REWARD.md-126-
+rl_code_v1/docs/MATH_REWARD.md-127-```
+rl_code_v1/docs/MATH_REWARD.md-128-검사 6,518행  프로파일=code       스키마 위반: 0건
+rl_code_v1/docs/MATH_REWARD.md:129:   step  lam(i=0)   주입 기준수(variant별)
+rl_code_v1/docs/MATH_REWARD.md-130-      0    1.0000   6 6 6 5 6 5
+rl_code_v1/docs/MATH_REWARD.md-131-     10    0.5000   3 3 3 3 3 3
+rl_code_v1/docs/MATH_REWARD.md-132-     12    0.0067   0 0 0 0 0 0     ← 24% 지점에서 비계 완전 제거
+
+=================== PATTERN: overlong ===================
+t01_math_reward_rubric/t01_math_reward.py-1-#!/usr/bin/env python
+t01_math_reward_rubric/t01_math_reward.py-2-"""T01 수학 채점기 — 규칙 기반 정오답 판정 (verl custom reward).
+t01_math_reward_rubric/t01_math_reward.py-3-
+t01_math_reward_rubric/t01_math_reward.py:4:score = answer_match × overlong_penalty        (형식 점수를 섞지 않는다)
+t01_math_reward_rubric/t01_math_reward.py-5-
+t01_math_reward_rubric/t01_math_reward.py-6-  · **answer_match 는 순수 정오답이다.** boxed 여부·길이 같은 형식 신호를 더하지
+t01_math_reward_rubric/t01_math_reward.py-7-    않는다 — DDCA가 이 값으로 정답 군집을 만들기 때문에, 형식이 섞이면 같은 답을
+t01_math_reward_rubric/t01_math_reward.py-8-    쓴 롤아웃이 다른 군집으로 갈라진다. 형식은 math_has_boxed 등으로 관측만 한다.
+t01_math_reward_rubric/t01_math_reward.py:9:  · **overlong**: extra_info의 valid/max_response_length 로 초과분만 감점.
+t01_math_reward_rubric/t01_math_reward.py:10:    버퍼가 0이면 비활성(overlong_active=False). 감점 전 값은 score_before_overlong.
+t01_math_reward_rubric/t01_math_reward.py-11-  · rubric(RuscaRL 비계)은 프롬프트에만 들어가고 이 채점기는 관여하지 않는다 —
+t01_math_reward_rubric/t01_math_reward.py-12-    보상은 처음부터 끝까지 rule 기반이다.
+t01_math_reward_rubric/t01_math_reward.py-13-
+--
+t01_math_reward_rubric/t01_math_reward.py-30-    compute_score(...) -> float
+t01_math_reward_rubric/t01_math_reward.py-31-
+t01_math_reward_rubric/t01_math_reward.py-32-반환 키 21개, 전 행 동일 집합, float·int만, 결정적.
+t01_math_reward_rubric/t01_math_reward.py:33:필수 키 score / answer_match / score_before_overlong.
+t01_math_reward_rubric/t01_math_reward.py-34-ground_truth 에는 데이터의 **gt** 를 넘긴다(answer 는 풀이 전문이라 넘기면 전 행 오답).
+t01_math_reward_rubric/t01_math_reward.py-35-
+t01_math_reward_rubric/t01_math_reward.py-36-## verl 연결
+--
+t01_math_reward_rubric/t01_math_reward.py-1074-
+t01_math_reward_rubric/t01_math_reward.py-1075-# 학습 기동이 넘기는 값. ⚠ 새 T01_* env는 Ray 액터에 안 닿아 조용히 꺼지므로 만들지 않는다
+t01_math_reward_rubric/t01_math_reward.py-1076-# (constants_ppo.py:81~103 전파 목록). 아래 셋은 이미 전파된다.
+t01_math_reward_rubric/t01_math_reward.py:1077:OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
+t01_math_reward_rubric/t01_math_reward.py:1078:OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
+t01_math_reward_rubric/t01_math_reward.py-1079-MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+t01_math_reward_rubric/t01_math_reward.py-1080-
+t01_math_reward_rubric/t01_math_reward.py-1081-# gold 형태 코드 — ⚠ 문자열이 아니라 int. verl이 첫 행 키로 지표 배열을 만들고
+--
+t01_math_reward_rubric/t01_math_reward.py-1099-        return GT_REL
+t01_math_reward_rubric/t01_math_reward.py-1100-    return GT_EXPR if any(c.isalpha() or c == "\\" for c in g) else GT_OTHER
+t01_math_reward_rubric/t01_math_reward.py-1101-
+t01_math_reward_rubric/t01_math_reward.py:1102:def _overlong(base, ei):
+t01_math_reward_rubric/t01_math_reward.py:1103:    """t15_reward_v3.py:543~601 및 dispatcher `_overlong_fields`와 **동일 산식**.
+t01_math_reward_rubric/t01_math_reward.py-1104-    """
+t01_math_reward_rubric/t01_math_reward.py-1105-    rl = ei.get("valid_response_length")
+t01_math_reward_rubric/t01_math_reward.py-1106-    ml = ei.get("max_response_length") or MAXRESP
+t01_math_reward_rubric/t01_math_reward.py:1107:    if OVERLONG_BUFFER > 0 and (rl is None or not ml):
+t01_math_reward_rubric/t01_math_reward.py:1108:        raise RuntimeError("overlong shaping이 켜졌는데 길이 정보가 없다 "
+t01_math_reward_rubric/t01_math_reward.py-1109-                           "(valid_response_length=%r, max_response_length=%r)" % (rl, ml))
+t01_math_reward_rubric/t01_math_reward.py-1110-    rl_i, ml_i = int(rl) if rl is not None else 0, int(ml) if ml else MAXRESP
+t01_math_reward_rubric/t01_math_reward.py-1111-    pen = frac = 0.0
+t01_math_reward_rubric/t01_math_reward.py-1112-    at_lim = 1.0 if (rl is not None and ml_i and rl_i >= ml_i) else 0.0
+t01_math_reward_rubric/t01_math_reward.py:1113:    if OVERLONG_BUFFER > 0:
+t01_math_reward_rubric/t01_math_reward.py:1114:        exceed = rl_i - (ml_i - OVERLONG_BUFFER)
+t01_math_reward_rubric/t01_math_reward.py-1115-        if exceed > 0:
+t01_math_reward_rubric/t01_math_reward.py:1116:            frac = min(1.0, float(exceed) / OVERLONG_BUFFER)
+t01_math_reward_rubric/t01_math_reward.py:1117:            pen = -frac * OVERLONG_PENALTY
+t01_math_reward_rubric/t01_math_reward.py:1118:    return {"score_before_overlong": float(base), "overlong_penalty": float(pen),
+t01_math_reward_rubric/t01_math_reward.py:1119:            "overlong_fraction": float(frac),
+t01_math_reward_rubric/t01_math_reward.py:1120:            "overlong_active": 1.0 if OVERLONG_BUFFER > 0 else 0.0,
+t01_math_reward_rubric/t01_math_reward.py-1121-            "at_response_limit": float(at_lim),
+t01_math_reward_rubric/t01_math_reward.py-1122-            "resp_tokens": float(rl_i), "resp_limit": float(ml_i)}
+t01_math_reward_rubric/t01_math_reward.py-1123-
+--
+t01_math_reward_rubric/t01_math_reward.py-1142-    pred, ex_tier = extract_answer(resp)
+t01_math_reward_rubric/t01_math_reward.py-1143-    ok, mt_tier, errs = is_equivalent(pred, gold)
+t01_math_reward_rubric/t01_math_reward.py-1144-    base = 1.0 if ok else 0.0
+t01_math_reward_rubric/t01_math_reward.py:1145:    ov = _overlong(base, ei)
+t01_math_reward_rubric/t01_math_reward.py-1146-    n_box, at_lim = count_boxed(resp), ov["at_response_limit"]
+t01_math_reward_rubric/t01_math_reward.py-1147-    if errs:
+t01_math_reward_rubric/t01_math_reward.py-1148-        _warn_once(errs)
+t01_math_reward_rubric/t01_math_reward.py-1149-    return {
+t01_math_reward_rubric/t01_math_reward.py-1150-        # 계약 3종. ⚠ answer_match는 **순수 정오만** — DDCA가 이 값으로 정답
+t01_math_reward_rubric/t01_math_reward.py-1151-        #   클러스터를 나눈다(ray_trainer.py:315). 감점이 섞이면 길이 신호가 오염된다.
+t01_math_reward_rubric/t01_math_reward.py:1152:        "score": float(base + ov["overlong_penalty"]),
+t01_math_reward_rubric/t01_math_reward.py-1153-        "answer_match": float(base),
+t01_math_reward_rubric/t01_math_reward.py:1154:        "score_before_overlong": ov["score_before_overlong"],
+t01_math_reward_rubric/t01_math_reward.py:1155:        # overlong shaping (t15와 동일 산식)
+t01_math_reward_rubric/t01_math_reward.py:1156:        "overlong_penalty": ov["overlong_penalty"], "overlong_fraction": ov["overlong_fraction"],
+t01_math_reward_rubric/t01_math_reward.py:1157:        "overlong_active": ov["overlong_active"], "at_response_limit": at_lim,
+t01_math_reward_rubric/t01_math_reward.py-1158-        "resp_tokens": ov["resp_tokens"], "resp_limit": ov["resp_limit"],
+t01_math_reward_rubric/t01_math_reward.py-1159-        # 수학 관측 (전 행 항상 반환, 해당 없으면 0.0)
+t01_math_reward_rubric/t01_math_reward.py-1160-        "math_has_boxed": 1.0 if n_box else 0.0, "math_n_boxed": float(n_box),
+rl_code_v1/harness/t15_code_harness.py-93-
+rl_code_v1/harness/t15_code_harness.py-94-    keysets = {tuple(sorted(o)) for o in outs}
+rl_code_v1/harness/t15_code_harness.py-95-    check("전 행 키 집합 동일", len(keysets) == 1, f"{len(keysets)}종 / {len(outs)}행")
+rl_code_v1/harness/t15_code_harness.py:96:    check("필수 3키", all({"score", "answer_match", "score_before_overlong"} <= set(o) for o in outs))
+rl_code_v1/harness/t15_code_harness.py-97-    bad = [(k, v) for o in outs for k, v in o.items()
+rl_code_v1/harness/t15_code_harness.py-98-           if not isinstance(v, (int, float, str, bool))
+rl_code_v1/harness/t15_code_harness.py-99-           or (isinstance(v, float) and (math.isnan(v) or math.isinf(v)))]
+rl_code_v1/docs/REWARD_DESIGN.md-217-
+rl_code_v1/docs/REWARD_DESIGN.md-218-| 키 | 의미 |
+rl_code_v1/docs/REWARD_DESIGN.md-219-|---|---|
+rl_code_v1/docs/REWARD_DESIGN.md:220:| `score` | 최종 보상(overlong 감점 반영 후) |
+rl_code_v1/docs/REWARD_DESIGN.md-221-| `answer_match` | 0/1. **`resolved` 여부만** 씁니다 |
+rl_code_v1/docs/REWARD_DESIGN.md:222:| `score_before_overlong` | 감점 전 점수 |
+rl_code_v1/docs/REWARD_DESIGN.md-223-
+rl_code_v1/docs/REWARD_DESIGN.md-224-`answer_match` 에 부분점수를 넣지 않은 것이 중요합니다. DDCA 는 이 값으로 정답
+rl_code_v1/docs/REWARD_DESIGN.md-225-클러스터를 가르는데, 부분점수가 섞이면 길이 신호가 오염됩니다.
+rl_code_v1/docs/MATH_REWARD.md-9-  [OK ] gold(answer) 존재            결측 0행
+rl_code_v1/docs/MATH_REWARD.md-10-  [OK ] 예외·None·NaN·비허용타입 없음   위반 0건
+rl_code_v1/docs/MATH_REWARD.md-11-  [OK ] 전 행 키 집합 동일             1종
+rl_code_v1/docs/MATH_REWARD.md:12:  [OK ] 필수 키 'score' / 'answer_match' / 'score_before_overlong'
+rl_code_v1/docs/MATH_REWARD.md-13-  [OK ] answer_match ∈ {0,1}
+rl_code_v1/docs/MATH_REWARD.md-14-  [OK ] 정답 점수 > 오답 점수 (분리)     정답 min=1.000 / 오답 max=0.000
+rl_code_v1/docs/MATH_REWARD.md-15-  [OK ] 동일 입력 → 동일 출력(결정성)
+rl_code_v1/reward/t15_code_reward.py-12-  3. 결정적. 난수·시각 의존 금지.
+rl_code_v1/reward/t15_code_reward.py-13-
+rl_code_v1/reward/t15_code_reward.py-14-DDCA 가 쓰는 3키
+rl_code_v1/reward/t15_code_reward.py:15:  score                  최종 보상(overlong 감점 반영 후)
+rl_code_v1/reward/t15_code_reward.py-16-  answer_match           0/1 정오 — **부분점수가 아니라 resolved 여부**여야 한다.
+rl_code_v1/reward/t15_code_reward.py-17-                         감점·부분점수가 섞인 값을 쓰면 정답 클러스터가 오염된다.
+rl_code_v1/reward/t15_code_reward.py:18:  score_before_overlong  감점 전 점수
+rl_code_v1/reward/t15_code_reward.py-19-"""
+rl_code_v1/reward/t15_code_reward.py-20-import json, math, os, sys
+rl_code_v1/reward/t15_code_reward.py-21-
+--
+rl_code_v1/reward/t15_code_reward.py-28-
+rl_code_v1/reward/t15_code_reward.py-29-INDEX_DIR = os.environ.get("RL_INDEX_DIR", os.path.join(_HERE, "..", "data", "index"))
+rl_code_v1/reward/t15_code_reward.py-30-MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+rl_code_v1/reward/t15_code_reward.py:31:OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
+rl_code_v1/reward/t15_code_reward.py:32:OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
+rl_code_v1/reward/t15_code_reward.py-33-JUDGE_TIMEOUT = int(os.environ.get("T15_CODE_TIMEOUT", "900"))
+rl_code_v1/reward/t15_code_reward.py-34-# 인프라 실패(sif 부재·타임아웃)를 0점으로 주면 "모델이 못 푼다"로 위장된다.
+rl_code_v1/reward/t15_code_reward.py-35-# 기본은 0.0 이되 `infra_excluded=1` 로 표시해 호출측이 배치에서 뺄 수 있게 한다.
+--
+rl_code_v1/reward/t15_code_reward.py-38-_UT_FULL = {}
+rl_code_v1/reward/t15_code_reward.py-39-
+rl_code_v1/reward/t15_code_reward.py-40-_KEYS = {
+rl_code_v1/reward/t15_code_reward.py:41:    "score": 0.0, "answer_match": 0.0, "score_before_overlong": 0.0,
+rl_code_v1/reward/t15_code_reward.py-42-    "code_resolved": 0.0, "code_partial": 0.0,
+rl_code_v1/reward/t15_code_reward.py-43-    "code_n_f2p": 0.0, "code_t_f2p": 0.0, "code_n_p2p": 0.0, "code_t_p2p": 0.0,
+rl_code_v1/reward/t15_code_reward.py-44-    "code_p2p_regressed": 0.0, "code_touched_files": 0.0,
+rl_code_v1/reward/t15_code_reward.py-45-    "fmt_extracted": 0.0, "fmt_applied": 0.0, "fmt_invalid_edit": 0.0,
+rl_code_v1/reward/t15_code_reward.py-46-    "infra_excluded": 0.0,
+rl_code_v1/reward/t15_code_reward.py-47-    "err_kind": "", "patch_fmt": "", "track": "",
+rl_code_v1/reward/t15_code_reward.py:48:    "overlong_penalty": 0.0, "overlong_fraction": 0.0, "overlong_active": 0.0,
+rl_code_v1/reward/t15_code_reward.py-49-    "at_response_limit": 0.0, "resp_tokens": 0.0, "resp_limit": 0.0,
+rl_code_v1/reward/t15_code_reward.py-50-}
+rl_code_v1/reward/t15_code_reward.py-51-
+--
+rl_code_v1/reward/t15_code_reward.py-83-    return 0.0
+rl_code_v1/reward/t15_code_reward.py-84-
+rl_code_v1/reward/t15_code_reward.py-85-
+rl_code_v1/reward/t15_code_reward.py:86:def _overlong(score, ei):
+rl_code_v1/reward/t15_code_reward.py-87-    """t15_reward_v3 와 같은 shaping 산식."""
+rl_code_v1/reward/t15_code_reward.py-88-    ei = ei or {}
+rl_code_v1/reward/t15_code_reward.py-89-    rl = ei.get("valid_response_length")
+--
+rl_code_v1/reward/t15_code_reward.py-91-    rl_i = int(rl) if rl is not None else 0
+rl_code_v1/reward/t15_code_reward.py-92-    pen = frac = 0.0
+rl_code_v1/reward/t15_code_reward.py-93-    at_lim = 1.0 if (rl is not None and ml and rl_i >= ml) else 0.0
+rl_code_v1/reward/t15_code_reward.py:94:    if rl is not None and ml and OVERLONG_BUFFER > 0:
+rl_code_v1/reward/t15_code_reward.py:95:        exceed = rl_i - (ml - OVERLONG_BUFFER)
+rl_code_v1/reward/t15_code_reward.py-96-        if exceed > 0:
+rl_code_v1/reward/t15_code_reward.py:97:            frac = min(1.0, exceed / OVERLONG_BUFFER)
+rl_code_v1/reward/t15_code_reward.py:98:            pen = -frac * OVERLONG_PENALTY
+rl_code_v1/reward/t15_code_reward.py:99:    return {"overlong_penalty": pen, "overlong_fraction": frac,
+rl_code_v1/reward/t15_code_reward.py:100:            "overlong_active": 1.0 if OVERLONG_BUFFER > 0 else 0.0,
+rl_code_v1/reward/t15_code_reward.py-101-            "at_response_limit": at_lim, "resp_tokens": float(rl_i),
+rl_code_v1/reward/t15_code_reward.py-102-            "resp_limit": float(ml)}
+rl_code_v1/reward/t15_code_reward.py-103-
+--
+rl_code_v1/reward/t15_code_reward.py-144-        "err_kind": kind, "patch_fmt": str(r.get("patch_fmt") or ""),
+rl_code_v1/reward/t15_code_reward.py-145-    })
+rl_code_v1/reward/t15_code_reward.py-146-
+rl_code_v1/reward/t15_code_reward.py:147:    ov = _overlong(base, ei)
+rl_code_v1/reward/t15_code_reward.py-148-    out.update(ov)
+rl_code_v1/reward/t15_code_reward.py:149:    out["score_before_overlong"] = base
+rl_code_v1/reward/t15_code_reward.py:150:    out["score"] = base + ov["overlong_penalty"]
+rl_code_v1/reward/t15_code_reward.py-151-    # DDCA 정답 클러스터는 resolved 로만 가른다 — 부분점수를 섞으면 길이 신호가 오염된다
+rl_code_v1/reward/t15_code_reward.py-152-    out["answer_match"] = 1.0 if r.get("resolved") else 0.0
+rl_code_v1/reward/t15_code_reward.py-153-    return {k: _clean(v) for k, v in out.items()}
+rl_code_v1/verl_example.sh-16-export UT_TIMEOUT=10                         # 단위테스트 1건 상한(초)
+rl_code_v1/verl_example.sh-17-
+rl_code_v1/verl_example.sh-18-# 선택 — 응답 길이 감점을 켤 때만
+rl_code_v1/verl_example.sh:19:# export T15_OVERLONG_BUFFER=1024
+rl_code_v1/verl_example.sh:20:# export T15_OVERLONG_PENALTY=1.0
+rl_code_v1/verl_example.sh-21-
+rl_code_v1/verl_example.sh-22-MODEL="${MODEL:?MODEL=<학습할 모델 경로> 를 지정하세요}"
+rl_code_v1/verl_example.sh-23-NGPU="${NGPU:-8}"
+--
+rl_code_v1/verl_example.sh-37-  data.train_batch_size=64 \
+rl_code_v1/verl_example.sh-38-  data.max_prompt_length=32768 \
+rl_code_v1/verl_example.sh-39-  data.max_response_length=15360 \
+rl_code_v1/verl_example.sh:40:  data.filter_overlong_prompts=True \
+rl_code_v1/verl_example.sh-41-  data.truncation=error \
+rl_code_v1/verl_example.sh-42-  \
+rl_code_v1/verl_example.sh-43-  actor_rollout_ref.model.path="$MODEL" \
+rl_code_v1/reward/math/t01_math_reward.py-14-계약 (`t01_math_harness.py` 로 검증)
+rl_code_v1/reward/math/t01_math_reward.py-15-  compute_score_dict(data_source, solution_str, ground_truth, extra_info=None, **kw) -> dict
+rl_code_v1/reward/math/t01_math_reward.py-16-  compute_score(...) -> float
+rl_code_v1/reward/math/t01_math_reward.py:17:  필수 키 score / answer_match / score_before_overlong
+rl_code_v1/reward/math/t01_math_reward.py-18-  전 행 같은 키 집합 · float|int|str|bool 만 · 결정적
+rl_code_v1/reward/math/t01_math_reward.py-19-
+rl_code_v1/reward/math/t01_math_reward.py-20-sympy 는 **선택**입니다. 없으면 4단계까지만 돌고, 그 사실이 `math_sympy_available`
+--
+rl_code_v1/reward/math/t01_math_reward.py-41-    parse_latex = None
+rl_code_v1/reward/math/t01_math_reward.py-42-    _HAS_LATEX = False
+rl_code_v1/reward/math/t01_math_reward.py-43-
+rl_code_v1/reward/math/t01_math_reward.py:44:OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
+rl_code_v1/reward/math/t01_math_reward.py:45:OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
+rl_code_v1/reward/math/t01_math_reward.py-46-MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+rl_code_v1/reward/math/t01_math_reward.py-47-# sympy 는 병리적 입력에서 오래 걸린다. 길이 상한으로 막는다 — 타임아웃과 달리
+rl_code_v1/reward/math/t01_math_reward.py-48-# 결정성을 깨지 않는다(계약 불변식 3).
+--
+rl_code_v1/reward/math/t01_math_reward.py-221-
+rl_code_v1/reward/math/t01_math_reward.py-222-
+rl_code_v1/reward/math/t01_math_reward.py-223-# ─────────────────────────────────────────────────────────────── 계약
+rl_code_v1/reward/math/t01_math_reward.py:224:_KEYS = ("score", "answer_match", "score_before_overlong", "overlong_penalty",
+rl_code_v1/reward/math/t01_math_reward.py:225:         "overlong_fraction", "overlong_active", "at_response_limit",
+rl_code_v1/reward/math/t01_math_reward.py-226-         "resp_tokens", "resp_limit", "math_answer_format", "math_pred_empty",
+rl_code_v1/reward/math/t01_math_reward.py-227-         "math_gold_unparsed", "math_sympy_available",
+rl_code_v1/reward/math/t01_math_reward.py-228-         "math_latex_parser_available", "math_equiv_path")
+--
+rl_code_v1/reward/math/t01_math_reward.py-238-    ml = int(ei.get("max_response_length") or MAXRESP)
+rl_code_v1/reward/math/t01_math_reward.py-239-    pen = frac = 0.0
+rl_code_v1/reward/math/t01_math_reward.py-240-    at_lim = 1.0 if (rl and ml and rl >= ml) else 0.0
+rl_code_v1/reward/math/t01_math_reward.py:241:    if OVERLONG_BUFFER > 0 and ml:
+rl_code_v1/reward/math/t01_math_reward.py:242:        exceed = rl - (ml - OVERLONG_BUFFER)
+rl_code_v1/reward/math/t01_math_reward.py-243-        if exceed > 0:
+rl_code_v1/reward/math/t01_math_reward.py:244:            frac = min(1.0, exceed / OVERLONG_BUFFER)
+rl_code_v1/reward/math/t01_math_reward.py:245:            pen = -frac * OVERLONG_PENALTY
+rl_code_v1/reward/math/t01_math_reward.py-246-
+rl_code_v1/reward/math/t01_math_reward.py-247-    return {
+rl_code_v1/reward/math/t01_math_reward.py-248-        "score": float(base + pen),
+rl_code_v1/reward/math/t01_math_reward.py-249-        "answer_match": float(base),
+rl_code_v1/reward/math/t01_math_reward.py:250:        "score_before_overlong": float(base),
+rl_code_v1/reward/math/t01_math_reward.py:251:        "overlong_penalty": float(pen),
+rl_code_v1/reward/math/t01_math_reward.py:252:        "overlong_fraction": float(frac),
+rl_code_v1/reward/math/t01_math_reward.py:253:        "overlong_active": 1.0 if OVERLONG_BUFFER > 0 else 0.0,
+rl_code_v1/reward/math/t01_math_reward.py-254-        "at_response_limit": float(at_lim),
+rl_code_v1/reward/math/t01_math_reward.py-255-        "resp_tokens": float(rl),
+rl_code_v1/reward/math/t01_math_reward.py-256-        "resp_limit": float(ml),
+
+=================== PATTERN: answer_match ===================
+t01_math_reward_rubric/README.md-53-```
+t01_math_reward_rubric/README.md-54-
+t01_math_reward_rubric/README.md-55-파일 하나, 외부 의존 없음. 반환 키 21개, 전 행 동일 집합, float·int만, 결정적.
+t01_math_reward_rubric/README.md:56:`answer_match` 는 **순수 정오답**이다 — 형식 점수를 섞지 않았다(길이 제어가 이 값으로
+t01_math_reward_rubric/README.md-57-정답 군집을 만들기 때문).
+t01_math_reward_rubric/README.md-58-
+t01_math_reward_rubric/README.md-59-추출 3단(`\boxed{}` → `Answer:` 줄 → 마지막 수식) 뒤 동치 tier 11개를 순서대로 시도한다.
+t01_math_reward_rubric/t01_math_reward.py-1-#!/usr/bin/env python
+t01_math_reward_rubric/t01_math_reward.py-2-"""T01 수학 채점기 — 규칙 기반 정오답 판정 (verl custom reward).
+t01_math_reward_rubric/t01_math_reward.py-3-
+t01_math_reward_rubric/t01_math_reward.py:4:score = answer_match × overlong_penalty        (형식 점수를 섞지 않는다)
+t01_math_reward_rubric/t01_math_reward.py-5-
+t01_math_reward_rubric/t01_math_reward.py:6:  · **answer_match 는 순수 정오답이다.** boxed 여부·길이 같은 형식 신호를 더하지
+t01_math_reward_rubric/t01_math_reward.py-7-    않는다 — DDCA가 이 값으로 정답 군집을 만들기 때문에, 형식이 섞이면 같은 답을
+t01_math_reward_rubric/t01_math_reward.py-8-    쓴 롤아웃이 다른 군집으로 갈라진다. 형식은 math_has_boxed 등으로 관측만 한다.
+t01_math_reward_rubric/t01_math_reward.py-9-  · **overlong**: extra_info의 valid/max_response_length 로 초과분만 감점.
+--
+t01_math_reward_rubric/t01_math_reward.py-30-    compute_score(...) -> float
+t01_math_reward_rubric/t01_math_reward.py-31-
+t01_math_reward_rubric/t01_math_reward.py-32-반환 키 21개, 전 행 동일 집합, float·int만, 결정적.
+t01_math_reward_rubric/t01_math_reward.py:33:필수 키 score / answer_match / score_before_overlong.
+t01_math_reward_rubric/t01_math_reward.py-34-ground_truth 에는 데이터의 **gt** 를 넘긴다(answer 는 풀이 전문이라 넘기면 전 행 오답).
+t01_math_reward_rubric/t01_math_reward.py-35-
+t01_math_reward_rubric/t01_math_reward.py-36-## verl 연결
+--
+t01_math_reward_rubric/t01_math_reward.py-1147-    if errs:
+t01_math_reward_rubric/t01_math_reward.py-1148-        _warn_once(errs)
+t01_math_reward_rubric/t01_math_reward.py-1149-    return {
+t01_math_reward_rubric/t01_math_reward.py:1150:        # 계약 3종. ⚠ answer_match는 **순수 정오만** — DDCA가 이 값으로 정답
+t01_math_reward_rubric/t01_math_reward.py-1151-        #   클러스터를 나눈다(ray_trainer.py:315). 감점이 섞이면 길이 신호가 오염된다.
+t01_math_reward_rubric/t01_math_reward.py-1152-        "score": float(base + ov["overlong_penalty"]),
+t01_math_reward_rubric/t01_math_reward.py:1153:        "answer_match": float(base),
+t01_math_reward_rubric/t01_math_reward.py-1154-        "score_before_overlong": ov["score_before_overlong"],
+t01_math_reward_rubric/t01_math_reward.py-1155-        # overlong shaping (t15와 동일 산식)
+t01_math_reward_rubric/t01_math_reward.py-1156-        "overlong_penalty": ov["overlong_penalty"], "overlong_fraction": ov["overlong_fraction"],
+rl_code_v1/harness/t15_code_harness.py-7-
+rl_code_v1/harness/t15_code_harness.py-8-검사 항목
+rl_code_v1/harness/t15_code_harness.py-9-  [계약]  전 행 키 집합 동일 · 필수 3키 · 타입(None/NaN/inf/컬렉션 금지)
+rl_code_v1/harness/t15_code_harness.py:10:          · answer_match ∈ {0,1} · 결정성
+rl_code_v1/harness/t15_code_harness.py-11-  [정오]  gold > empty 분리 · 사다리 단조성 · 반칙 패치 차단
+rl_code_v1/harness/t15_code_harness.py-12-  [실행]  gold → resolved, empty → not resolved (실행노드에서만)
+rl_code_v1/harness/t15_code_harness.py-13-
+--
+rl_code_v1/harness/t15_code_harness.py-93-
+rl_code_v1/harness/t15_code_harness.py-94-    keysets = {tuple(sorted(o)) for o in outs}
+rl_code_v1/harness/t15_code_harness.py-95-    check("전 행 키 집합 동일", len(keysets) == 1, f"{len(keysets)}종 / {len(outs)}행")
+rl_code_v1/harness/t15_code_harness.py:96:    check("필수 3키", all({"score", "answer_match", "score_before_overlong"} <= set(o) for o in outs))
+rl_code_v1/harness/t15_code_harness.py-97-    bad = [(k, v) for o in outs for k, v in o.items()
+rl_code_v1/harness/t15_code_harness.py-98-           if not isinstance(v, (int, float, str, bool))
+rl_code_v1/harness/t15_code_harness.py-99-           or (isinstance(v, float) and (math.isnan(v) or math.isinf(v)))]
+rl_code_v1/harness/t15_code_harness.py-100-    check("타입 (None/NaN/inf/컬렉션 없음)", not bad, str(bad[:3]))
+rl_code_v1/harness/t15_code_harness.py:101:    check("answer_match ∈ {0,1}", all(o["answer_match"] in (0.0, 1.0) for o in outs))
+rl_code_v1/harness/t15_code_harness.py-102-    check("score ∈ [-1,1]", all(-1.0 <= o["score"] <= 1.0 for o in outs))
+rl_code_v1/harness/t15_code_harness.py-103-    # 결정성 — flaky test 대비 2회 중 1회 일치면 통과
+rl_code_v1/harness/t15_code_harness.py-104-    a = [R.compute_score_dict(*(rows[i][0], rows[i][2], rows[i][1]["instance_id"], rows[i][1]))
+rl_code_v1/docs/REWARD_DESIGN.md-218-| 키 | 의미 |
+rl_code_v1/docs/REWARD_DESIGN.md-219-|---|---|
+rl_code_v1/docs/REWARD_DESIGN.md-220-| `score` | 최종 보상(overlong 감점 반영 후) |
+rl_code_v1/docs/REWARD_DESIGN.md:221:| `answer_match` | 0/1. **`resolved` 여부만** 씁니다 |
+rl_code_v1/docs/REWARD_DESIGN.md-222-| `score_before_overlong` | 감점 전 점수 |
+rl_code_v1/docs/REWARD_DESIGN.md-223-
+rl_code_v1/docs/REWARD_DESIGN.md:224:`answer_match` 에 부분점수를 넣지 않은 것이 중요합니다. DDCA 는 이 값으로 정답
+rl_code_v1/docs/REWARD_DESIGN.md-225-클러스터를 가르는데, 부분점수가 섞이면 길이 신호가 오염됩니다.
+rl_code_v1/docs/REWARD_DESIGN.md-226-
+rl_code_v1/docs/REWARD_DESIGN.md-227-**불변식 3가지**를 코드로 강제합니다.
+rl_code_v1/reward/t15_code_reward.py-13-
+rl_code_v1/reward/t15_code_reward.py-14-DDCA 가 쓰는 3키
+rl_code_v1/reward/t15_code_reward.py-15-  score                  최종 보상(overlong 감점 반영 후)
+rl_code_v1/reward/t15_code_reward.py:16:  answer_match           0/1 정오 — **부분점수가 아니라 resolved 여부**여야 한다.
+rl_code_v1/reward/t15_code_reward.py-17-                         감점·부분점수가 섞인 값을 쓰면 정답 클러스터가 오염된다.
+rl_code_v1/reward/t15_code_reward.py-18-  score_before_overlong  감점 전 점수
+rl_code_v1/reward/t15_code_reward.py-19-"""
+--
+rl_code_v1/reward/t15_code_reward.py-38-_UT_FULL = {}
+rl_code_v1/reward/t15_code_reward.py-39-
+rl_code_v1/reward/t15_code_reward.py-40-_KEYS = {
+rl_code_v1/reward/t15_code_reward.py:41:    "score": 0.0, "answer_match": 0.0, "score_before_overlong": 0.0,
+rl_code_v1/reward/t15_code_reward.py-42-    "code_resolved": 0.0, "code_partial": 0.0,
+rl_code_v1/reward/t15_code_reward.py-43-    "code_n_f2p": 0.0, "code_t_f2p": 0.0, "code_n_p2p": 0.0, "code_t_p2p": 0.0,
+rl_code_v1/reward/t15_code_reward.py-44-    "code_p2p_regressed": 0.0, "code_touched_files": 0.0,
+--
+rl_code_v1/reward/t15_code_reward.py-149-    out["score_before_overlong"] = base
+rl_code_v1/reward/t15_code_reward.py-150-    out["score"] = base + ov["overlong_penalty"]
+rl_code_v1/reward/t15_code_reward.py-151-    # DDCA 정답 클러스터는 resolved 로만 가른다 — 부분점수를 섞으면 길이 신호가 오염된다
+rl_code_v1/reward/t15_code_reward.py:152:    out["answer_match"] = 1.0 if r.get("resolved") else 0.0
+rl_code_v1/reward/t15_code_reward.py-153-    return {k: _clean(v) for k, v in out.items()}
+rl_code_v1/reward/t15_code_reward.py-154-
+rl_code_v1/reward/t15_code_reward.py-155-
+rl_code_v1/reward/math/t01_math_reward.py-14-계약 (`t01_math_harness.py` 로 검증)
+rl_code_v1/reward/math/t01_math_reward.py-15-  compute_score_dict(data_source, solution_str, ground_truth, extra_info=None, **kw) -> dict
+rl_code_v1/reward/math/t01_math_reward.py-16-  compute_score(...) -> float
+rl_code_v1/reward/math/t01_math_reward.py:17:  필수 키 score / answer_match / score_before_overlong
+rl_code_v1/reward/math/t01_math_reward.py-18-  전 행 같은 키 집합 · float|int|str|bool 만 · 결정적
+rl_code_v1/reward/math/t01_math_reward.py-19-
+rl_code_v1/reward/math/t01_math_reward.py-20-sympy 는 **선택**입니다. 없으면 4단계까지만 돌고, 그 사실이 `math_sympy_available`
+--
+rl_code_v1/reward/math/t01_math_reward.py-221-
+rl_code_v1/reward/math/t01_math_reward.py-222-
+rl_code_v1/reward/math/t01_math_reward.py-223-# ─────────────────────────────────────────────────────────────── 계약
+rl_code_v1/reward/math/t01_math_reward.py:224:_KEYS = ("score", "answer_match", "score_before_overlong", "overlong_penalty",
+rl_code_v1/reward/math/t01_math_reward.py-225-         "overlong_fraction", "overlong_active", "at_response_limit",
+rl_code_v1/reward/math/t01_math_reward.py-226-         "resp_tokens", "resp_limit", "math_answer_format", "math_pred_empty",
+rl_code_v1/reward/math/t01_math_reward.py-227-         "math_gold_unparsed", "math_sympy_available",
+--
+rl_code_v1/reward/math/t01_math_reward.py-246-
+rl_code_v1/reward/math/t01_math_reward.py-247-    return {
+rl_code_v1/reward/math/t01_math_reward.py-248-        "score": float(base + pen),
+rl_code_v1/reward/math/t01_math_reward.py:249:        "answer_match": float(base),
+rl_code_v1/reward/math/t01_math_reward.py-250-        "score_before_overlong": float(base),
+rl_code_v1/reward/math/t01_math_reward.py-251-        "overlong_penalty": float(pen),
+rl_code_v1/reward/math/t01_math_reward.py-252-        "overlong_fraction": float(frac),
+rl_code_v1/docs/MATH_REWARD.md-9-  [OK ] gold(answer) 존재            결측 0행
+rl_code_v1/docs/MATH_REWARD.md-10-  [OK ] 예외·None·NaN·비허용타입 없음   위반 0건
+rl_code_v1/docs/MATH_REWARD.md-11-  [OK ] 전 행 키 집합 동일             1종
+rl_code_v1/docs/MATH_REWARD.md:12:  [OK ] 필수 키 'score' / 'answer_match' / 'score_before_overlong'
+rl_code_v1/docs/MATH_REWARD.md:13:  [OK ] answer_match ∈ {0,1}
+rl_code_v1/docs/MATH_REWARD.md-14-  [OK ] 정답 점수 > 오답 점수 (분리)     정답 min=1.000 / 오답 max=0.000
+rl_code_v1/docs/MATH_REWARD.md-15-  [OK ] 동일 입력 → 동일 출력(결정성)
+rl_code_v1/docs/MATH_REWARD.md-16-판정: 통과 — 본학습 연결 가능
+
+=================== PATTERN: static_pack ===================
+t01_math_reward_rubric/README.md-116-
+t01_math_reward_rubric/README.md-117-⚠ `calculate_log_probs=True` 와 병용 금지 — rollout log-prob은 비계 조건 값이라
+t01_math_reward_rubric/README.md-118-old로 쓰면 importance ratio가 어긋난다.
+t01_math_reward_rubric/README.md:119:⚠ `static_pack` 은 지정하지 않는다. 전수에 루브릭이 있어 폴백이 필요 없고,
+t01_math_reward_rubric/README.md-120-지정하면 데이터 누락이 조용히 덮인다.
+t01_math_reward_rubric/README.md-121-
+t01_math_reward_rubric/README.md-122-## 루브릭 효과 — 있는 그대로
+
+=================== PATTERN: load_rubrics ===================
+t01_math_reward_rubric/README.md-69-
+t01_math_reward_rubric/README.md-70-## 루브릭 — `rubrics/rubric_math.jsonl`
+t01_math_reward_rubric/README.md-71-
+t01_math_reward_rubric/README.md:72:T15 `t15_multitask_build.py` 의 `load_rubrics()` 규격 그대로다(그 함수로 읽는 것을 확인했다).
+t01_math_reward_rubric/README.md-73-7개 카테고리 × ko/en, 문항당 3기준, 4,911행 전수.
+t01_math_reward_rubric/README.md-74-
+t01_math_reward_rubric/README.md-75-```jsonl
+--
+t01_math_reward_rubric/README.md-94-
+t01_math_reward_rubric/README.md-95-```python
+t01_math_reward_rubric/README.md-96-RUB = {"math": ".../rubrics/rubric_math.jsonl"}
+t01_math_reward_rubric/README.md:97:rub = load_rubrics(RUB["math"])          # index → criteria
+t01_math_reward_rubric/README.md-98-ei["rubrics"] = rub.get(row["uid"])      # list[RUBRIC_TYPE], JSON 문자열 아님
+t01_math_reward_rubric/README.md-99-ei["rubric_profile"] = "math"
+t01_math_reward_rubric/README.md-100-```
+
+=================== PATTERN: rubric_profile ===================
+t01_math_reward_rubric/README.md-96-RUB = {"math": ".../rubrics/rubric_math.jsonl"}
+t01_math_reward_rubric/README.md-97-rub = load_rubrics(RUB["math"])          # index → criteria
+t01_math_reward_rubric/README.md-98-ei["rubrics"] = rub.get(row["uid"])      # list[RUBRIC_TYPE], JSON 문자열 아님
+t01_math_reward_rubric/README.md:99:ei["rubric_profile"] = "math"
+t01_math_reward_rubric/README.md-100-```
+t01_math_reward_rubric/README.md-101-
+t01_math_reward_rubric/README.md-102-### 학습 기동
+rl_code_v1/docs/MATH_REWARD.md-117-넘어갑니다. **보상 함수는 처음부터 끝까지 rule 기반**이고, 비계는 rollout 생성에만
+rl_code_v1/docs/MATH_REWARD.md-118-관여합니다(advantage 에는 개입하지 않음).
+rl_code_v1/docs/MATH_REWARD.md-119-
+rl_code_v1/docs/MATH_REWARD.md:120:수학은 키트의 `MATH` 프로파일을 그대로 씁니다 (`rubric_profile="math"`).
+rl_code_v1/docs/MATH_REWARD.md-121-탈락 순위: `answer_hint`/`step_hint`(0) → `strategy`/`subgoal`(1) →
+rl_code_v1/docs/MATH_REWARD.md-122-`key_condition`(2) → `show_work`/`self_check`(3) → `answer_format`/`no_skip`(4).
+rl_code_v1/docs/MATH_REWARD.md-123-
+
+=================== PATTERN: calculate_log_probs ===================
+t01_math_reward_rubric/README.md-109-  +actor_rollout_ref.rollout.custom.rusca.enable=True \
+t01_math_reward_rubric/README.md-110-  +actor_rollout_ref.rollout.custom.rusca.profile=math \
+t01_math_reward_rubric/README.md-111-  +actor_rollout_ref.rollout.custom.rusca.total_steps=$STEPS \
+t01_math_reward_rubric/README.md:112:  actor_rollout_ref.rollout.calculate_log_probs=False \
+t01_math_reward_rubric/README.md-113-  custom_reward_function.path=.../t01_math_reward.py \
+t01_math_reward_rubric/README.md-114-  custom_reward_function.name=compute_score_dict
+t01_math_reward_rubric/README.md-115-```
+t01_math_reward_rubric/README.md-116-
+t01_math_reward_rubric/README.md:117:⚠ `calculate_log_probs=True` 와 병용 금지 — rollout log-prob은 비계 조건 값이라
+t01_math_reward_rubric/README.md-118-old로 쓰면 importance ratio가 어긋난다.
+t01_math_reward_rubric/README.md-119-⚠ `static_pack` 은 지정하지 않는다. 전수에 루브릭이 있어 폴백이 필요 없고,
+t01_math_reward_rubric/README.md-120-지정하면 데이터 누락이 조용히 덮인다.
+
+=================== PATTERN: kit ===================
+rl_code_v1/docs/MATH_REWARD.md-106-T01_SCORER=rl_v1/reward/math/t01_math_reward.py \
+rl_code_v1/docs/MATH_REWARD.md-107-T01_DATA=build/math_fixture.jsonl \
+rl_code_v1/docs/MATH_REWARD.md-108-RESP_FILE=build/math_fixture_resp.jsonl \
+rl_code_v1/docs/MATH_REWARD.md:109:GOLD_KEY=answer N=100 python 참고자료/ex/t01_math_kit/t01_math_harness.py
+rl_code_v1/docs/MATH_REWARD.md-110-```
+rl_code_v1/docs/MATH_REWARD.md-111-
+rl_code_v1/docs/MATH_REWARD.md-112----
+

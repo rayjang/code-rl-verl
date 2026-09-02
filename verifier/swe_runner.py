@@ -80,10 +80,15 @@ class SweSmithRunner:
             wd = tempfile.mkdtemp(dir=self.run_dir, prefix="extract." + iid[:40] + ".")
             os.makedirs(f"{wd}/tb", exist_ok=True)
             tf_args = " ".join(shlex.quote(t) for t in test_files)
-            script = (f"cd /testbed && git -c safe.directory='*' archive origin/{shlex.quote(iid)} | tar -x -C /wd/tb && "
-                      f"git -c safe.directory='*' archive main -- {tf_args} | tar -x -C /wd/tb && echo EXTRACT_OK")
+            # older git inside the images ignores `-c safe.directory`; a global config file is honoured
+            with open(f"{wd}/gitconfig", "w") as f:
+                f.write("[safe]\n\tdirectory = *\n")
+            shutil.copy(f"{wd}/gitconfig", f"{wd}/.gitconfig")
+            script = (f"cd /testbed && git archive origin/{shlex.quote(iid)} | tar -x -C /wd/tb && "
+                      f"git archive main -- {tf_args} | tar -x -C /wd/tb && echo EXTRACT_OK")
             try:
-                r = subprocess.run([self.sing, "exec", *self._iso_flags(), "--bind", f"{wd}:/wd", sif, "bash", "-c", script],
+                r = subprocess.run([self.sing, "exec", *self._iso_flags(), "--bind", f"{wd}:/wd",
+                                    "--env", "HOME=/wd,GIT_CONFIG_GLOBAL=/wd/gitconfig", sif, "bash", "-c", script],
                                    capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=self.extract_timeout)
             except subprocess.TimeoutExpired:
                 shutil.rmtree(wd, ignore_errors=True)

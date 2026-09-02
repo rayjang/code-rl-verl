@@ -1,0 +1,1197 @@
+{
+ "per_file": {
+  "t15_code_rl_core_train": {
+   "file": "/scratch/r919a03/code_verl_test/sources/rl_code_v1/data/parquet/t15_code_rl_core_train.parquet",
+   "rows": 6516,
+   "columns": [
+    "data_source",
+    "prompt",
+    "ability",
+    "reward_model",
+    "extra_info",
+    "_source_meta"
+   ],
+   "schema": "data_source: string\nprompt: list<element: struct<role: string, content: string>>\n  child 0, element: struct<role: string, content: string>\n      child 0, role: string\n      child 1, content: string\nability: string\nreward_model: struct<ground_truth: string, style: string>\n  child 0, ground_truth: string\n  child 1, style: string\nextra_info: struct<index: string, split: string, task_tag: string, rubric_profile: string, rubrics: list<element (... 444 chars omitted)\n  child 0, index: string\n  child 1, split: string\n  child 2, task_tag: string\n  child 3, rubric_profile: string\n  child 4, rubrics: list<element: struct<criterion: string, points: double, tags: struct<judge: bool, inject: bool, scaf (... 72 chars omitted)\n      child 0, element: struct<criterion: string, points: double, tags: struct<judge: bool, inject: bool, scaffold_rank: int (... 57 chars omitted)\n          child 0, criterion: string\n          child 1, points: double\n          child 2, tags: struct<judge: bool, inject: bool, scaffold_rank: int64, scaffold_kind: string, verify: string, rewar (... 8 chars omitted)\n              child 0, judge: bool\n              child 1, inject: bool\n              child 2, scaffold_rank: int64\n              child 3, scaffold_kind: string\n              child 4, verify: string\n              child 5, reward: bool\n  child 5, variant_type: string\n  child 6, instance_id: string\n  child 7, exec_backend: string\n  child 8, harness: string\n  child 9, p_hat: double\n  child 10, p_hat_source: string\n  child 11, difficulty_0_10: int64\n  child 12, difficulty_band: string\n  child 13, n_f2p: int64\n  child 14, n_p2p: int64\n  child 15, n_tests: int64\n  child 16, context_bucket: int64\n  child 17, lang: string\n  child 18, image_name: string\n  child 19, repo: string\n_source_meta: struct<dataset: string, variant_type: string>\n  child 0, dataset: string\n  child 1, variant_type: string",
+   "data_source": {
+    "t15_unittest_impl": 5781,
+    "t15_repo_patch": 735
+   },
+   "ability": {
+    "code_impl_unittest": 5781,
+    "swe_patch_longctx": 735
+   },
+   "reward_model.style": {
+    "rule": 6516
+   },
+   "reward_model.ground_truth_nonempty": 6516,
+   "extra_info.split": {
+    "train": 6516
+   },
+   "extra_info.task_tag": {
+    "code": 6516
+   },
+   "extra_info.rubric_profile": {
+    "code": 6516
+   },
+   "extra_info.variant_type": {
+    "ut_function": 2563,
+    "ut_pytest": 1963,
+    "ut_stdio": 1255,
+    "swe_32k": 344,
+    "swe_64k": 258,
+    "swe_128k": 133
+   },
+   "extra_info.exec_backend": {
+    "unittest": 5781,
+    "swe_smith": 735
+   },
+   "extra_info.harness": {
+    "pytest": 2698,
+    "function": 2563,
+    "stdio": 1255
+   },
+   "extra_info.p_hat_source": {
+    "measured_pass_at_k(n=2,k=8)": 4742,
+    "judge_label_mapped": 735,
+    "measured_pass_at_k(n=2,k=16)": 630,
+    "measured_pass_at_k(n=1,k=4)": 367,
+    "measured_pass_at_k(n=1,k=8)": 42
+   },
+   "extra_info.difficulty_band": {
+    "learnable": 6516
+   },
+   "extra_info.lang": {
+    "en": 6112,
+    "ko": 404
+   },
+   "extra_info.context_bucket": {
+    "0": 5781,
+    "32768": 344,
+    "65536": 258,
+    "131072": 133
+   },
+   "extra_info.difficulty_0_10": {
+    "8": 2505,
+    "5": 2146,
+    "2": 1179,
+    "6": 448,
+    "4": 238
+   },
+   "extra_info.p_hat_nonnull": 6516,
+   "extra_info.p_hat_values": {
+    "0.25": 2505,
+    "0.5": 2146,
+    "0.75": 1179,
+    "0.4": 270,
+    "0.6": 203,
+    "0.375": 178,
+    "0.625": 35
+   },
+   "extra_info.image_name_nonempty": 6516,
+   "extra_info.repo_nonempty": 735,
+   "extra_info.repo_values_by_source": {
+    "t15_unittest_impl": {
+     "": 5781
+    },
+    "t15_repo_patch": {
+     "swesmith/pudo__dataset.5c2dc8d3": 40,
+     "swesmith/pygments__pygments.27649ebb": 40,
+     "swesmith/mahmoud__boltons.3bfcfdd0": 40,
+     "swesmith/pyupio__safety.7654596b": 40,
+     "swesmith/agronholm__exceptiongroup.0b4f4937": 40,
+     "swesmith/cknd__stackprinter.219fcc52": 40,
+     "swesmith/oauthlib__oauthlib.1fd52536": 40,
+     "swesmith/Suor__funcy.207a7810": 40,
+     "swesmith/agronholm__typeguard.b6a7e438": 39,
+     "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7": 39,
+     "swesmith/jd__tenacity.0d40e76f": 39,
+     "swesmith/joke2k__faker.8b401a7d": 39,
+     "swesmith/jaraco__inflect.c079a96a": 39,
+     "swesmith/PyCQA__flake8.cf1542ce": 38,
+     "swesmith/Knio__dominate.9082227e": 38,
+     "swesmith/bottlepy__bottle.a8dfef30": 38,
+     "swesmith/luozhouyang__python-string-similarity.115acaac": 37,
+     "swesmith/pdfminer__pdfminer.six.1a8bd2f7": 37,
+     "swesmith/cantools__cantools.0c6a7871": 32
+    }
+   },
+   "extra_info.rubrics_len": {
+    "5": 3692,
+    "6": 2824
+   },
+   "extra_info.rubrics_example": [
+    {
+     "criterion": "Make these currently failing tests pass: test_be_cdd_add, test_be_example_cdd, test_be_example_cdd_repr.",
+     "points": 2.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 0,
+      "scaffold_kind": "hint",
+      "verify": "failing_test",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Locate the root cause first, then make the smallest edit that fixes it.",
+     "points": 1.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 1,
+      "scaffold_kind": "hint",
+      "verify": "approach",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Handle the boundary conditions the issue describes, not just the happy path.",
+     "points": 1.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 2,
+      "scaffold_kind": "hint",
+      "verify": "edge_cases",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Do not break any test that currently passes.",
+     "points": 1.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 3,
+      "scaffold_kind": "hint",
+      "verify": "tests_pass",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Reply with one unified diff inside a ```diff block.",
+     "points": 1.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 4,
+      "scaffold_kind": "hint",
+      "verify": "output_format",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Change only what the issue requires; no refactoring or reformatting.",
+     "points": 0.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 4,
+      "scaffold_kind": "hint",
+      "verify": "no_extra",
+      "reward": false
+     }
+    }
+   ],
+   "extra_info.n_tests_dist_unittest": {
+    "n": 5781,
+    "min": 3,
+    "p10": 5,
+    "p25": 6,
+    "median": 9,
+    "p75": 10,
+    "p90": 12,
+    "p99": 12,
+    "max": 12,
+    "mean": 8.3
+   },
+   "extra_info.n_f2p_dist_swe": {
+    "n": 735,
+    "min": 1,
+    "p10": 1,
+    "p25": 2,
+    "median": 5,
+    "p75": 14,
+    "p90": 48,
+    "p99": 185,
+    "max": 2732,
+    "mean": 19.6
+   },
+   "extra_info.n_f2p_dist_unittest": {
+    "n": 5781,
+    "min": 0,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "p99": 0,
+    "max": 0,
+    "mean": 0.0
+   },
+   "_source_meta.dataset": {
+    "kexaone_pool": 5781,
+    "swe_smith": 735
+   },
+   "_source_meta.variant_type": {
+    "ut_function": 2563,
+    "ut_pytest": 1963,
+    "ut_stdio": 1255,
+    "swe_32k": 344,
+    "swe_64k": 258,
+    "swe_128k": 133
+   },
+   "index==instance_id": 6516,
+   "ground_truth==instance_id": 6516,
+   "ground_truth!=instance_id_examples": [],
+   "unique_instance_id": 6516,
+   "dup_instance_ids": [],
+   "join_to_index_by_instance_id": {
+    "t15_code_swesmith": 735,
+    "t15_code_unittest": 5781
+   },
+   "missing_join_examples": [],
+   "extra_info_vs_learnable_mismatch_counts": {},
+   "judge_verdict_of_swe_rows": {
+    "drop": 421,
+    "keep": 312,
+    "fix": 2
+   },
+   "prompt_role_sequences": {
+    "[\"system\", \"user\"]": 6516
+   },
+   "prompt_n_messages": {
+    "2": 6516
+   },
+   "prompt_len_chars_dist": {
+    "n": 6516,
+    "min": 222,
+    "p10": 486,
+    "p25": 606,
+    "median": 766,
+    "p75": 1046,
+    "p90": 90728,
+    "p99": 458702,
+    "max": 562282,
+    "mean": 23669.8
+   },
+   "prompt_len_tokens_est_dist": {
+    "n": 6516,
+    "min": 63,
+    "p10": 139,
+    "p25": 173,
+    "median": 219,
+    "p75": 299,
+    "p90": 25922,
+    "p99": 131058,
+    "max": 160652,
+    "mean": 6763
+   },
+   "prompt_len_chars_dist_by_source": {
+    "t15_unittest_impl": {
+     "n": 5781,
+     "min": 222,
+     "p10": 473,
+     "p25": 583,
+     "median": 729,
+     "p75": 916,
+     "p90": 1149,
+     "p99": 1637,
+     "max": 3984,
+     "mean": 778.3
+    },
+    "t15_repo_patch": {
+     "n": 735,
+     "min": 75400,
+     "p10": 80841,
+     "p25": 104449,
+     "median": 137979,
+     "p75": 261988,
+     "p90": 440321,
+     "p99": 550572,
+     "max": 562282,
+     "mean": 203717.9
+    }
+   },
+   "prompt_len_chars_dist_by_variant": {
+    "ut_function": {
+     "n": 2563,
+     "min": 277,
+     "p10": 557,
+     "p25": 659,
+     "median": 766,
+     "p75": 931,
+     "p90": 1162,
+     "p99": 1676,
+     "max": 3984,
+     "mean": 823.6
+    },
+    "ut_pytest": {
+     "n": 1963,
+     "min": 222,
+     "p10": 410,
+     "p25": 482,
+     "median": 574,
+     "p75": 696,
+     "p90": 834,
+     "p99": 1226,
+     "max": 2202,
+     "mean": 605.8
+    },
+    "ut_stdio": {
+     "n": 1255,
+     "min": 295,
+     "p10": 630,
+     "p25": 756,
+     "median": 920,
+     "p75": 1119,
+     "p90": 1305,
+     "p99": 1734,
+     "max": 2328,
+     "mean": 955.7
+    },
+    "swe_32k": {
+     "n": 344,
+     "min": 75400,
+     "p10": 79389,
+     "p25": 90863,
+     "median": 99911,
+     "p75": 115255,
+     "p90": 125188,
+     "p99": 135082,
+     "max": 140081,
+     "mean": 101679.7
+    },
+    "swe_64k": {
+     "n": 258,
+     "min": 136457,
+     "p10": 156750,
+     "p25": 186802,
+     "median": 230089,
+     "p75": 253080,
+     "p90": 267554,
+     "p99": 286138,
+     "max": 286376,
+     "mean": 217326.3
+    },
+    "swe_128k": {
+     "n": 133,
+     "min": 261058,
+     "p10": 321954,
+     "p25": 361436,
+     "median": 449312,
+     "p75": 533366,
+     "p90": 549102,
+     "p99": 559779,
+     "max": 562282,
+     "mean": 441238.1
+    }
+   },
+   "prompt_gt_30k_tokens_est": 550,
+   "prompt_gt_32768_tokens_est": 482,
+   "prompt_gt_30k_tokens_by_variant": {
+    "swe_64k": 258,
+    "swe_32k": 159,
+    "swe_128k": 133
+   },
+   "prompt_empty_rows": 0,
+   "system_prompt_variants": {
+    "e8748b44|t15_unittest_impl": 5781,
+    "0b166d4e|t15_repo_patch": 735
+   },
+   "prompt_text_dup_groups": 4
+  },
+  "t15_code_rl_core_val": {
+   "file": "/scratch/r919a03/code_verl_test/sources/rl_code_v1/data/parquet/t15_code_rl_core_val.parquet",
+   "rows": 162,
+   "columns": [
+    "data_source",
+    "prompt",
+    "ability",
+    "reward_model",
+    "extra_info",
+    "_source_meta"
+   ],
+   "schema": "data_source: string\nprompt: list<element: struct<role: string, content: string>>\n  child 0, element: struct<role: string, content: string>\n      child 0, role: string\n      child 1, content: string\nability: string\nreward_model: struct<ground_truth: string, style: string>\n  child 0, ground_truth: string\n  child 1, style: string\nextra_info: struct<index: string, split: string, task_tag: string, rubric_profile: string, rubrics: list<element (... 444 chars omitted)\n  child 0, index: string\n  child 1, split: string\n  child 2, task_tag: string\n  child 3, rubric_profile: string\n  child 4, rubrics: list<element: struct<criterion: string, points: double, tags: struct<judge: bool, inject: bool, scaf (... 72 chars omitted)\n      child 0, element: struct<criterion: string, points: double, tags: struct<judge: bool, inject: bool, scaffold_rank: int (... 57 chars omitted)\n          child 0, criterion: string\n          child 1, points: double\n          child 2, tags: struct<judge: bool, inject: bool, scaffold_rank: int64, scaffold_kind: string, verify: string, rewar (... 8 chars omitted)\n              child 0, judge: bool\n              child 1, inject: bool\n              child 2, scaffold_rank: int64\n              child 3, scaffold_kind: string\n              child 4, verify: string\n              child 5, reward: bool\n  child 5, variant_type: string\n  child 6, instance_id: string\n  child 7, exec_backend: string\n  child 8, harness: string\n  child 9, p_hat: double\n  child 10, p_hat_source: string\n  child 11, difficulty_0_10: int64\n  child 12, difficulty_band: string\n  child 13, n_f2p: int64\n  child 14, n_p2p: int64\n  child 15, n_tests: int64\n  child 16, context_bucket: int64\n  child 17, lang: string\n  child 18, image_name: string\n  child 19, repo: string\n_source_meta: struct<dataset: string, variant_type: string>\n  child 0, dataset: string\n  child 1, variant_type: string",
+   "data_source": {
+    "t15_unittest_impl": 146,
+    "t15_repo_patch": 16
+   },
+   "ability": {
+    "code_impl_unittest": 146,
+    "swe_patch_longctx": 16
+   },
+   "reward_model.style": {
+    "rule": 162
+   },
+   "reward_model.ground_truth_nonempty": 162,
+   "extra_info.split": {
+    "validation": 162
+   },
+   "extra_info.task_tag": {
+    "code": 162
+   },
+   "extra_info.rubric_profile": {
+    "code": 162
+   },
+   "extra_info.variant_type": {
+    "ut_function": 65,
+    "ut_pytest": 49,
+    "ut_stdio": 32,
+    "swe_32k": 7,
+    "swe_64k": 5,
+    "swe_128k": 4
+   },
+   "extra_info.exec_backend": {
+    "unittest": 146,
+    "swe_smith": 16
+   },
+   "extra_info.harness": {
+    "pytest": 65,
+    "function": 65,
+    "stdio": 32
+   },
+   "extra_info.p_hat_source": {
+    "measured_pass_at_k(n=2,k=8)": 82,
+    "measured_pass_at_k(n=1,k=4)": 52,
+    "judge_label_mapped": 16,
+    "measured_pass_at_k(n=2,k=16)": 6,
+    "measured_pass_at_k(n=1,k=8)": 6
+   },
+   "extra_info.difficulty_band": {
+    "learnable": 162
+   },
+   "extra_info.lang": {
+    "en": 155,
+    "ko": 7
+   },
+   "extra_info.context_bucket": {
+    "0": 146,
+    "32768": 7,
+    "65536": 5,
+    "131072": 4
+   },
+   "extra_info.difficulty_0_10": {
+    "8": 63,
+    "5": 54,
+    "2": 28,
+    "6": 10,
+    "4": 7
+   },
+   "extra_info.p_hat_nonnull": 162,
+   "extra_info.p_hat_values": {
+    "0.25": 63,
+    "0.5": 54,
+    "0.75": 28,
+    "0.4": 6,
+    "0.6": 4,
+    "0.375": 4,
+    "0.625": 3
+   },
+   "extra_info.image_name_nonempty": 162,
+   "extra_info.repo_nonempty": 16,
+   "extra_info.repo_values_by_source": {
+    "t15_unittest_impl": {
+     "": 146
+    },
+    "t15_repo_patch": {
+     "swesmith/pdfminer__pdfminer.six.1a8bd2f7": 3,
+     "swesmith/luozhouyang__python-string-similarity.115acaac": 3,
+     "swesmith/Knio__dominate.9082227e": 2,
+     "swesmith/PyCQA__flake8.cf1542ce": 2,
+     "swesmith/jd__tenacity.0d40e76f": 1,
+     "swesmith/agronholm__typeguard.b6a7e438": 1,
+     "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7": 1,
+     "swesmith/bottlepy__bottle.a8dfef30": 1,
+     "swesmith/joke2k__faker.8b401a7d": 1,
+     "swesmith/jaraco__inflect.c079a96a": 1
+    }
+   },
+   "extra_info.rubrics_len": {
+    "5": 96,
+    "6": 66
+   },
+   "extra_info.rubrics_example": [
+    {
+     "criterion": "Make these currently failing tests pass: test_ascii85decode, test_asciihexdecode.",
+     "points": 2.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 0,
+      "scaffold_kind": "hint",
+      "verify": "failing_test",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Locate the root cause first, then make the smallest edit that fixes it.",
+     "points": 1.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 1,
+      "scaffold_kind": "hint",
+      "verify": "approach",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Handle the boundary conditions the issue describes, not just the happy path.",
+     "points": 1.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 2,
+      "scaffold_kind": "hint",
+      "verify": "edge_cases",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Do not break any test that currently passes.",
+     "points": 1.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 3,
+      "scaffold_kind": "hint",
+      "verify": "tests_pass",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Reply with one unified diff inside a ```diff block.",
+     "points": 1.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 4,
+      "scaffold_kind": "hint",
+      "verify": "output_format",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Change only what the issue requires; no refactoring or reformatting.",
+     "points": 0.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 4,
+      "scaffold_kind": "hint",
+      "verify": "no_extra",
+      "reward": false
+     }
+    }
+   ],
+   "extra_info.n_tests_dist_unittest": {
+    "n": 146,
+    "min": 3,
+    "p10": 5,
+    "p25": 6,
+    "median": 9,
+    "p75": 10,
+    "p90": 12,
+    "p99": 12,
+    "max": 12,
+    "mean": 8.3
+   },
+   "extra_info.n_f2p_dist_swe": {
+    "n": 16,
+    "min": 1,
+    "p10": 1,
+    "p25": 2,
+    "median": 7,
+    "p75": 9,
+    "p90": 24,
+    "p99": 60,
+    "max": 60,
+    "mean": 10.2
+   },
+   "extra_info.n_f2p_dist_unittest": {
+    "n": 146,
+    "min": 0,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "p99": 0,
+    "max": 0,
+    "mean": 0.0
+   },
+   "_source_meta.dataset": {
+    "kexaone_pool": 146,
+    "swe_smith": 16
+   },
+   "_source_meta.variant_type": {
+    "ut_function": 65,
+    "ut_pytest": 49,
+    "ut_stdio": 32,
+    "swe_32k": 7,
+    "swe_64k": 5,
+    "swe_128k": 4
+   },
+   "index==instance_id": 162,
+   "ground_truth==instance_id": 162,
+   "ground_truth!=instance_id_examples": [],
+   "unique_instance_id": 162,
+   "dup_instance_ids": [],
+   "join_to_index_by_instance_id": {
+    "t15_code_swesmith": 16,
+    "t15_code_unittest": 146
+   },
+   "missing_join_examples": [],
+   "extra_info_vs_learnable_mismatch_counts": {},
+   "judge_verdict_of_swe_rows": {
+    "drop": 9,
+    "keep": 7
+   },
+   "prompt_role_sequences": {
+    "[\"system\", \"user\"]": 162
+   },
+   "prompt_n_messages": {
+    "2": 162
+   },
+   "prompt_len_chars_dist": {
+    "n": 162,
+    "min": 335,
+    "p10": 483,
+    "p25": 624,
+    "median": 795,
+    "p75": 1040,
+    "p90": 1623,
+    "p99": 323384,
+    "max": 443715,
+    "mean": 21021.9
+   },
+   "prompt_len_tokens_est_dist": {
+    "n": 162,
+    "min": 96,
+    "p10": 138,
+    "p25": 178,
+    "median": 227,
+    "p75": 297,
+    "p90": 464,
+    "p99": 92395,
+    "max": 126776,
+    "mean": 6006
+   },
+   "prompt_len_chars_dist_by_source": {
+    "t15_unittest_impl": {
+     "n": 146,
+     "min": 335,
+     "p10": 477,
+     "p25": 598,
+     "median": 740,
+     "p75": 957,
+     "p90": 1155,
+     "p99": 1622,
+     "max": 1623,
+     "mean": 798.6
+    },
+    "t15_repo_patch": {
+     "n": 16,
+     "min": 77189,
+     "p10": 79250,
+     "p25": 91098,
+     "median": 187376,
+     "p75": 285919,
+     "p90": 431826,
+     "p99": 443715,
+     "max": 443715,
+     "mean": 205559.6
+    }
+   },
+   "prompt_len_chars_dist_by_variant": {
+    "ut_function": {
+     "n": 65,
+     "min": 591,
+     "p10": 631,
+     "p25": 680,
+     "median": 797,
+     "p75": 969,
+     "p90": 1080,
+     "p99": 1622,
+     "max": 1623,
+     "mean": 852.9
+    },
+    "ut_pytest": {
+     "n": 49,
+     "min": 335,
+     "p10": 406,
+     "p25": 461,
+     "median": 527,
+     "p75": 630,
+     "p90": 724,
+     "p99": 1215,
+     "max": 1215,
+     "mean": 573.3
+    },
+    "ut_stdio": {
+     "n": 32,
+     "min": 564,
+     "p10": 763,
+     "p25": 879,
+     "median": 1013,
+     "p75": 1160,
+     "p90": 1328,
+     "p99": 1590,
+     "max": 1590,
+     "mean": 1033.4
+    },
+    "swe_32k": {
+     "n": 7,
+     "min": 77189,
+     "p10": 78618,
+     "p25": 79250,
+     "median": 89572,
+     "p75": 91098,
+     "p90": 91442,
+     "p99": 109842,
+     "max": 109842,
+     "mean": 88144.4
+    },
+    "swe_64k": {
+     "n": 5,
+     "min": 159154,
+     "p10": 159154,
+     "p25": 187376,
+     "median": 249165,
+     "p75": 268324,
+     "p90": 285919,
+     "p99": 285919,
+     "max": 285919,
+     "mean": 229987.6
+    },
+    "swe_128k": {
+     "n": 4,
+     "min": 323080,
+     "p10": 323080,
+     "p25": 323384,
+     "median": 431826,
+     "p75": 431826,
+     "p90": 443715,
+     "p99": 443715,
+     "max": 443715,
+     "mean": 380501.2
+    }
+   },
+   "prompt_gt_30k_tokens_est": 10,
+   "prompt_gt_32768_tokens_est": 9,
+   "prompt_gt_30k_tokens_by_variant": {
+    "swe_64k": 5,
+    "swe_128k": 4,
+    "swe_32k": 1
+   },
+   "prompt_empty_rows": 0,
+   "system_prompt_variants": {
+    "e8748b44|t15_unittest_impl": 146,
+    "0b166d4e|t15_repo_patch": 16
+   },
+   "prompt_text_dup_groups": 0
+  },
+  "t15_code_rl_extended_train": {
+   "file": "/scratch/r919a03/code_verl_test/sources/rl_code_v1/data/parquet/t15_code_rl_extended_train.parquet",
+   "rows": 16464,
+   "columns": [
+    "data_source",
+    "prompt",
+    "ability",
+    "reward_model",
+    "extra_info",
+    "_source_meta"
+   ],
+   "schema": "data_source: string\nprompt: list<element: struct<role: string, content: string>>\n  child 0, element: struct<role: string, content: string>\n      child 0, role: string\n      child 1, content: string\nability: string\nreward_model: struct<ground_truth: string, style: string>\n  child 0, ground_truth: string\n  child 1, style: string\nextra_info: struct<index: string, split: string, task_tag: string, rubric_profile: string, rubrics: list<element (... 444 chars omitted)\n  child 0, index: string\n  child 1, split: string\n  child 2, task_tag: string\n  child 3, rubric_profile: string\n  child 4, rubrics: list<element: struct<criterion: string, points: double, tags: struct<judge: bool, inject: bool, scaf (... 72 chars omitted)\n      child 0, element: struct<criterion: string, points: double, tags: struct<judge: bool, inject: bool, scaffold_rank: int (... 57 chars omitted)\n          child 0, criterion: string\n          child 1, points: double\n          child 2, tags: struct<judge: bool, inject: bool, scaffold_rank: int64, scaffold_kind: string, verify: string, rewar (... 8 chars omitted)\n              child 0, judge: bool\n              child 1, inject: bool\n              child 2, scaffold_rank: int64\n              child 3, scaffold_kind: string\n              child 4, verify: string\n              child 5, reward: bool\n  child 5, variant_type: string\n  child 6, instance_id: string\n  child 7, exec_backend: string\n  child 8, harness: string\n  child 9, p_hat: double\n  child 10, p_hat_source: string\n  child 11, difficulty_0_10: int64\n  child 12, difficulty_band: string\n  child 13, n_f2p: int64\n  child 14, n_p2p: int64\n  child 15, n_tests: int64\n  child 16, context_bucket: int64\n  child 17, lang: string\n  child 18, image_name: string\n  child 19, repo: string\n_source_meta: struct<dataset: string, variant_type: string>\n  child 0, dataset: string\n  child 1, variant_type: string",
+   "data_source": {
+    "t15_unittest_impl": 16464
+   },
+   "ability": {
+    "code_impl_unittest": 16464
+   },
+   "reward_model.style": {
+    "rule": 16464
+   },
+   "reward_model.ground_truth_nonempty": 16464,
+   "extra_info.split": {
+    "train": 16464
+   },
+   "extra_info.task_tag": {
+    "code": 16464
+   },
+   "extra_info.rubric_profile": {
+    "code": 16464
+   },
+   "extra_info.variant_type": {
+    "ut_function": 9902,
+    "ut_pytest": 6562
+   },
+   "extra_info.exec_backend": {
+    "unittest": 16464
+   },
+   "extra_info.harness": {
+    "function": 9902,
+    "pytest": 6562
+   },
+   "extra_info.p_hat_source": {
+    "unmeasured": 16464
+   },
+   "extra_info.difficulty_band": {
+    "unmeasured": 16464
+   },
+   "extra_info.lang": {
+    "en": 15644,
+    "ko": 820
+   },
+   "extra_info.context_bucket": {
+    "0": 16464
+   },
+   "extra_info.difficulty_0_10": {
+    "None": 16464
+   },
+   "extra_info.p_hat_nonnull": 0,
+   "extra_info.p_hat_values": {
+    "None": 16464
+   },
+   "extra_info.image_name_nonempty": 16464,
+   "extra_info.repo_nonempty": 0,
+   "extra_info.repo_values_by_source": {
+    "t15_unittest_impl": {
+     "": 16464
+    }
+   },
+   "extra_info.rubrics_len": {
+    "5": 9082,
+    "6": 7382
+   },
+   "extra_info.rubrics_example": [
+    {
+     "criterion": "State the algorithm in one line before writing the code.",
+     "points": 1.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 1,
+      "scaffold_kind": "hint",
+      "verify": "approach",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Handle empty input, single element, and boundary values.",
+     "points": 1.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 2,
+      "scaffold_kind": "hint",
+      "verify": "edge_cases",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Keep the solution within the stated time limit for the largest input.",
+     "points": 1.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 2,
+      "scaffold_kind": "hint",
+      "verify": "complexity",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Reply with one ```python code block containing the full solution.",
+     "points": 1.0,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 4,
+      "scaffold_kind": "hint",
+      "verify": "output_format",
+      "reward": false
+     }
+    },
+    {
+     "criterion": "Do not print anything the problem did not ask for.",
+     "points": 0.5,
+     "tags": {
+      "judge": false,
+      "inject": true,
+      "scaffold_rank": 4,
+      "scaffold_kind": "hint",
+      "verify": "no_extra",
+      "reward": false
+     }
+    }
+   ],
+   "extra_info.n_tests_dist_unittest": {
+    "n": 16464,
+    "min": 3,
+    "p10": 4,
+    "p25": 6,
+    "median": 8,
+    "p75": 10,
+    "p90": 10,
+    "p99": 10,
+    "max": 13,
+    "mean": 7.5
+   },
+   "extra_info.n_f2p_dist_swe": {},
+   "extra_info.n_f2p_dist_unittest": {
+    "n": 16464,
+    "min": 0,
+    "p10": 0,
+    "p25": 0,
+    "median": 0,
+    "p75": 0,
+    "p90": 0,
+    "p99": 0,
+    "max": 0,
+    "mean": 0.0
+   },
+   "_source_meta.dataset": {
+    "kexaone_pool_ext": 16464
+   },
+   "_source_meta.variant_type": {
+    "ut_function": 9902,
+    "ut_pytest": 6562
+   },
+   "index==instance_id": 16464,
+   "ground_truth==instance_id": 16464,
+   "ground_truth!=instance_id_examples": [],
+   "unique_instance_id": 16464,
+   "dup_instance_ids": [],
+   "join_to_index_by_instance_id": {
+    "t15_code_unittest_ext": 16464
+   },
+   "missing_join_examples": [],
+   "extra_info_vs_learnable_mismatch_counts": {},
+   "judge_verdict_of_swe_rows": {},
+   "prompt_role_sequences": {
+    "[\"system\", \"user\"]": 16464
+   },
+   "prompt_n_messages": {
+    "2": 16464
+   },
+   "prompt_len_chars_dist": {
+    "n": 16464,
+    "min": 212,
+    "p10": 436,
+    "p25": 539,
+    "median": 684,
+    "p75": 851,
+    "p90": 1061,
+    "p99": 1577,
+    "max": 2511,
+    "mean": 724.4
+   },
+   "prompt_len_tokens_est_dist": {
+    "n": 16464,
+    "min": 61,
+    "p10": 125,
+    "p25": 154,
+    "median": 195,
+    "p75": 243,
+    "p90": 303,
+    "p99": 451,
+    "max": 717,
+    "mean": 207
+   },
+   "prompt_len_chars_dist_by_source": {
+    "t15_unittest_impl": {
+     "n": 16464,
+     "min": 212,
+     "p10": 436,
+     "p25": 539,
+     "median": 684,
+     "p75": 851,
+     "p90": 1061,
+     "p99": 1577,
+     "max": 2511,
+     "mean": 724.4
+    }
+   },
+   "prompt_len_chars_dist_by_variant": {
+    "ut_function": {
+     "n": 9902,
+     "min": 212,
+     "p10": 532,
+     "p25": 646,
+     "median": 771,
+     "p75": 938,
+     "p90": 1167,
+     "p99": 1693,
+     "max": 2511,
+     "mean": 817.6
+    },
+    "ut_pytest": {
+     "n": 6562,
+     "min": 223,
+     "p10": 394,
+     "p25": 460,
+     "median": 553,
+     "p75": 672,
+     "p90": 809,
+     "p99": 1183,
+     "max": 2183,
+     "mean": 583.8
+    }
+   },
+   "prompt_gt_30k_tokens_est": 0,
+   "prompt_gt_32768_tokens_est": 0,
+   "prompt_gt_30k_tokens_by_variant": {},
+   "prompt_empty_rows": 0,
+   "system_prompt_variants": {
+    "e8748b44|t15_unittest_impl": 16464
+   },
+   "prompt_text_dup_groups": 5
+  }
+ },
+ "split": {
+  "core_train_ids": 6516,
+  "core_val_ids": 162,
+  "ext_ids": 16464,
+  "train&val": 0,
+  "train&ext": 0,
+  "val&ext": 0,
+  "val_data_source": {
+   "t15_unittest_impl": 146,
+   "t15_repo_patch": 16
+  },
+  "val_variant": {
+   "ut_function": 65,
+   "ut_pytest": 49,
+   "ut_stdio": 32,
+   "swe_32k": 7,
+   "swe_64k": 5,
+   "swe_128k": 4
+  },
+  "val_split_field": {
+   "validation": 162
+  },
+  "train_split_field": {
+   "train": 6516
+  },
+  "ext_split_field": {
+   "train": 16464
+  },
+  "swe_repos_train": [
+   "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7",
+   "swesmith/Knio__dominate.9082227e",
+   "swesmith/PyCQA__flake8.cf1542ce",
+   "swesmith/Suor__funcy.207a7810",
+   "swesmith/agronholm__exceptiongroup.0b4f4937",
+   "swesmith/agronholm__typeguard.b6a7e438",
+   "swesmith/bottlepy__bottle.a8dfef30",
+   "swesmith/cantools__cantools.0c6a7871",
+   "swesmith/cknd__stackprinter.219fcc52",
+   "swesmith/jaraco__inflect.c079a96a",
+   "swesmith/jd__tenacity.0d40e76f",
+   "swesmith/joke2k__faker.8b401a7d",
+   "swesmith/luozhouyang__python-string-similarity.115acaac",
+   "swesmith/mahmoud__boltons.3bfcfdd0",
+   "swesmith/oauthlib__oauthlib.1fd52536",
+   "swesmith/pdfminer__pdfminer.six.1a8bd2f7",
+   "swesmith/pudo__dataset.5c2dc8d3",
+   "swesmith/pygments__pygments.27649ebb",
+   "swesmith/pyupio__safety.7654596b"
+  ],
+  "swe_repos_val": [
+   "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7",
+   "swesmith/Knio__dominate.9082227e",
+   "swesmith/PyCQA__flake8.cf1542ce",
+   "swesmith/agronholm__typeguard.b6a7e438",
+   "swesmith/bottlepy__bottle.a8dfef30",
+   "swesmith/jaraco__inflect.c079a96a",
+   "swesmith/jd__tenacity.0d40e76f",
+   "swesmith/joke2k__faker.8b401a7d",
+   "swesmith/luozhouyang__python-string-similarity.115acaac",
+   "swesmith/pdfminer__pdfminer.six.1a8bd2f7"
+  ],
+  "swe_repo_overlap_train_val": [
+   "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7",
+   "swesmith/Knio__dominate.9082227e",
+   "swesmith/PyCQA__flake8.cf1542ce",
+   "swesmith/agronholm__typeguard.b6a7e438",
+   "swesmith/bottlepy__bottle.a8dfef30",
+   "swesmith/jaraco__inflect.c079a96a",
+   "swesmith/jd__tenacity.0d40e76f",
+   "swesmith/joke2k__faker.8b401a7d",
+   "swesmith/luozhouyang__python-string-similarity.115acaac",
+   "swesmith/pdfminer__pdfminer.six.1a8bd2f7"
+  ],
+  "swe_val_repo_counts": {
+   "swesmith/pdfminer__pdfminer.six.1a8bd2f7": 3,
+   "swesmith/luozhouyang__python-string-similarity.115acaac": 3,
+   "swesmith/Knio__dominate.9082227e": 2,
+   "swesmith/PyCQA__flake8.cf1542ce": 2,
+   "swesmith/jd__tenacity.0d40e76f": 1,
+   "swesmith/agronholm__typeguard.b6a7e438": 1,
+   "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7": 1,
+   "swesmith/bottlepy__bottle.a8dfef30": 1,
+   "swesmith/joke2k__faker.8b401a7d": 1,
+   "swesmith/jaraco__inflect.c079a96a": 1
+  },
+  "swe_train_repo_counts": {
+   "swesmith/pudo__dataset.5c2dc8d3": 40,
+   "swesmith/pygments__pygments.27649ebb": 40,
+   "swesmith/mahmoud__boltons.3bfcfdd0": 40,
+   "swesmith/pyupio__safety.7654596b": 40,
+   "swesmith/agronholm__exceptiongroup.0b4f4937": 40,
+   "swesmith/cknd__stackprinter.219fcc52": 40,
+   "swesmith/oauthlib__oauthlib.1fd52536": 40,
+   "swesmith/Suor__funcy.207a7810": 40,
+   "swesmith/agronholm__typeguard.b6a7e438": 39,
+   "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7": 39,
+   "swesmith/jd__tenacity.0d40e76f": 39,
+   "swesmith/joke2k__faker.8b401a7d": 39,
+   "swesmith/jaraco__inflect.c079a96a": 39,
+   "swesmith/PyCQA__flake8.cf1542ce": 38,
+   "swesmith/Knio__dominate.9082227e": 38,
+   "swesmith/bottlepy__bottle.a8dfef30": 38,
+   "swesmith/luozhouyang__python-string-similarity.115acaac": 37,
+   "swesmith/pdfminer__pdfminer.six.1a8bd2f7": 37,
+   "swesmith/cantools__cantools.0c6a7871": 32
+  },
+  "train&val_identical_prompt_text": 1,
+  "train&val_identical_unittest_user_msg": 1,
+  "val_frac_of_core": 0.0243,
+  "val_per_source_frac": {
+   "t15_repo_patch": 0.0213,
+   "t15_unittest_impl": 0.0246
+  }
+ },
+ "index_rows_not_in_parquet": {
+  "t15_code_r2e": 120
+ },
+ "index_rows_not_in_parquet_examples": [],
+ "examples": {
+  "example_prompt_swe": {
+   "instance_id": "luozhouyang__python-string-similarity.115acaac.func_pm_class_rm_funcs__hv4o2all",
+   "file": "/scratch/r919a03/code_verl_test/data/processed/analysis/example_prompt_swe.txt",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "chars": [
+    805,
+    74595
+   ]
+  },
+  "example_prompt_unittest": {
+   "instance_id": "kodcode-8bf4ec80aa26",
+   "file": "/scratch/r919a03/code_verl_test/data/processed/analysis/example_prompt_unittest.txt",
+   "roles": [
+    "system",
+    "user"
+   ],
+   "chars": [
+    126,
+    603
+   ]
+  }
+ }
+}

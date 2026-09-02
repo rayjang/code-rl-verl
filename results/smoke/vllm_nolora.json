@@ -1,0 +1,11 @@
+{
+ "variant": "nolora",
+ "ok": true,
+ "load_s": 50.4,
+ "gen_s": 5.5,
+ "tok_per_s": 268.1,
+ "samples": [
+  " stand in need of a good\n What is the difference between a and b? What is the difference between a and c? What is the difference between a and d? What is the difference between a and e? What is the difference between a and f? What is the difference between a and g? What is the difference between a a",
+  ""
+ ]
+}

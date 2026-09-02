@@ -1,0 +1,36 @@
+{
+ "n_rows": 751,
+ "counts": {
+  "lang=ko": 284,
+  "ko_ps_in_user|lang=ko": 284,
+  "sys_mentions_SEARCH_REPLACE": 751,
+  "user_task_mentions_diff_block": 751,
+  "user_task_mentions_SEARCH_REPLACE": 0,
+  "user_msg_has_hangul": 295,
+  "sys_msg_has_hangul": 0,
+  "listed_count_matches_FILE_blocks": 751,
+  "gold_files_all_in_snapshot": 751,
+  "f2p_test_file_shown_in_snapshot": 747,
+  "snapshot_contains_any_testish_file": 750,
+  "buggy_file_content_matches_snapshot": 880,
+  "lang=en": 467,
+  "en_ps_in_user|lang=en": 467,
+  "f2p_test_name_appears_in_issue": 30,
+  "f2p_test_file_NOT_in_snapshot": 4
+ },
+ "examples": {
+  "f2p_shown": [
+   "cantools__cantools.0c6a7871.combine_file__446ox3s6",
+   [
+    "tests/test_diagnostics_database.py"
+   ]
+  ]
+ },
+ "system_prompt_variants": {
+  "You are an expert software engineer. You are given a GitHub issue and a snapshot of the repository the issue belongs to.": 751
+ },
+ "task_tail_variants": {
+  "Fix the issue by editing the repository files. Reply with a single unified diff inside a ```diff code block. Use paths relative to the repository root (`--- a/<": 467,
+  "위 이슈를 저장소 파일을 수정해 해결하세요. 답은 ```diff 코드블록 안에 unified diff 하나로 작성합니다. 경로는 저장소 루트 기준(`--- a/<경로>` / `+++ b/<경로>`)으로 쓰고, 테스트 파일은 수정하지 마세요.": 284
+ }
+}

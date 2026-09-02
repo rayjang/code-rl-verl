@@ -1,0 +1,11 @@
+Error processing line 1 of /scratch/r919a03/.conda/envs/py312/lib/python3.12/site-packages/matplotlib-3.8.0.dev392+gf8ffce6d4.d20260819-nspkg.pth:
+
+  Traceback (most recent call last):
+    File "<frozen site>", line 206, in addpackage
+    File "<string>", line 1, in <module>
+    File "<frozen importlib._bootstrap>", line 810, in module_from_spec
+  AttributeError: 'NoneType' object has no attribute 'loader'
+
+Remainder of file ignored
+swe dupes done 9.6
+dupes done 11.2

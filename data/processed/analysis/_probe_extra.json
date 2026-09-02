@@ -1,0 +1,372 @@
+{
+ "identical_prompt_groups_detail": [
+  {
+   "ids": [
+    "opencodeinstruct-0d0e09bba9a9",
+    "opencodeinstruct-3c2898915911"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_core_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    9,
+    9
+   ],
+   "p_hat": [
+    0.5,
+    0.25
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-ad713dccf658",
+    "opencodeinstruct-af89fd636b8d"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_core_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10
+   ],
+   "p_hat": [
+    0.25,
+    0.375
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-3cb98fee76cc",
+    "opencodeinstruct-93bdded6810c"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_core_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10
+   ],
+   "p_hat": [
+    0.25,
+    0.25
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-9dc3d6cad277",
+    "opencodeinstruct-88162438200b"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10
+   ],
+   "p_hat": [
+    0.25,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-1e4edd44078b",
+    "opencodeinstruct-177a03c799ea"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_core_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10
+   ],
+   "p_hat": [
+    0.25,
+    0.25
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-ca832f659892",
+    "opencodeinstruct-34dd8517835b"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": true,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10
+   ],
+   "p_hat": [
+    0.75,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-2da3f67cca30",
+    "opencodeinstruct-355ff4c96430",
+    "opencodeinstruct-22aff0155a0d",
+    "opencodeinstruct-1eaa8a612c11"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_core_val",
+    "t15_code_rl_extended_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10,
+    10,
+    10
+   ],
+   "p_hat": [
+    0.5,
+    0.25,
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-8f93a81fdc10",
+    "opencodeinstruct-3d23a0fcf8c1"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    6
+   ],
+   "p_hat": [
+    0.5,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-9aef62e8cb10",
+    "opencodeinstruct-2705551b9b28"
+   ],
+   "files": [
+    "t15_code_rl_core_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    9,
+    8
+   ],
+   "p_hat": [
+    0.25,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-384c40f052e6",
+    "opencodeinstruct-1e254ee7c178",
+    "opencodeinstruct-8eac1038a5c3"
+   ],
+   "files": [
+    "t15_code_rl_extended_train",
+    "t15_code_rl_extended_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10,
+    10
+   ],
+   "p_hat": [
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-37910ab85df9",
+    "opencodeinstruct-fb0829291e97"
+   ],
+   "files": [
+    "t15_code_rl_extended_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10
+   ],
+   "p_hat": [
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-1d34249717e5",
+    "opencodeinstruct-684c9264dc07"
+   ],
+   "files": [
+    "t15_code_rl_extended_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    8,
+    10
+   ],
+   "p_hat": [
+    null,
+    null
+   ]
+  },
+  {
+   "ids": [
+    "opencodeinstruct-53b168072a07",
+    "opencodeinstruct-016ad5246daa"
+   ],
+   "files": [
+    "t15_code_rl_extended_train",
+    "t15_code_rl_extended_train"
+   ],
+   "same_tests": false,
+   "same_reference": false,
+   "n_tests": [
+    10,
+    10
+   ],
+   "p_hat": [
+    null,
+    null
+   ]
+  }
+ ],
+ "p_hat_source_x_p_hat_core": {
+  "measured_pass_at_k(n=2,k=8)|0.5": 1955,
+  "measured_pass_at_k(n=1,k=4)|0.25": 169,
+  "measured_pass_at_k(n=2,k=8)|0.75": 933,
+  "measured_pass_at_k(n=2,k=8)|0.25": 1936,
+  "measured_pass_at_k(n=1,k=4)|0.75": 84,
+  "measured_pass_at_k(n=1,k=4)|0.5": 166,
+  "measured_pass_at_k(n=2,k=16)|0.25": 324,
+  "measured_pass_at_k(n=1,k=8)|0.5": 5,
+  "measured_pass_at_k(n=1,k=8)|0.25": 30,
+  "measured_pass_at_k(n=2,k=16)|0.375": 170,
+  "measured_pass_at_k(n=2,k=16)|0.75": 31,
+  "measured_pass_at_k(n=2,k=16)|0.5": 74,
+  "measured_pass_at_k(n=1,k=8)|0.375": 12,
+  "measured_pass_at_k(n=2,k=16)|0.625": 37,
+  "measured_pass_at_k(n=1,k=8)|0.625": 1
+ },
+ "swe_snapshot_files_included_dist": {
+  "n": 751,
+  "min": 5,
+  "median": 22,
+  "p90": 48,
+  "max": 98
+ },
+ "swe_snapshot_files_by_variant": {
+  "swe_64k": {
+   "n": 263,
+   "min": 5,
+   "median": 21,
+   "p90": 41,
+   "max": 70
+  },
+  "swe_32k": {
+   "n": 351,
+   "min": 5,
+   "median": 18,
+   "p90": 35,
+   "max": 41
+  },
+  "swe_128k": {
+   "n": 137,
+   "min": 22,
+   "median": 44,
+   "p90": 77,
+   "max": 98
+  }
+ },
+ "swe_instances_per_repo_full": {
+  "swesmith/pdfminer__pdfminer.six.1a8bd2f7": 40,
+  "swesmith/jd__tenacity.0d40e76f": 40,
+  "swesmith/Knio__dominate.9082227e": 40,
+  "swesmith/luozhouyang__python-string-similarity.115acaac": 40,
+  "swesmith/cantools__cantools.0c6a7871": 32,
+  "swesmith/agronholm__typeguard.b6a7e438": 40,
+  "swesmith/Cog-Creators__Red-DiscordBot.33e0eac7": 40,
+  "swesmith/PyCQA__flake8.cf1542ce": 40,
+  "swesmith/bottlepy__bottle.a8dfef30": 39,
+  "swesmith/pudo__dataset.5c2dc8d3": 40,
+  "swesmith/pygments__pygments.27649ebb": 40,
+  "swesmith/joke2k__faker.8b401a7d": 40,
+  "swesmith/mahmoud__boltons.3bfcfdd0": 40,
+  "swesmith/pyupio__safety.7654596b": 40,
+  "swesmith/agronholm__exceptiongroup.0b4f4937": 40,
+  "swesmith/cknd__stackprinter.219fcc52": 40,
+  "swesmith/jaraco__inflect.c079a96a": 40,
+  "swesmith/oauthlib__oauthlib.1fd52536": 40,
+  "swesmith/Suor__funcy.207a7810": 40
+ },
+ "inflect_n": 40,
+ "inflect_gold_touches_init": 40,
+ "inflect_f2p_file_is_init": 11,
+ "inflect_f2p_files": {
+  "tests/test_inflections.py": 81,
+  "tests/test_numwords.py": 19,
+  "tests/test_pwd.py": 400,
+  "inflect/__init__.py": 16,
+  "tests/test_compounds.py": 49,
+  "tests/test_classical_all.py": 7,
+  "tests/test_classical_ancient.py": 7,
+  "tests/test_classical_herd.py": 7,
+  "tests/test_classical_names.py": 7,
+  "tests/test_classical_person.py": 7,
+  "tests/test_classical_zero.py": 7,
+  "tests/test_unicode.py": 7,
+  "tests/test_an.py": 4,
+  "tests/test_join.py": 1
+ },
+ "r2e_total_f2p_ids": 6842,
+ "r2e_f2p_ids_with_::": 0,
+ "swe_issue_mentions_gold_path": 28,
+ "val_rows_with_user_msg_in_train": [
+  [
+   "opencodeinstruct-355ff4c96430",
+   "opencodeinstruct-2da3f67cca30"
+  ]
+ ]
+}

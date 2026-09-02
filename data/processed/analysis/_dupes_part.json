@@ -1,0 +1,449 @@
+{
+ "swe": {
+  "method": "group by repo; 5-word shingle Jaccard on problem_statement for every within-repo pair; difflib.SequenceMatcher(autojunk=False).quick_ratio() for every pair; real ratio() only for pairs with quick_ratio>0.9 (all if jaccard>0.15, else first 3000)",
+  "n_within_repo_pairs": 14497,
+  "pairs_quick_ratio_gt_0.9": 111,
+  "n_real_ratio_computed": 111,
+  "pairs_ratio_gt_0.9": 7,
+  "pairs_shingle_jaccard_gt_0.9": 1,
+  "pairs_shingle_jaccard_gt_0.5": 15,
+  "top_pairs_(ratio,quick_ratio,jaccard,id_a,id_b)": [
+   [
+    1.0,
+    1.0,
+    1.0,
+    "jd__tenacity.0d40e76f.combine_module__jua0momz",
+    "jd__tenacity.0d40e76f.combine_module__xor0ajnm"
+   ],
+   [
+    0.969,
+    0.969,
+    0.864,
+    "jd__tenacity.0d40e76f.combine_module__31gyysk9",
+    "jd__tenacity.0d40e76f.combine_file__x4ymm5x6"
+   ],
+   [
+    0.964,
+    0.965,
+    0.877,
+    "jd__tenacity.0d40e76f.combine_module__jua0momz",
+    "jd__tenacity.0d40e76f.combine_module__7f90zoga"
+   ],
+   [
+    0.964,
+    0.965,
+    0.877,
+    "jd__tenacity.0d40e76f.combine_module__7f90zoga",
+    "jd__tenacity.0d40e76f.combine_module__xor0ajnm"
+   ],
+   [
+    0.931,
+    0.934,
+    0.657,
+    "jd__tenacity.0d40e76f.combine_file__qdll5l0h",
+    "jd__tenacity.0d40e76f.combine_file__x4ymm5x6"
+   ],
+   [
+    0.915,
+    0.915,
+    0.824,
+    "jd__tenacity.0d40e76f.combine_module__7f90zoga",
+    "jd__tenacity.0d40e76f.combine_file__x4ymm5x6"
+   ],
+   [
+    0.904,
+    0.904,
+    0.636,
+    "jd__tenacity.0d40e76f.combine_module__31gyysk9",
+    "jd__tenacity.0d40e76f.combine_file__qdll5l0h"
+   ],
+   [
+    0.898,
+    0.917,
+    0.735,
+    "jd__tenacity.0d40e76f.combine_module__jua0momz",
+    "jd__tenacity.0d40e76f.combine_module__31gyysk9"
+   ],
+   [
+    0.898,
+    0.917,
+    0.735,
+    "jd__tenacity.0d40e76f.combine_module__xor0ajnm",
+    "jd__tenacity.0d40e76f.combine_module__31gyysk9"
+   ],
+   [
+    0.872,
+    0.938,
+    0.708,
+    "jd__tenacity.0d40e76f.combine_module__jua0momz",
+    "jd__tenacity.0d40e76f.combine_file__x4ymm5x6"
+   ],
+   [
+    0.872,
+    0.938,
+    0.708,
+    "jd__tenacity.0d40e76f.combine_module__xor0ajnm",
+    "jd__tenacity.0d40e76f.combine_file__x4ymm5x6"
+   ],
+   [
+    0.864,
+    0.971,
+    0.413,
+    "agronholm__exceptiongroup.0b4f4937.combine_module__3hhws1dx",
+    "agronholm__exceptiongroup.0b4f4937.combine_module__6vp5bpr2"
+   ],
+   [
+    0.856,
+    0.955,
+    0.563,
+    "jd__tenacity.0d40e76f.combine_module__7f90zoga",
+    "jd__tenacity.0d40e76f.combine_file__qdll5l0h"
+   ],
+   [
+    0.85,
+    0.965,
+    0.215,
+    "agronholm__exceptiongroup.0b4f4937.combine_module__3hhws1dx",
+    "agronholm__exceptiongroup.0b4f4937.combine_module__lvq30r88"
+   ],
+   [
+    0.839,
+    0.957,
+    0.342,
+    "agronholm__exceptiongroup.0b4f4937.combine_module__lvq30r88",
+    "agronholm__exceptiongroup.0b4f4937.combine_module__6vp5bpr2"
+   ],
+   [
+    0.818,
+    0.943,
+    0.536,
+    "jd__tenacity.0d40e76f.combine_module__jua0momz",
+    "jd__tenacity.0d40e76f.combine_file__qdll5l0h"
+   ],
+   [
+    0.818,
+    0.943,
+    0.536,
+    "jd__tenacity.0d40e76f.combine_module__xor0ajnm",
+    "jd__tenacity.0d40e76f.combine_file__qdll5l0h"
+   ],
+   [
+    0.794,
+    0.905,
+    0.24,
+    "oauthlib__oauthlib.1fd52536.combine_file__1o3hm5l5",
+    "oauthlib__oauthlib.1fd52536.combine_file__8424hlua"
+   ],
+   [
+    0.757,
+    0.97,
+    0.245,
+    "oauthlib__oauthlib.1fd52536.combine_file__0qgnxkrq",
+    "oauthlib__oauthlib.1fd52536.combine_file__3oyoy4m0"
+   ],
+   [
+    0.692,
+    0.951,
+    0.121,
+    "oauthlib__oauthlib.1fd52536.combine_file__5jtc65v3",
+    "oauthlib__oauthlib.1fd52536.combine_file__3robnlss"
+   ],
+   [
+    0.687,
+    0.905,
+    0.361,
+    "Suor__funcy.207a7810.combine_file__a7cg73k3",
+    "Suor__funcy.207a7810.combine_file__186umsl2"
+   ],
+   [
+    0.669,
+    0.937,
+    0.225,
+    "agronholm__exceptiongroup.0b4f4937.combine_file__e14uhohy",
+    "agronholm__exceptiongroup.0b4f4937.combine_module__muc4qt7x"
+   ],
+   [
+    0.651,
+    0.942,
+    0.088,
+    "cknd__stackprinter.219fcc52.combine_file__jnvikixw",
+    "cknd__stackprinter.219fcc52.combine_file__3mb4yuht"
+   ],
+   [
+    0.65,
+    0.935,
+    0.113,
+    "cknd__stackprinter.219fcc52.combine_file__twbd555w",
+    "cknd__stackprinter.219fcc52.combine_file__tl1vgxi2"
+   ],
+   [
+    0.636,
+    0.908,
+    0.149,
+    "pdfminer__pdfminer.six.1a8bd2f7.func_basic__15p0z6ws",
+    "pdfminer__pdfminer.six.1a8bd2f7.combine_file__rdrw2vbh"
+   ]
+  ],
+  "exact_dup_problem_statement_groups": 1,
+  "exact_dup_gold_patch_groups": 0,
+  "exact_dup_f2p_set_groups": 91,
+  "exact_dup_f2p_set_rows": 262,
+  "dup_f2p_set_examples": [
+   [
+    "[\"tests/test_asyncio.py::TestContextManager::test_retry_with_async_result_and\", \"tests/test_asyncio.py::TestContextManager::test_retry_with_async_result_rand\", \"tests/test_asyncio.py::TestContextManager::test_retry_with_async_result_ror\", \"tests/test_asyncio.py::TestContextManager::test_retry_with_r",
+    2
+   ],
+   [
+    "[\"tests/test_html.py::test_attributes\", \"tests/test_html.py::test_get_context\"]",
+    2
+   ],
+   [
+    "[\"strsimpy/jaccard_test.py::TestJaccard::test_jaccard\"]",
+    3
+   ],
+   [
+    "[\"tests/test_diagnostics_database.py::CanToolsDiagnosticsDatabaseTest::test_be_cdd_add\", \"tests/test_diagnostics_database.py::CanToolsDiagnosticsDatabaseTest::test_be_example_cdd\", \"tests/test_diagnostics_database.py::CanToolsDiagnosticsDatabaseTest::test_be_example_cdd_repr\", \"tests/test_diagnostic",
+    3
+   ],
+   [
+    "[\"tests/cogs/downloader/test_downloader.py::test_update_available_modules\", \"tests/cogs/downloader/test_installable.py::test_serialization\"]",
+    2
+   ]
+  ],
+  "seconds": 9.6
+ },
+ "unittest": {
+  "t15_code_unittest": {
+   "dup_statement_groups": 7,
+   "dup_statement_rows": 14,
+   "dup_reference_solution_groups": 5,
+   "dup_reference_solution_rows": 11,
+   "dup_tests_groups": 52,
+   "dup_tests_rows": 167,
+   "dup_statement_AND_tests_rows": 2,
+   "dup_statement_examples": [
+    [
+     "opencodeinstruct-355ff4c96430",
+     "opencodeinstruct-2da3f67cca30"
+    ],
+    [
+     "opencodeinstruct-0d0e09bba9a9",
+     "opencodeinstruct-3c2898915911"
+    ],
+    [
+     "opencodeinstruct-dfd36ce89ac8",
+     "opencodeinstruct-84c5a9f0eb06"
+    ],
+    [
+     "opencodeinstruct-ad713dccf658",
+     "opencodeinstruct-af89fd636b8d"
+    ],
+    [
+     "opencodeinstruct-3cb98fee76cc",
+     "opencodeinstruct-93bdded6810c"
+    ]
+   ],
+   "dup_reference_examples": [
+    [
+     "opencodeinstruct-73d2b08aef42",
+     "opencodeinstruct-283e3f9ae44f"
+    ],
+    [
+     "opencodeinstruct-63a9306815be",
+     "opencodeinstruct-6a2da4214e8f",
+     "opencodeinstruct-0b87704544f9"
+    ],
+    [
+     "opencodeinstruct-91fd5b797ff1",
+     "opencodeinstruct-0d2c4d52c4bc"
+    ],
+    [
+     "opencodeinstruct-8e73167e2428",
+     "opencodeinstruct-84c5a9f0eb06"
+    ],
+    [
+     "opencodeinstruct-ee3eed650bcd",
+     "opencodeinstruct-8fa490cb95c4"
+    ]
+   ],
+   "dup_tests_examples": [
+    [
+     "opencodeinstruct-355ff4c96430",
+     "opencodeinstruct-1e4edd44078b",
+     "opencodeinstruct-180be81d77e1",
+     "opencodeinstruct-adedbada1a1c"
+    ],
+    [
+     "opencodeinstruct-66651d627d6a",
+     "opencodeinstruct-346fc828f730",
+     "opencodeinstruct-ff56b5cd0a21"
+    ],
+    [
+     "opencodeinstruct-d4f0d0993ace",
+     "opencodeinstruct-0b17dd5f5715"
+    ],
+    [
+     "opencodeinstruct-8d0aaef0350e",
+     "opencodeinstruct-6557e4f9f3c5"
+    ],
+    [
+     "opencodeinstruct-5691d1890952",
+     "opencodeinstruct-6165cf1a7f48",
+     "opencodeinstruct-5451f81dc1e1",
+     "opencodeinstruct-2c42434a2747"
+    ]
+   ]
+  },
+  "t15_code_unittest_ext": {
+   "dup_statement_groups": 5,
+   "dup_statement_rows": 11,
+   "dup_reference_solution_groups": 20,
+   "dup_reference_solution_rows": 41,
+   "dup_tests_groups": 250,
+   "dup_tests_rows": 701,
+   "dup_statement_AND_tests_rows": 0,
+   "dup_statement_examples": [
+    [
+     "opencodeinstruct-384c40f052e6",
+     "opencodeinstruct-1e254ee7c178",
+     "opencodeinstruct-8eac1038a5c3"
+    ],
+    [
+     "opencodeinstruct-37910ab85df9",
+     "opencodeinstruct-fb0829291e97"
+    ],
+    [
+     "opencodeinstruct-22aff0155a0d",
+     "opencodeinstruct-1eaa8a612c11"
+    ],
+    [
+     "opencodeinstruct-1d34249717e5",
+     "opencodeinstruct-684c9264dc07"
+    ],
+    [
+     "opencodeinstruct-53b168072a07",
+     "opencodeinstruct-016ad5246daa"
+    ]
+   ],
+   "dup_reference_examples": [
+    [
+     "opencodeinstruct-fe88b3aac405",
+     "opencodeinstruct-65b6e4b36f61"
+    ],
+    [
+     "opencodeinstruct-bb580d07cbb8",
+     "opencodeinstruct-0cb7e09258db",
+     "opencodeinstruct-15d42642efc2"
+    ],
+    [
+     "kodcode-03cc3c73061c",
+     "kodcode-e6f46823a7cf"
+    ],
+    [
+     "opencodeinstruct-cb622cca0911",
+     "opencodeinstruct-7d1042f4cb69"
+    ],
+    [
+     "opencodeinstruct-10199fc37048",
+     "opencodeinstruct-b539eacd4247"
+    ]
+   ],
+   "dup_tests_examples": [
+    [
+     "opencodeinstruct-496b90f3f28f",
+     "opencodeinstruct-706f50aff664"
+    ],
+    [
+     "opencodeinstruct-249b715098ef",
+     "opencodeinstruct-cdae287698bc",
+     "opencodeinstruct-2ca28b2f5ebb"
+    ],
+    [
+     "opencodeinstruct-384c40f052e6",
+     "opencodeinstruct-ca961a77fb40"
+    ],
+    [
+     "opencodeinstruct-058c137c2f6b",
+     "opencodeinstruct-6632331eccbc"
+    ],
+    [
+     "opencodeinstruct-6b3df27cc3a6",
+     "opencodeinstruct-8f7d40f2622c",
+     "opencodeinstruct-5ee40d60fc1d"
+    ]
+   ]
+  },
+  "cross_core_ext": {
+   "ext_rows_with_statement_in_core": 6,
+   "ext_rows_with_reference_in_core": 5,
+   "ext_rows_with_tests_in_core": 276,
+   "shared_statement_example_ids": [
+    [
+     "opencodeinstruct-2da3f67cca30",
+     "opencodeinstruct-22aff0155a0d"
+    ],
+    [
+     "opencodeinstruct-2da3f67cca30",
+     "opencodeinstruct-1eaa8a612c11"
+    ],
+    [
+     "opencodeinstruct-8f93a81fdc10",
+     "opencodeinstruct-3d23a0fcf8c1"
+    ],
+    [
+     "opencodeinstruct-ca832f659892",
+     "opencodeinstruct-34dd8517835b"
+    ],
+    [
+     "opencodeinstruct-9aef62e8cb10",
+     "opencodeinstruct-2705551b9b28"
+    ]
+   ],
+   "shared_reference_example_ids": [
+    [
+     "opencodeinstruct-346fc828f730",
+     "opencodeinstruct-959c45aa2ca1"
+    ],
+    [
+     "opencodeinstruct-df53fb95b2a6",
+     "opencodeinstruct-d1bccde81d93"
+    ],
+    [
+     "opencodeinstruct-65493ae488a5",
+     "opencodeinstruct-e217e7b9938c"
+    ],
+    [
+     "opencodeinstruct-087c28b4a345",
+     "opencodeinstruct-5b9771e685d0"
+    ],
+    [
+     "opencodeinstruct-4af0450ce013",
+     "opencodeinstruct-2323af12e292"
+    ]
+   ],
+   "shared_tests_example_ids": [
+    [
+     "opencodeinstruct-49ae6745b2ad",
+     "opencodeinstruct-249b715098ef"
+    ],
+    [
+     "opencodeinstruct-1a8fc6e782d1",
+     "opencodeinstruct-384c40f052e6"
+    ],
+    [
+     "opencodeinstruct-8f7ffc69374e",
+     "opencodeinstruct-058c137c2f6b"
+    ],
+    [
+     "opencodeinstruct-19e4b4cfc9aa",
+     "opencodeinstruct-6b3df27cc3a6"
+    ],
+    [
+     "opencodeinstruct-15482e93d603",
+     "opencodeinstruct-70ac35197b71"
+    ]
+   ]
+  }
+ },
+ "seconds_total": 11.2
+}

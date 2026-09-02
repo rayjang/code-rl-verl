@@ -1,0 +1,9 @@
+# instance_id=kodcode-a154fafde017 harness=pytest total_chars=558
+
+===== ROLE: system (chars=126) =====
+You are an expert programmer. Solve the problem and reply with a single ```python code block containing the complete solution.
+
+===== ROLE: user (chars=432) =====
+You are given an array of integers `heights` representing the heights of buildings along a street. Each building can either be painted with one of two colors: Red or Blue. If two neighboring buildings are painted with the same color, there is a penalty equal to the absolute difference of their heights. Your task is to determine the minimum penalty possible after painting all the buildings.
+
+Return _the minimum penalty possible_.

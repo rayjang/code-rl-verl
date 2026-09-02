@@ -1,0 +1,1399 @@
+--- /scratch/r919a03/code_verl_test/sources/rl_code_v1/reward/math/t01_math_reward.py	2026-09-02 00:00:00.000000000 +0900
++++ /scratch/r919a03/code_verl_test/sources/t01_math_reward_rubric/t01_math_reward.py	2026-08-28 17:59:02.000000000 +0900
+@@ -1,268 +1,1179 @@
+ #!/usr/bin/env python
+-"""T01 수학 채점기 — `T01_SCORER` 슬롯에 꽂는 구현.
++"""T01 수학 채점기 — 규칙 기반 정오답 판정 (verl custom reward).
+ 
+-키트 스텁이 TODO 로 남긴 두 함수가 채점기의 전부입니다.
++score = answer_match × overlong_penalty        (형식 점수를 섞지 않는다)
+ 
+-  extract_answer   응답에서 최종 답을 꺼낸다
+-  is_equivalent    꺼낸 답이 gold 와 같은가
++  · **answer_match 는 순수 정오답이다.** boxed 여부·길이 같은 형식 신호를 더하지
++    않는다 — DDCA가 이 값으로 정답 군집을 만들기 때문에, 형식이 섞이면 같은 답을
++    쓴 롤아웃이 다른 군집으로 갈라진다. 형식은 math_has_boxed 등으로 관측만 한다.
++  · **overlong**: extra_info의 valid/max_response_length 로 초과분만 감점.
++    버퍼가 0이면 비활성(overlong_active=False). 감점 전 값은 score_before_overlong.
++  · rubric(RuscaRL 비계)은 프롬프트에만 들어가고 이 채점기는 관여하지 않는다 —
++    보상은 처음부터 끝까지 rule 기반이다.
+ 
+-스텁 기본 구현(정규식 1단 boxed + 공백제거 문자열 일치)은 `\\frac{1}{2}` 와 `0.5`,
+-`{1,2}` 와 `{2,1}` 을 전부 오답 처리합니다. 수학에서 이건 채점기 버그가
+-"모델이 못 푼다"로 위장되는 대표적 경로라(T01 문서 §7-4), 여기서는 5단계
+-동치 판정을 씁니다.
+-
+-계약 (`t01_math_harness.py` 로 검증)
+-  compute_score_dict(data_source, solution_str, ground_truth, extra_info=None, **kw) -> dict
+-  compute_score(...) -> float
+-  필수 키 score / answer_match / score_before_overlong
+-  전 행 같은 키 집합 · float|int|str|bool 만 · 결정적
++## 판정 방식
+ 
+-sympy 는 **선택**입니다. 없으면 4단계까지만 돌고, 그 사실이 `math_sympy_available`
+-키로 드러납니다 — 조용히 성능이 떨어지지 않게.
++추출 3단(boxed → Answer: 줄 → 마지막 display 수식) 뒤, 동치 tier 11개를 순서대로
++시도해 처음 True/False를 낸 곳에서 멈춘다. tier 번호는 math_match_tier로 관측된다.
++
++  string · yesno · numeric · pm · structured · relation · arrow · textcase ·
++  annotation · gloss · symbolic
++
++기호 tier는 math_verify(없으면 sympy)를 쓰되 **시계 기반 타임아웃을 쓰지 않는다**.
++같은 입력이 부하에 따라 다르게 채점되면 학습 워커와 검증 노드가 어긋나기 때문이다
++(계약 불변식 3). 끝나는 것은 sym_admissible의 입력 **모양** 가드가 보장한다
++— 20k 전수 17,313회 비교에서 p99.9 43ms, 최대 1.2초.
++
++## 계약
++
++    compute_score_dict(data_source, solution_str, ground_truth, extra_info=None, **kw) -> dict
++    compute_score(...) -> float
++
++반환 키 21개, 전 행 동일 집합, float·int만, 결정적.
++필수 키 score / answer_match / score_before_overlong.
++ground_truth 에는 데이터의 **gt** 를 넘긴다(answer 는 풀이 전문이라 넘기면 전 행 오답).
++
++## verl 연결
++
++    custom_reward_function.path=이 파일, name=compute_score
++    data_source 가 t01_* 로 시작하면 T15 디스패처가 여기로 보낸다.
++
++의존 파일 없음 — 표준 라이브러리만. math_verify/sympy 는 있으면 쓰고 없으면
++규칙 tier까지만 쓴다(어느 쪽이든 죽지 않고 math_sym_used 로 관측된다).
++
++⚠ 이 파일은 생성물이다. 고칠 때는 synth_T01/src/ 의 모듈을 고치고 빌더를 다시 돌린다
++  — 그래야 셀프테스트(normalize 61 · extract 24 · equal 93)가 같이 따라온다.
+ """
+-import os
++
++# §1 정규화 — LaTeX 표기를 gold와 비교 가능한 형태로. NORM_STEPS 순서대로 적용된다.
++
+ import re
+ 
+-# sympy 와 parse_latex 는 **따로** 잡는다. `parse_latex` 는 antlr4 런타임을 추가로
+-# 요구하는데, 한 블록으로 묶으면 antlr 만 없어도 sympify 경로까지 통째로 꺼진다.
+-# 그러면 `x+1` vs `1+x` 같은 기본 동치가 조용히 오답이 된다.
+-try:
+-    import sympy
+-    _HAS_SYMPY = True
+-except Exception:
+-    sympy = None
+-    _HAS_SYMPY = False
++def read_group(s, i):
++    r"""s[i]부터 LaTeX 인자 하나를 읽어 (내용, 다음위치). `{..}`면 균형을 맞춰 읽는다."""
++    n = len(s)
++    while i < n and s[i].isspace():
++        i += 1
++    if i >= n:
++        return None, i
++    if s[i] == "{":
++        d = 0
++        for k in range(i, n):
++            d += (s[k] == "{") - (s[k] == "}")
++            if d == 0:
++                return s[i + 1:k], k + 1
++        return s[i + 1:], n
++    if s[i] == "\\":
++        m = re.match(r"\\[A-Za-z]+", s[i:])
++        return (m.group(0), i + m.end()) if m else (s[i:i + 2], i + 2)
++    return s[i], i + 1
++
++_UNI = {"\u2212": "-", "\u2013": "-", "\u2014": "-", "\u00d7": "*", "\u22c5": "*",
++        "\u00b7": "*", "\u00f7": "/", "\u2044": "/", "\u2264": "\\le", "\u2265": "\\ge",
++        "\u2260": "\\ne", "\u221e": "\\infty", "\u03c0": "\\pi", "\u00b0": "^\\circ",
++        "\u00a0": " ", "\u200b": "", "\u2032": "'", "\u2033": "''"}
++_UNI.update({chr(0xFF10 + d): chr(0x30 + d) for d in range(10)})
++_UNI_RE = re.compile("|".join(re.escape(k) for k in sorted(_UNI, key=len, reverse=True)))
++# ⚠ 긴 이름 우선(biggl > bigg > big). 순서가 바뀌면 `\bigg`가 `\big`+`g`로 잘린다.
++# ⚠ `(?<!\\\\)` 없으면 행렬 행 구분자 `\\\\ ` 의 둘째 백슬래시를 먹는다(실측).
++_SPACING_RE = re.compile(
++    r"(?<!\\)\\(?:displaystyle|textstyle|scriptscriptstyle|scriptstyle|nolimits|limits|left|right"
++    r"|middle|Biggl|Biggr|Biggm|biggl|biggr|biggm|Bigll|Bigl|Bigr|Bigm|bigl|bigr|bigm"
++    r"|Bigg|bigg|Big|big|negthinspace|thinspace|medspace|thickspace|qquad|quad|hfill"
++    r"|hspace\{[^{}]*\}|phantom\{[^{}]*\}|,|;|:|!|\s)")
++_UNWRAP = ("text|textbf|textit|textrm|textsf|texttt|textnormal|mathrm|mathbf|mathit|mathsf"
++           "|mathtt|mathnormal|mbox|hbox|operatorname|mathop|emph|rm|bf|it")
++_UNWRAP_RE = re.compile(r"\\(?:" + "|".join(sorted(_UNWRAP.split("|"), key=len, reverse=True))
++                        + r")\s*(?=\{|\*)")
++_ARITY = {"frac": 2, "binom": 2, "choose": 2, "sqrt": 1, "mathbb": 1, "mathcal": 1,
++          "mathfrak": 1, "mathscr": 1, "bar": 1, "hat": 1, "vec": 1, "tilde": 1,
++          "widehat": 1, "widetilde": 1, "overline": 1, "underline": 1, "dot": 1, "ddot": 1}
++_CMD_RE = re.compile(r"\\(" + "|".join(sorted(_ARITY, key=len, reverse=True)) + r")(?![A-Za-z])")
++_MD_HEAD_RE = re.compile(r"^\s*#{1,6}\s*")
++_PURE_NUM_RE = re.compile(r"^-?\d{1,3}(,\d{3})+(\.\d+)?$")
++
++def _rx(rx, rep=""):
++    """정규식 치환 한 방으로 끝나는 단계용 팩토리."""
++    return lambda s: rx.sub(rep, s)
++
++def unify_unicode(s):
++    """유니코드 수학기호 → LaTeX. `−`(U+2212)와 `-`가 갈리는 사고를 막는다."""
++    return _UNI_RE.sub(lambda m: _UNI[m.group(0)], s)
++
++def strip_markdown(s):
++    r"""마크다운 장식 제거. `_`(아래첨자)와 `-`(음수)는 손대지 않는다."""
++    s = _MD_HEAD_RE.sub("", s.replace("`", "").replace("**", ""))
++    t = s.strip()
++    # 홑 `*`는 곱셈이므로 양끝을 감싸고 내부에 없을 때만 이탤릭으로 본다
++    return t[1:-1] if (len(t) > 2 and t[0] == "*" and t[-1] == "*" and "*" not in t[1:-1]) else s
++
++def strip_wrappers(s):
++    r"""`\(..\)` `\[..\]` `$..$` 래퍼 제거."""
++    return re.sub(r"\\[()\[\]]", "", s).strip().strip("$").strip()
++
++# `\operatorname{}` 안의 알려진 연산자는 대소문자를 통일한다(`Im`/`im`, `Ker`/`ker`).
++_OPNAMES = frozenset("im re ker coker aut end hom tr rank dim deg gcd lcm span supp "
++                     "char sgn id ord lim sup inf max min det".split())
++
++_TEXT_UNIT_RE = re.compile(
++    r"(?<=[0-9}\)])\s*\\(?:text|mathrm|mbox)\s*\{\s*[A-Za-z\uac00-\ud7a3][A-Za-z\uac00-\ud7a3 \^0-9]{0,14}\}\s*$")
++
++def strip_text_unit(s):
++    r"""끝에 붙은 `\text{단위}` 를 뗀다: `300 \text{ m}` → `300`.
++    ⚠ **`\text{}` 안에 있을 때만** 단위로 본다. 맨 알파벳을 단위로 보면 변수를 먹는다
++    """
++    for _ in range(3):
++        t = _TEXT_UNIT_RE.sub("", s).strip()
++        if t == s or not t:
++            break
++        s = t
++    return s
+ 
+-try:
+-    from sympy.parsing.latex import parse_latex
+-    parse_latex(r"\frac{1}{2}")                    # antlr 부재는 호출 시점에 드러난다
+-    _HAS_LATEX = True
+-except Exception:
+-    parse_latex = None
+-    _HAS_LATEX = False
++def unwrap_text(s):
++    r"""`\text{cm}` → `cm`. `\operatorname{Im}` → `im`. 중첩 6단까지(결정적)."""
++    for _ in range(6):
++        m = _UNWRAP_RE.search(s)
++        if not m:
++            break
++        i = m.end() + (1 if s[m.end():m.end() + 1] == "*" else 0)
++        body, j = read_group(s, i)
++        if body is None:
++            break
++        if m.group(0).lstrip("\\").startswith("operatorname") and body.strip().lower() in _OPNAMES:
++            body = body.strip().lower()
++        s = s[:m.start()] + body + s[j:]
++    return s
+ 
+-OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
+-OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
+-MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
+-# sympy 는 병리적 입력에서 오래 걸린다. 길이 상한으로 막는다 — 타임아웃과 달리
+-# 결정성을 깨지 않는다(계약 불변식 3).
+-SYMPY_MAX_LEN = int(os.environ.get("T01_SYMPY_MAX_LEN", "200"))
+-
+-_ANSWER_LINE = re.compile(
+-    r"^\s*(?:final\s+answer|answer|정답|답)\s*[:：]\s*(.+?)\s*$", re.I | re.M)
+-_GSM_HASH = re.compile(r"####\s*(.+?)\s*$", re.M)
+-
+-
+-# ────────────────────────────────────────────────────────────── 답 추출
+-def _iter_boxed(text):
+-    """`\\boxed{...}` 를 중괄호 균형을 세어 전부 뽑는다.
+-
+-    정규식으로는 중첩을 못 센다. `\\boxed{\\frac{1}{2}}` 에서 스텁 정규식은
+-    `\\frac{1}{2}` 까지만 잡히는 것처럼 보이지만 중첩이 한 단계만 허용돼
+-    `\\boxed{\\frac{\\sqrt{2}}{2}}` 같은 2단 중첩에서 잘린 답을 돌려준다.
+-    """
+-    for m in re.finditer(r"\\boxed\s*\{", text or ""):
+-        i = m.end() - 1          # '{' 위치
+-        depth, j = 0, i
+-        while j < len(text):
+-            if text[j] == "{":
+-                depth += 1
+-            elif text[j] == "}":
+-                depth -= 1
+-                if depth == 0:
+-                    yield text[i + 1:j]
+-                    break
+-            j += 1
+-
+-
+-def extract_answer(text):
+-    """마지막 \\boxed{} → Answer:/정답: 줄 → GSM8K `####` 순."""
+-    t = text or ""
+-    boxed = list(_iter_boxed(t))
+-    if boxed:
+-        return boxed[-1].strip()
+-    m = _ANSWER_LINE.findall(t)
+-    if m:
+-        return m[-1].strip()
+-    m = _GSM_HASH.findall(t)
+-    if m:
+-        return m[-1].strip()
+-    return ""
+-
+-
+-# ────────────────────────────────────────────────────────── 정규화·동치
+-_UNIT_TAIL = re.compile(
+-    r"\s*(?:개|명|원|점|가지|번|cm|mm|km|kg|m|g|s|초|분|시간|일|년|dollars?|cents?|"
+-    r"units?|degrees?|°)\s*$", re.I)
+-_TEXT_CMD = re.compile(r"\\(?:text|mathrm|mbox|textbf|mathbf|operatorname)\s*\{([^{}]*)\}")
+-
+-
+-def _normalize(s):
+-    """표기 차이를 걷어낸다. 값을 바꾸는 변환은 하지 않는다."""
+-    s = str(s if s is not None else "").strip()
+-    s = s.replace("\\!", "").replace("\\,", "").replace("\\;", "").replace("\\ ", " ")
+-    s = s.replace("\\left", "").replace("\\right", "")
+-    s = s.replace("dfrac", "frac").replace("tfrac", "frac").replace("cfrac", "frac")
+-    s = _TEXT_CMD.sub(r"\1", s)
+-    s = s.strip("$").strip()
+-    s = re.sub(r"^\\\((.*)\\\)$", r"\1", s).strip()
+-    s = re.sub(r"^\\\[(.*)\\\]$", r"\1", s).strip()
+-    if s.endswith("."):
+-        s = s[:-1]
+-    s = _UNIT_TAIL.sub("", s)
+-    s = s.replace("\\%", "").rstrip("%").strip()
+-    s = re.sub(r"(?<=\d),(?=\d{3}\b)", "", s)        # 1,234 -> 1234
+-    # LaTeX 로 이스케이프된 중괄호는 집합 표기다. 안 풀면 `\{1,2,3\}` 의 첫 글자가
+-    # '\' 라서 집합으로 인식되지 않고 순서 무관 비교가 통째로 죽는다.
+-    s = s.replace("\\{", "{").replace("\\}", "}")
+-    s = re.sub(r"\s+", "", s)
++_OR_RE = re.compile(
++    r"\\(?:text|mathrm|mbox)\s*\{\s*(?:or|and|\uB610\uB294|\uADF8\uB9AC\uACE0|\uC774\uACE0)\s*\}"      # `\text{or}` / `\text{ and }`
++    r"|\s+(?:or|and)\s+"                                     # 맨 ` or ` / ` and `
++    r"|\s*(?:\uB610\uB294|\uADF8\uB9AC\uACE0|\uC774\uACE0)\s*")                       # 또는 / 그리고 / 이고
++
++def unify_or(s):
++    r"""나열 접속사를 콤마로: `x = 45 or x = -35` → `x = 45,x = -35`.
++    ⚠ **`\text{}` 가 살아있을 때** 처리해야 한다. 나중에 하면 `\quad\text{or}\quad`(공백 없음)는
++    ⚠ 한국어 낱말도 **`\text{}` 통째로** 잡아야 한다. `\text{ 또는 }` 에서 낱말만 빼면
++    """
++    return _OR_RE.sub(",", s)
++
++def brace_cmd_args(s):
++    r"""`\frac13` → `\frac{1}{3}`, `\sqrt2` → `\sqrt{2}`, `\mathbb N` → `\mathbb{N}`."""
++    out, i, guard = [], 0, 0
++    while i < len(s) and guard < 4096:
++        guard += 1
++        m = _CMD_RE.search(s, i)
++        if not m:
++            out.append(s[i:])
++            break
++        out.append(s[i:m.start()])
++        name, j, opt = m.group(1), m.end(), ""
++        if s[j:j + 1] == "[":                       # `\sqrt[3]{x}` 의 선택 인자 보존
++            k = s.find("]", j)
++            if k > 0:
++                opt, j = s[j:k + 1], k + 1
++        args = []
++        for _ in range(_ARITY[name]):
++            g, j = read_group(s, j)
++            if g is None:
++                break
++            args.append(g)
++        if len(args) < _ARITY[name]:
++            out.append(s[m.start():])
++            break
++        out.append("\\" + name + opt + "".join("{" + brace_cmd_args(a) + "}" for a in args))
++        i = j
++    return "".join(out)
++
++def strip_thousand_sep(s):
++    r"""`1{,}234` → `1234`. 맨 콤마는 **전체가 단일 수치일 때만** — 아니면 튜플
++    `(-272, 104)`가 `(-272104)`로 뭉개진다(실측)."""
++    s = re.sub(r"(?<=\d)\{,\}(?=\d{3})", "", s)
++    t = s.strip()
++    return t.replace(",", "") if _PURE_NUM_RE.match(t) else s
++
++def strip_trailing_punct(s):
++    """문장 끝 구두점 제거. `42.` == `42` (단 `4.5`는 보존)."""
++    s = s.strip()
++    while s and s[-1] in ".,;":
++        s = s[:-1].rstrip()
+     return s
+ 
++# 적용 순서 = 이 목록의 순서. 한 줄짜리는 _rx 팩토리로 접었다.
++_CLAUSE_KW = (u",", u";", u"(", u"where", u"for", u"with", u"since", u"because", u"if",
++              u"when", u"and", u"or", u"so", u"thus", u"hence", u"note", u"the", u"in",
++              u"is", u"are", u"it", u"this", u"i.e", u"e.g", u"provided", u"which",
++              u"\ub2e8", u"\uc5ec\uae30\uc11c", u"\uc989", u"\ub530\ub77c\uc11c", u"\ub2e8\uc704")
++
++_HANGUL_RE = re.compile(u"[\uac00-\ud7a3]")
++
++def strip_clause(s):
++    r"""답 뒤에 붙은 **산문 단서절**을 통째로 뗀다 — `5\text{, where }n>0` → `5`.
++    ⚠ 단위와 갈라야 한다: `2\text{L}` 의 `L` 은 답의 일부다(실측 사고).
++    ⚠ `unwrap_text` 보다 **먼저** 돌아야 한다(그 뒤엔 `\text{}` 가 사라진다).
++    """
++    i = s.find("\\text{")
++    while i != -1:
++        body, _ = read_group(s, i + 5)   # ⚠ read_group은 여는 `{`의 인덱스를 받는다
++        head = s[:i].strip()
++        # ⚠ 중괄호가 안 닫히면 read_group은 None을 준다 — 정규화는 tier 예외처리 **밖**이라
++        #   여기서 죽으면 채점기 전체가 죽는다(실측 88K 전수에서 발견).
++        if body is None:
++            return s
++        low = body.lstrip().lower()
++        # 한글 산문은 낱말 목록으로 못 잡는다(조사가 앞에 붙는다) — 길이로 가른다.
++        # ⚠ 한글 **단위**는 전부 두 글자 이하다(개·명·원·시간·가지) → 4자 이상만 산문으로 본다.
++        prose = any(low.startswith(k) for k in _CLAUSE_KW) or (
++            len(low) >= 4 and _HANGUL_RE.search(low))
++        if head and prose:
++            # ⚠ `= 0 \quad (\text{거의 확률 1로})` 처럼 절 앞에 여는 괄호가 있으면
++            #   떼고 나서 `0(` 가 남는다 — 짝이 없으므로 같이 정리한다(실측 8R 놓침).
++            return head.rstrip(" \t,;([")
++        i = s.find("\\text{", i + 1)
++    return s
+ 
+-_FRAC = re.compile(r"^\\frac\{([^{}]+)\}\{([^{}]+)\}$")
+-_SIMPLE_FRAC = re.compile(r"^(-?\d+)\s*/\s*(-?\d+)$")
++# `+\infty` `\infin` 등 무한대 이표기 통일. ⚠ `-\infty` 는 **건드리지 않는다**(값이 다르다).
++_INF_RE = re.compile(r"(^|[=(,{])\+\\infty")
++_INF2_RE = re.compile(r"\\infin(?:ity)?(?![A-Za-z])|무한대")
++
++def unify_infty(s):
++    return _INF2_RE.sub(r"\\infty", _INF_RE.sub(r"\1\\infty", s))
++
++# `-1\leq s\leq 1` → `[-1,1]`. 경계 포함 여부는 연산자가 그대로 결정한다.
++_CHAIN_RE = re.compile(r"^(.+?)(\\leq|\\le|\\geq|\\ge|<|>)"
++                       r"\s*([A-Za-z](?:_\{[^}]*\})?)\s*"
++                       r"(\\leq|\\le|\\geq|\\ge|<|>)(.+)$")
++_CLOSED = ("\\leq", "\\le", "\\geq", "\\ge")
++
++def interval_from_chain(s):
++    r"""연쇄부등식을 구간으로 — `-1\leq s\leq 1` 과 `[-1,1]` 은 같은 집합이다.
++    ⚠ 두 연산자의 **방향이 같아야** 한다. `a<x>b` 는 구간이 아니다.
++    ⚠ 경계 포함 여부는 그대로 옮긴다 — `\le` 는 대괄호, `<` 는 소괄호.
++    """
++    m = _CHAIN_RE.match(s)
++    if not m:
++        return s
++    lo, op1, _v, op2, hi = m.groups()
++    up1, up2 = op1 in ("\\geq", "\\ge", ">"), op2 in ("\\geq", "\\ge", ">")
++    if up1 != up2:
++        return s
++    if up1:                                   # `1\geq s\geq -1` → 뒤집어 읽는다
++        lo, hi, op1, op2 = hi, lo, op2, op1
++    ob = "[" if op1 in _CLOSED else "("
++    cb = "]" if op2 in _CLOSED else ")"
++    return ob + lo + "," + hi + cb
++
++NORM_STEPS = [
++    ("unify_unicode", unify_unicode),
++    ("strip_markdown", strip_markdown),
++    ("unify_or", unify_or),
++    ("strip_wrappers", strip_wrappers),
++    # `\displaystyle` `\,` `\!` `\quad` `\left` 등 간격·스타일 매크로 + `~`
++    ("strip_spacing", lambda s: _SPACING_RE.sub("", s).replace("~", "")),
++    ("strip_text_unit", strip_text_unit),
++    ("strip_clause", strip_clause),
++    ("unwrap_text", unwrap_text),
++    # `\dfrac` `\tfrac` `\cfrac` → `\frac`, `\dbinom` `\tbinom` → `\binom`
++    # ⚠ 치환 문자열은 **r-string**이어야 한다. "\\frac" 로 쓰면 re.sub가 `\f`를
++    #   폼피드로 해석해 `\x0crac` 이 된다(실측: 2,407건 오채점).
++    ("unify_frac_name", _rx(re.compile(r"\\[dtc]frac"), r"\\frac")),
++    ("unify_binom_name", _rx(re.compile(r"\\[dt]binom"), r"\\binom")),
++    ("brace_cmd_args", brace_cmd_args),
++    # `x^2` → `x^{2}`, `d_n` → `d_{n}`
++    ("brace_scripts", _rx(re.compile(r"([\^_])\s*(\\[A-Za-z]+|[A-Za-z0-9])"), r"\1{\2}")),
++    # `45^\circ` → `45` (gold·응답 양쪽에 동일 적용)
++    ("strip_degree", _rx(re.compile(r"\^\{\\circ\}|\^\\circ|\^\{\\degree\}|\\degree|\\textdegree"))),
++    # `\$189.75` → `189.75`, `50\%` → `50`
++    ("strip_units", _rx(re.compile(r"\\[$%]|[$]|\\?%"))),
++    # 공백 전면 제거 — 수식에서 공백은 의미가 없다(대소문자와 달리)
++    ("unify_setbrace", _rx(re.compile(r"\\([{}])"), r"\1")),
++    ("collapse_space", _rx(re.compile(r"\s+"))),
++    # ⚠ 공백 제거 **뒤에** 놓아야 좌우가 대칭이다. 앞에 두면 `[-4, +\infty)`(공백 있음)만
++    #   통일이 안 돼 `[-4,\,+\infty)` 와 갈린다(실측 20k). strip_thousand_sep 과 같은 함정.
++    ("unify_infty", unify_infty),
++    # ⚠ 공백 제거 **뒤에** 놓아야 좌우가 대칭이 된다. 앞에 두면 `147, 399`(공백 있음)와
++    #   `147,399`(공백 없음)가 다르게 정규화된다(실측 20k 2건).
++    ("strip_thousand_sep", strip_thousand_sep),
++    # 맨 앞 `=` `\Rightarrow` 제거 — 모델이 `\boxed{= 375}`로 쓴다(Qwen 실측)
++    ("strip_leading_relop",
++     _rx(re.compile(r"^(?:=|\\Rightarrow|\\rightarrow|\\to|\\therefore|\\implies|\\approx)+\s*"))),
++    ("interval_from_chain", interval_from_chain),
++    ("strip_trailing_punct", strip_trailing_punct),
++]
++
++def normalize(s, skip=()):
++    """등록 순서대로 적용. `skip`의 단계는 건너뛴다(기여도 측정용)."""
++    out = "" if s is None else str(s)
++    for name, fn in NORM_STEPS:
++        if name not in skip:
++            out = fn(out)
++    return out
++
++def step_names():
++    return [n for n, _ in NORM_STEPS]
++
++# §2 추출 — 응답에서 최종답을 뽑는다. EXTRACTORS에 우선순위 순으로 등록.
++
++# ⚠ 정규식으로 \\boxed{}를 잡으면 중첩(`\\boxed{\\frac{\\sqrt{3}}{2}}`)에서 깨진다.
++
++EXTRACTORS = []
++
++def extractor(name):
++    def deco(fn):
++        EXTRACTORS.append((name, fn))
++        fn.extractor_name = name
++        return fn
++    return deco
++
++_BOX_CMDS = ("\\boxed", "\\Boxed", "\\fbox", "\\framebox")
++_ANS_RE = re.compile(
++    r"^\s*(?:\*{0,2})\s*(?:final\s+answer|answer|answ|solution|result"
++    r"|답|정답|최종\s*답|답안)\s*(?:\*{0,2})\s*[:：]\s*(.+?)\s*$", re.IGNORECASE)
++_DISPLAY_RE = re.compile(r"\$\$(.+?)\$\$|\\\[(.+?)\\\]", re.DOTALL)
++
++def iter_boxed(text):
++    """텍스트 안의 모든 boxed 내용을 등장 순서대로."""
++    if not text:
++        return
++    i, n = 0, len(text)
++    while i < n:
++        hit = [(text.find(c, i), len(c)) for c in _BOX_CMDS]
++        best, blen = min([h for h in hit if h[0] >= 0], default=(-1, 0))
++        if best < 0:
++            return
++        k = best + blen
++        while k < n and text[k] == " ":
++            k += 1
++        if k < n and text[k] != "{":
++            # ⚠ `\boxed 42` 처럼 중괄호가 없으면 read_group은 **한 글자**만 준다 →
++            #   조용히 틀린 답이 된다(실측 참고구현 대조). 토큰 끝까지 읽는다.
++            m = re.match(r"[^\s$\\]+|\\[a-zA-Z]+(?:\{[^{}]*\})*", text[k:])
++            if m:
++                yield m.group(0), best, k + m.end()
++                i = k + m.end()
++                continue
++        body, j = read_group(text, best + blen)
++        if body is None:
++            i = best + 1
++            continue
++        yield body, best, j
++        i = max(j, best + 1)
+ 
++def count_boxed(text):
++    """응답에 등장한 boxed 개수(관측용)."""
++    return sum(1 for _ in iter_boxed(text))
++
++_GAP_STRIP = re.compile(r"[\s$]|\\[()\[\]]")
++# ⚠ **선택접속사만**이다. `and` `,` 로 이으면 `\boxed{-4} and \boxed{50}`(최소·최대)나
++#   `\boxed{(-2,-9)}, \boxed{x=-2}`(점과 성분) 같은 다부분 답까지 얼버무림이 된다(실측 20k 24건).
++_HEDGE_RE = re.compile(u"^(?:\ub610\ub294|\ud639\uc740|\uc774\uac70\ub098|or)$", re.I)
++
++@extractor("boxed")
++def find_last_boxed(text):
++    r"""마지막 `\boxed{...}`. 모델이 중간 결과를 boxed로 감싸는 일이 흔해 마지막을 쓴다.
++    ⚠ 중첩(`\boxed{a, \boxed{b}}`)이면 **안쪽 마지막**을 쓴다 — 바깥은 나열을 감싼
++    """
++    spans = list(iter_boxed(text))
++    if not spans:
++        return None
++    last = spans[-1][0]
++    # ⚠ `\boxed{A} 또는 \boxed{B}` 는 답을 **둘로 얼버무린 것**이다. 마지막만 뽑으면
++    #   그중 하나가 gold와 맞아 틀린 답이 정답이 된다(실측 8R). 콤마로 이어 붙여
++    #   나열로 넘기면 gold이 단일값일 때 개수가 달라 걸러진다.
++    #   ⚠ 사이가 **접속사 하나뿐**일 때만 — `\boxed{3} 이므로 답은 \boxed{9}` 는 아니다.
++    if len(spans) >= 2:
++        prev, gap = spans[-2][0], _GAP_STRIP.sub("", text[spans[-2][2]:spans[-1][1]])
++        if _HEDGE_RE.match(gap) and prev.strip() != last.strip():
++            last = prev.strip() + ", " + last.strip()
++    for _ in range(4):                      # 중첩 상한(결정적)
++        if last is None or "\\boxed" not in last and "\\fbox" not in last:
++            break
++        inner = None
++        for b, _bs, _be in iter_boxed(last):
++            inner = b
++        if inner is None:
++            break
++        last = inner
++    return last
++
++_ANS_PREFIX_RE = re.compile(
++    r"^(?:the\s+)?(?:final\s+)?answer(?:\s+to[^:]*)?\s*(?:is|:|=)\s*"
++    r"|^(?:\uc815\ub2f5|\ub2f5)(?:\uc740|\ub294)?\s*(?:\uc774\ub2e4|\uc785\ub2c8\ub2e4|:|=)?\s*", re.I)
++
++@extractor("answer_line")
++def find_answer_line(text):
++    """`Answer: 42` / `정답: 42` / `**Final Answer:** 42` 형태의 마지막 줄."""
++    for line in reversed(str(text or "").splitlines()):
++        m = _ANS_RE.match(line)
++        if m:
++            v = m.group(1).strip().strip("*").strip()
++            # ⚠ 모델이 표지를 겹쳐 쓴다 — `Final Answer: The final answer is $\sqrt2$`
++            #   (실측 5R, 접두어째 뽑혀 오답 처리). 한 번 더 벗긴다.
++            v = _ANS_PREFIX_RE.sub("", v).strip().strip("*").strip()
++            if v:
++                return v
++    return None
+ 
+-def _to_float(s):
+-    """숫자로 읽을 수 있으면 float, 아니면 None. 예외를 밖으로 흘리지 않는다."""
+-    s = _normalize(s)
+-    if not s:
++@extractor("display_math")
++def find_last_display_math(text):
++    r"""마지막 `$$..$$` 또는 `\[..\]` 블록. 여러 줄이면 마지막 줄만."""
++    last = None
++    for m in _DISPLAY_RE.finditer(str(text or "")):
++        last = m.group(1) if m.group(1) is not None else m.group(2)
++    if not last or not last.strip():
+         return None
+-    try:
+-        return float(s)
+-    except ValueError:
+-        pass
+-    m = _FRAC.match(s) or _SIMPLE_FRAC.match(s)
+-    if m:
++    tail = [ln for ln in last.strip().splitlines() if ln.strip()]
++    return tail[-1].strip() if tail else None
++
++TIER_NONE = len(EXTRACTORS)
++
++def extract_answer(text, skip=()):
++    """(답, tier). 실패하면 ("", TIER_NONE).
++    ⚠ '마지막 줄 숫자 긁기' 같은 느슨한 폴백은 **의도적으로 없다.** 실제 모델 응답
++    """
++    if not text:
++        return "", TIER_NONE
++    s = str(text)
++    for tier, (name, fn) in enumerate(EXTRACTORS):
++        if name in skip:
++            continue
+         try:
+-            den = float(m.group(2))
+-            return float(m.group(1)) / den if den else None
+-        except (ValueError, ZeroDivisionError):
+-            return None
+-    m = re.match(r"^(-?\d+(?:\.\d+)?)\\?times10\^\{?(-?\d+)\}?$", s)
+-    if m:
++            v = fn(s)
++        except Exception:
++            v = None
++        if v and v.strip():
++            return v.strip(), tier
++    return "", TIER_NONE
++
++def extractor_names():
++    return [n for n, _ in EXTRACTORS]
++
++# §3 동치 판정 — EQ_TIERS를 순서대로 시도해 처음 True/False를 낸 곳에서 멈춘다.
++
++# ⚠ 결정성(계약 불변식 3): 난수·시각·부하 의존 금지. 기호 tier는 시계 기반 타임아웃
++from fractions import Fraction
++
++EQ_TIERS = []
++TIER_NAMES = []
++
++def tier(name):
++    def deco(fn):
++        EQ_TIERS.append((name, fn))
++        TIER_NAMES.append(name)
++        fn.tier_name = name
++        return fn
++    return deco
++
++# ───────────────────────────────────────────────────────── 최상위 분해
++_OPEN = {"(": ")", "[": "]", "{": "}"}
++_CLOSE = {v: k for k, v in _OPEN.items()}
++
++def split_top(s, seps=(",",)):
++    r"""괄호·`\{ \}` 깊이 0에서만 구분자로 쪼갠다."""
++    parts, buf, depth, i, n = [], [], 0, 0, len(s)
++    while i < n:
++        c = s[i]
++        if c == "\\" and i + 1 < n and s[i + 1] in "{}":
++            depth += 1 if s[i + 1] == "{" else -1
++            buf.append(s[i:i + 2])
++            i += 2
++            continue
++        depth += (c in _OPEN) - (c in _CLOSE)
++        if depth == 0 and c in seps:
++            parts.append("".join(buf))
++            buf = []
++        else:
++            buf.append(c)
++        i += 1
++    parts.append("".join(buf))
++    return parts
++
++def strip_outer(s):
++    """최상위 괄호쌍을 벗겨 (여는기호, 내용, 닫는기호). 없으면 ("", s, "")."""
++    # `{`는 normalize의 unify_setbrace를 거친 집합 표기다 — `\{` 와 같은 것으로 돌려준다.
++    for o, c in (("\\{", "\\}"), ("{", "}"), ("(", ")"), ("[", "]"), ("(", "]"), ("[", ")")):
++        if s.startswith(o) and s.endswith(c) and len(s) > len(o) + len(c) - 1:
++            inner = s[len(o):len(s) - len(c)]
++            if len(split_top(inner + "\x00", ("\x00",))) == 2:
++                return ("\\{" if o == "{" else o), inner, c
++    return "", s, ""
++
++# ───────────────────────────────────────────────────────── tier 0~4 (rule)
++@tier("string")
++def eq_string(p, g):
++    """정규화 후 완전 일치. 실측상 이 tier가 99.9%를 처리한다."""
++    return True if p == g else None
++
++# ⚠ str.isdigit()는 유니코드 숫자(`①`,`²`)에도 True인데 int()는 터진다 — ASCII만 본다.
++_INT_RE = re.compile(r"^[0-9]+$")
++_DEC_RE = re.compile(r"^[0-9]+\.[0-9]*$|^[0-9]*\.[0-9]+$")
++
++def _frac_args(s):
++    r"""`\frac{A}{B}` → [A, B]. 정확히 그 형태일 때만."""
++    if not s.startswith("\\frac{"):
++        return None
++    a, i = read_group(s, len("\\frac"))
++    if a is None:
++        return None
++    b, j = read_group(s, i)
++    return [a, b] if b is not None and j == len(s) else None
++
++def _ratio(parts):
++    """두 조각을 나눗셈으로 합친다 — 분수·비·슬래시가 모두 같은 모양이다."""
++    if not parts or len(parts) != 2:
++        return None
++    a, b = parse_number(parts[0]), parse_number(parts[1])
++    return None if (a is None or b is None or b == 0) else a / b
++
++def _parse_unsigned(s):
++    if _INT_RE.match(s):
++        return Fraction(int(s))
++    if s.startswith("\\frac{"):
++        return _ratio(_frac_args(s))
++    for sep in (":", "/"):             # 비(ratio) `171:113` = 171/113, 슬래시 `3/4`
++        if sep in s:
++            return _ratio(split_top(s, (sep,)))
++    if _DEC_RE.match(s):
+         try:
+-            return float(m.group(1)) * (10 ** int(m.group(2)))
+-        except (ValueError, OverflowError):
++            return Fraction(s)
++        except (ValueError, ZeroDivisionError):
+             return None
+     return None
+ 
++def parse_number(s):
++    """정규화 문자열 → Fraction(**정확 산술**). 못 읽으면 None."""
++    if not s or len(s) > 200:
++        return None
++    s, neg = s.strip(), False
++    while s[:1] in ("+", "-"):
++        neg ^= s[0] == "-"
++        s = s[1:]
++    if not s:
++        return None
++    v = _parse_unsigned(s)
++    return None if v is None else (-v if neg else v)
+ 
+-_SEP = re.compile(r"[,;]")
++_YN = {"yes": 1, "true": 1, "예": 1, "참": 1,
++       "no": 0, "false": 0, "아니오": 0, "아니요": 0, "거짓": 0}
++_YN_RE = re.compile(u"^(yes|no|true|false|예|아니오|아니요|참|거짓)"
++                    u"(?![A-Za-z가-힣])", re.I)
++
++@tier("yesno")
++def eq_yesno(p, g):
++    r"""gold이 **순수 예/아니오**면 응답의 첫 낱말만 본다 — `Yes, the theorem holds` = `Yes`.
++    """
++    mg = _YN_RE.match(g)
++    if not mg or mg.end() != len(g):
++        return None
++    mp = _YN_RE.match(p)
++    return None if not mp else (_YN[mp.group(1).lower()] == _YN[mg.group(1).lower()])
+ 
++@tier("numeric")
++def eq_numeric(p, g):
++    r"""양쪽이 수치면 Fraction 정확 비교. `0.5` == `\frac{1}{2}`."""
++    a, b = parse_number(p), parse_number(g)
++    return None if (a is None or b is None) else (a == b)
++
++def _expand_pm(s):
++    if "\\pm" not in s:
++        return [s]
++    if s.count("\\pm") != 1:
++        return None
++    head, tail = s.split("\\pm", 1)
++    return [head + "+" + tail, head + "-" + tail]
+ 
+-def _as_collection(s):
+-    """`{1,2}` `(1,2)` `[1,2]` 를 (종류, 원소들)로. 아니면 None."""
+-    s = _normalize(s)
+-    if len(s) < 3 or s[0] not in "{([" or s[-1] not in "})]":
++@tier("pm")
++def eq_pm(p, g):
++    r"""`\pm 110` 을 `{110, -110}` 으로 전개해 비교."""
++    if "\\pm" not in p and "\\pm" not in g:
+         return None
+-    inner = s[1:-1]
+-    if not inner or _SEP.search(inner) is None:
++    ep, eg = _expand_pm(p), _expand_pm(g)
++    if ep is None or eg is None:
+         return None
+-    if inner.count("{") != inner.count("}"):
++    flat = lambda xs: [x.strip() for e in xs for x in split_top(e)]
++    return _same_multiset(flat(ep), flat(eg), unordered=True)
++
++@tier("structured")
++def eq_structured(p, g):
++    """튜플·구간은 순서 있음, 집합·맨 나열은 순서 없음."""
++    op, ip, cp = strip_outer(p)
++    og, ig, cg = strip_outer(g)
++    # `;`도 구분자다 — 유럽식 표기 `(-8; 25)`. 실측: gold 2건이 이 형태다.
++    lp, lg = split_top(ip, (",", ";")), split_top(ig, (",", ";"))
++    # ⚠ 같은 값을 두 표기로 쓴 나열은 **한 값**이다 — `\frac{41}{2} 또는 20.5`, `4:9 또는 4/9`.
++    #   접지 않으면 개수가 달라 gold 단일값과 어긋난다(실측 20k).
++    # ⚠ 괄호 없는 **맨 나열**일 때만 접는다. `(10/3, 10/3)` 은 좌표쌍이지 같은 값의 나열이 아니다
++    #   (실측: 괄호까지 접었더니 gold `(10/3, 10/3)` 과 개수가 어긋나 정답을 잃었다).
++    if op == "" and len(lp) > 1 and all(_same_value(lp[0], x) for x in lp[1:]):
++        lp = lp[:1]
++        if len(lg) < 2:            # gold이 단일값이면 접은 값과 그 자리에서 견준다
++            return True if _same_value(lp[0], ig.strip()) else None
++    if len(lp) < 2 and len(lg) < 2:
+         return None
+-    kind = "set" if s[0] == "{" else "seq"
+-    return kind, [p for p in _SEP.split(inner) if p != ""]
++    if len(lp) != len(lg):
++        return False
++    # 집합은 중괄호를 생략해 나열해도 같다(실측). 단 `(a,b)`좌표와 `[a,b]`구간은 구분.
++    setlike = ("", "\\{")
++    if op in setlike and og in setlike:
++        unordered = True
++    elif (op, cp) != (og, cg):
++        # ⚠ 닫는 괄호까지 봐야 한다. 여는 것만 보면 `[-1,1]` 이 `[-1,1)` 과 같아진다
++        #   (실측 7R, **틀린 답을 정답 처리**). `(0,1]`=`(0,1)`, `(a,b)`=`(a,b]` 도 마찬가지였다.
++        return False
++    else:
++        unordered = (op == "\\{")
++    return _same_multiset([x.strip() for x in lp], [x.strip() for x in lg], unordered)
++
++def _same_multiset(xs, ys, unordered):
++    if len(xs) != len(ys):
++        return False
++    if not unordered:
++        return all(_elem_eq(a, b) for a, b in zip(xs, ys))
++    rest = list(ys)
++    for a in xs:
++        for k, b in enumerate(rest):
++            if _elem_eq(a, b):
++                rest.pop(k)
++                break
++        else:
++            return False
++    return True
+ 
++def _elem_eq(a, b):
++    """원소 비교 — 아래 tier만 재귀(무한재귀 방지)."""
++    if a == b:
++        return True
++    v = eq_numeric(a, b)
++    if v is not None:
++        return v
++    v = eq_relation(a, b)
++    return v if v is not None else False
+ 
+-def _sympy_equal(a, b):
+-    """기호 동치. 실패하면 False 가 아니라 None(판정 불가)을 돌려준다."""
+-    if not _HAS_SYMPY or max(len(a), len(b)) > SYMPY_MAX_LEN:
++def _same_value(a, b):
++    """접기 판정용 — `_elem_eq` 에 **기호 tier까지** 붙인다.
++    """
++    if _elem_eq(a, b):
++        return True
++    try:
++        return eq_symbolic(a, b) is True
++    except Exception:
++        return False
++
++_MOD_MARK = ("\\pmod", "\\bmod", "\\mod")
++
++def _relsplit(s):
++    r"""관계식을 좌·우로 쪼갠다.
++    """
++    if "\\equiv" in s and not any(m in s for m in _MOD_MARK):
++        s = s.replace("\\equiv", "=")
++    return split_top(s, ("=",))
++
++_OPS = ("+", "-", "*", "/", "<", ">")
++_HAS_ALPHA = re.compile(r"[A-Za-z]")
++# ⚠ `x \cdot 0 = 0` 의 LHS를 이름표로 오인하면 gold `0` 과 같아진다 — 문자만 봐선 못 잡는다.
++_OP_CMDS = ("\\cdot", "\\times", "\\div", "\\pm", "\\mp", "\\frac", "\\sqrt",
++            "\\sum", "\\int", "\\prod", "\\binom", "\\log", "\\ln")
++
++_SUB_RE = re.compile(r"_\{[^{}]*\}|_[A-Za-z0-9]")
++
++def _label_key(s):
++    r"""이름표 비교용 키 — 첨자를 뗀다. `t_{1,2}` 와 `t` 는 같은 변수다(실측)."""
++    return _SUB_RE.sub("", s.strip())
++
++_WORD_RUN = re.compile(r"[A-Za-z]{7,}")
++# `\int` `\sum` 같은 큰 연산자, 또는 `D(` `f_{n}(` 같은 함수 적용 — 값을 가리키는 양이다.
++# ⚠ `\b` 를 쓰면 안 된다 — `\int_{A}` 처럼 뒤에 `_` 가 오면 낱말 경계가 아니다.
++_QUANT_RE = re.compile(r"^(?:\\(?:int|iint|oint|sum|prod|lim|max|min|det|tr)(?![A-Za-z])"
++                       r"|[A-Za-z](?:_\{[^}]*\})?\()")
++
++def _is_lhs_label(s):
++    r"""LHS가 단순 이름표(`\theta`, `I_n`, `f(n)`)인가. 식이면 벗기지 않는다."""
++    s = s.strip()
++    if not s or len(s) > 24 or any(c in s for c in _OP_CMDS):
++        return False
++    return len(split_top(s, _OPS)) == 1
++
++def _is_pred_label(s):
++    r"""**응답 쪽** 좌변용 — 이름표이면서 산문이 아니어야 한다.
++    ⚠ 산문 문장도 끝에 `=`가 있으면 이름표로 통과한다 — `f(x) is differentiable at x=0`
++    ⚠ gold 쪽에는 쓰지 않는다 — gold은 큐레이션된 데이터라 `E[copies borrowed]=...`
++    """
++    s = s.strip()
++    if not s or _WORD_RUN.search(re.sub(r"\\[A-Za-z]+", "", s)):
++        return False
++    # 이름표가 아니어도 **값을 가리키는 양**이면 좌변으로 인정한다 —
++    return _is_lhs_label(s) or bool(_QUANT_RE.match(s))
++
++def _side_eq(a, b):
++    a, b = a.strip(), b.strip()
++    if a == b:
++        return True
++    v = eq_numeric(a, b)
++    return bool(v) if v is not None else False
++
++@tier("relation")
++def eq_relation(p, g):
++    r"""`\theta=X` vs `X` 를 맞다고 본다. 확신 없으면 None → 기호 tier로."""
++    sp, sg = _relsplit(p), _relsplit(g)
++    if len(sp) == 1 and len(sg) == 1:
+         return None
+-    for parser in ("latex", "expr"):
+-        try:
+-            if parser == "latex":
+-                if not _HAS_LATEX:
+-                    continue
+-                ea, eb = parse_latex(a), parse_latex(b)
+-            else:
+-                ea = sympy.sympify(a.replace("^", "**"))
+-                eb = sympy.sympify(b.replace("^", "**"))
+-            d = sympy.simplify(ea - eb)
+-            if d == 0:
++    if len(sp) == len(sg) and len(sp) > 1:
++        if all(_side_eq(a, b) for a, b in zip(sp, sg)):
++            return True
++        # 좌변이 둘 다 단순 이름표면 **이름은 내용이 아니다** — 첨자를 떼고 같으면 우변만 본다
++        if (len(sp) == 2 and _is_lhs_label(sp[0]) and _is_lhs_label(sg[0])
++                and _label_key(sp[0]) == _label_key(sg[0])):
++            return True if _side_eq(sp[1], sg[1]) else None
++        return None
++    # gold이 `A = B = C` 처럼 **같은 값을 여러 표현으로 나열**하면 어느 하나와 맞으면 된다
++    if len(sg) >= 3 and len(sp) == 1:
++        return True if any(_side_eq(p, part) for part in sg) else None
++    if len(sp) >= 3 and len(sg) == 1:
++        # ⚠ 응답이 `1=2=3=4=5` 처럼 후보를 **나열**하면 하나만 맞아도 통과한다 → 보상 해킹.
++        #   사슬 안에 **서로 다른 수치가 둘 이상** 있으면 항등식이 아니므로 거부한다.
++        #   (`2+2=4=4` 처럼 계산이 필요한 항은 수치로 안 잡히니 정당한 사슬은 살아남는다.)
++        nums = set(v for v in (parse_number(q) for q in sp) if v is not None)
++        if len(nums) > 1:
++            return None
++        return True if any(_side_eq(part, g) for part in sp) else None
++    if len(sg) == 2 and len(sp) == 1 and _is_lhs_label(sg[0]):
++        return True if _side_eq(p, sg[1]) else None
++    if len(sp) == 2 and len(sg) == 1 and _is_pred_label(sp[0]):
++        return True if _side_eq(sp[1], g) else None
++    return None
++
++# ⚠ `\to` `\rightarrow` 는 뺐다 — `S_n \sim n \text{ as } n\to\infty` 의 한정구를
++#   결과 화살표로 오인해 gold `\infty` 와 맞다고 한다(실측 88K). 동형기호만 남긴다.
++_ARROW = ("\\cong", "\\simeq")
++
++@tier("arrow")
++def eq_arrow(p, g):
++    r"""`S_3/S_2 \cong \mathbb{Z}_3`, `nE[\cdots] \to L` — 화살표·동형기호는 **오른쪽이 답**이다.
++    """
++    for op in _ARROW:
++        if op in p and op not in g:
++            parts = split_top(p.replace(op, "\x01"), ("\x01",))
++            if len(parts) == 2 and parts[0].strip() and parts[1].strip():
++                return True if _side_eq(parts[1], g) else None
++    return None
++
++# 모델이 답 끝에 붙이는 꼬리 — 단위와 단서. 정규화 뒤라 `300 \text{ m}` 는 `300m` 이 된다.
++# ⚠ 아무 알파벳이나 떼면 `2x` 가 `2` 가 된다 → **알려진 단위만** 뗀다.
++_UNIT_RE = re.compile(
++    r"(?<=[0-9}\)])(?:dollars|dollar|ways|way|students|student|inches|inch|feet|foot"
++    r"|squareunits|units|unit|degrees|degree|percent|cents|cent|hours|hour|minutes|seconds"
++    r"|km|cm|mm|kg|mg|mL|ms|min|sec"   # ⚠ 단일 문자(m,g,s,h,L)는 변수와 충돌 → 제외
++    r"|\uac1c|\uba85|\uc6d0|\uc77c|\uc2dc\uac04|\ubd84|\ucd08|\ub144|\uc6d4|\uac00\uc9c0|\ubc88|\ub3c4)$")
++_CAVEAT_RE = re.compile(r"\((?:\ub2e8|where|for|when|if)[^()]*\)$")
++
++def strip_annotation(s):
++    """끝에 붙은 단위·단서를 뗀다. 뗄 게 없으면 그대로."""
++    prev = None
++    while prev != s and s:
++        prev = s
++        s = _CAVEAT_RE.sub("", s).strip()
++        s = _UNIT_RE.sub("", s).strip()
++    return s
++
++_GLOSS_RE = re.compile(u"^[\uac00-\ud7a3][\uac00-\ud7a3\\s]*\\(([A-Za-z][A-Za-z\\s.'-]*)\\)$")
++
++@tier("gloss")
++def eq_gloss(p, g):
++    r"""`피트(Pete)` — 고유명사를 한글·영문 병기로 쓴다. 괄호 안 영문이 답이다.
++    """
++    m = _GLOSS_RE.match(p)
++    if not m:
++        return None
++    return True if m.group(1).strip().lower() == g.strip().lower() else None
++
++_ALPHA_ONLY = re.compile(r"^[A-Za-z ]{2,40}$")
++
++@tier("textcase")
++def eq_textcase(p, g):
++    """양쪽이 **순수 영문 텍스트**면 대소문자를 무시한다 — `No solution` vs `no solution`.
++    수식에는 적용하지 않는다(대소문자가 변수를 가른다)."""
++    if _ALPHA_ONLY.match(p) and _ALPHA_ONLY.match(g):
++        return True if p.lower() == g.lower() else None
++    return None
++
++@tier("annotation")
++def eq_annotation(p, g):
++    """`300m` vs `300`, `2/x(단,x≠0)` vs `2/x` — 꼬리를 떼고 다시 본다."""
++    sp, sg = strip_annotation(p), strip_annotation(g)
++    if (sp, sg) == (p, g) or not sp or not sg:
++        return None                       # 뗀 게 없으면 이 tier가 할 일이 없다
++    if sp == sg:
++        return True
++    return True if eq_numeric(sp, sg) else None
++
++# ───────────────────────────────────────────────────────── tier 6 기호 + 가드
++SYM_ENABLED = True
++_SYM_STATE = {"probed": False, "backend": None}
++_PROBE = (Fraction(7, 3), Fraction(11, 5), Fraction(13, 7), Fraction(17, 11))  # 고정(난수 아님)
++
++SYM_MAX_LEN, SYM_MAX_OPS, SYM_MAX_DEPTH = 200, 8, 8
++SYM_MAX_TERMS, SYM_MAX_FUNCS, SYM_MAX_EXP = 40, 4, 1000
++_HEAVY = ("\\frac", "\\sqrt", "\\int", "\\sum", "\\prod", "\\lim", "\\binom")
++_BIGNUM_RE = re.compile(r"\d{15,}")
++_FUNC_RE = re.compile(r"\\(?:sin|cos|tan|cot|sec|csc|sinh|cosh|tanh|arcsin|arccos|arctan"
++                      r"|log|ln|exp|Gamma|zeta)")
++_CMD_SCAN_RE = re.compile(r"\\([a-zA-Z]+)")
++_CMD_STRIP_RE = re.compile(r"\\[a-zA-Z]+")
++_SAFE_CHARS = frozenset("0123456789abcdefghijklmnopqrstuvwxyz"
++                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ\\{}()[]+-*/^_.,=<>|!' ")
++# ⚠ 맨 끝 공백은 **latex_respace가 되살린 것**만이다 — normalize가 공백을 전부 지우므로
++#   여기 오는 공백은 `\ln a` `\cdot n!` 처럼 명령어를 떼어놓은 그 한 칸뿐이다.
++# 기호 엔진이 **확실히 아는** 명령만. 화이트리스트인 이유: math_verify는 모르는 명령을
++# 만나면 조용히 잘라내고 파싱되는 부분만 남긴다(`2^{\aleph_0}`→2, `\square ABCD`→a*b*c*d*square).
++_SYM_OK_CMDS = set((
++    "frac sqrt binom cdot times div pm mp "
++    "sin cos tan cot sec csc sinh cosh tanh arcsin arccos arctan log ln exp sum prod int lim "
++    "le ge ne leq geq neq lt gt "
++    "alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta iota kappa lambda mu "
++    "nu xi rho sigma tau upsilon phi varphi chi psi omega pi "
++    "Gamma Delta Theta Lambda Sigma Upsilon Phi Psi Omega Xi Pi infty cdots ldots dots quad"
++).split())
++# 중괄호 없이 인자를 붙여 쓰는 명령. 화이트리스트인 이유: 일반 패턴 `\\[a-zA-Z]+` 는
++_RESPACE_CMDS = sorted(
++    _SYM_OK_CMDS | set("max min sup inf det gcd lcm deg dim ker equiv approx in notin subset "
++                       "supset cup cap forall exists partial nabla ell aleph".split()),
++    key=len, reverse=True)
++_RESPACE_SET = frozenset(_RESPACE_CMDS)
++_RESPACE_MAX = max(len(c) for c in _RESPACE_CMDS)
++_RESPACE_TOK = re.compile(r"\\([a-zA-Z]+)")
++_ABSORBED = frozenset("ei")   # 오일러 수·허수는 상수로 흡수된다(소문자 비교)   # 오일러 수·허수는 심볼이 아니라 상수로 흡수된다
++
++def _brace_depth(s):
++    d = m = 0
++    for c in s:
++        d += (c == "{") - (c == "}")
++        m = max(m, d)
++    return m
++
++def _bad_exponent(s):
++    r"""거듭제곱 탑(`9^{9^{9}}`, 5,069ms) 또는 큰 지수(`3^{6567340}`, 1,005ms)가 있는가.
++    """
++    i = 0
++    while True:
++        i = s.find("^{", i)
++        if i < 0:
++            return False
++        body, _j = read_group(s, i + 1)
++        if body:
++            if "^" in body:                                  # 탑
+                 return True
+-            if d.is_number and d.is_zero is False:
+-                return False
+-        except Exception:
++            t = body.lstrip("-+")
++            if t.isdigit() and (len(t) > 18 or int(t) > SYM_MAX_EXP):
++                return True
++        i += 2
++
++def _case_collision(s):
++    r"""같은 글자의 대소문자가 함께 있는가. latex2sympy는 T와 t를 같은 심볼로 뭉갠다:
++    parse("e^{4(T-t)}") -> exp(4*(-t+t)) -> exp(0) -> 1 (실측)."""
++    seen = set(c for c in _CMD_STRIP_RE.sub(" ", s) if c.isalpha())
++    return any(c.swapcase() in seen for c in seen)
++
++def _safe_chars(s):
++    """수학 문자만인가(그리스 문자 허용). 물음표·제어문자가 섞이면 파서가 앞부분만 읽는다."""
++    for c in s:
++        if c in _SAFE_CHARS or "\u03b1" <= c <= "\u03c9" or "\u0391" <= c <= "\u03a9" or c == "\u00b1":
+             continue
+-    return None
++        return False
++    return True
+ 
++def sym_admissible(s):
++    """기호 엔진에 넘겨도 안전한 모양인가. 순수 함수 — 시계·부하 무관."""
++    if not s or len(s) > SYM_MAX_LEN:
++        return False
++    if sum(s.count(h) for h in _HEAVY) > SYM_MAX_OPS or _brace_depth(s) > SYM_MAX_DEPTH:
++        return False
++    if _bad_exponent(s):
++        return False
++    if s.count("+") + s.count("-") > SYM_MAX_TERMS or _BIGNUM_RE.search(s):
++        return False
++    if len(_FUNC_RE.findall(s)) > SYM_MAX_FUNCS or not _safe_chars(s):
++        return False
++    if ":" in s or "{}" in s:                  # 비(ratio) 표기 / 빈 그룹
++        return False
++    if s[-1] in "+-*/^_,(" or s[0] in "*/^_,)":            # 끝이 연산자 → 절단 위험
++        return False
++    if s.count("{") != s.count("}") or s.count("(") != s.count(")"):
++        return False
++    if any(c not in _SYM_OK_CMDS for c in _CMD_SCAN_RE.findall(s)):
++        return False
++    return not _case_collision(s)
++
++def latex_respace(s):
++    r"""`\sinA` → `\sin A`. collapse_space가 지운 공백을 기호 엔진에 넘길 때만 되살린다
++    ⚠ 정규식 대안으로 하면 **역추적**에 당한다: `\infty` 에서 `infty` 가 먼저 맞았다가
++    """
++    def one(m):
++        tok = m.group(1)
++        for k in range(min(len(tok), _RESPACE_MAX), 0, -1):
++            if tok[:k] in _RESPACE_SET:
++                return "\\" + tok if k == len(tok) else "\\" + tok[:k] + " " + tok[k:]
++        return m.group(0)
++    return _RESPACE_TOK.sub(one, s)
++
++def _parse_lost_symbols(expr, src):
++    r"""파싱 결과가 원문의 변수를 **잃었으면** 절단된 것이다. 지금까지 잡은 오수용의
++    공통 원인이 전부 조용한 절단이었다 → 패턴이 아니라 **결과**를 검사한다."""
++    # ⚠ 대소문자를 무시하고 비교한다 — latex2sympy는 `C`를 `c`로 파싱한다.
++    #   구분해서 보면 `-\frac{1}{1+x^2}+C`(적분상수)를 '절단됐다'고 오판해
++    #   기호 판정을 포기한다(실측: 1라운드 놓침의 주요 원인).
++    #   같은 글자의 대소문자 혼용은 _case_collision이 따로 막으므로 안전하다.
++    want = {c.lower() for c in _CMD_STRIP_RE.sub(" ", src) if c.isalpha()} - _ABSORBED
++    if not want:
++        return False
++    try:
++        got = {c.lower() for sym in expr.free_symbols for c in str(sym) if c.isalpha()}
++    except AttributeError:
++        return False
++    return bool(want - got)
++
++def symbolic_backend():
++    """사용 가능한 기호 백엔드 이름. 없으면 None. 한 번만 탐색한다."""
++    if not SYM_ENABLED:
++        return None
++    if not _SYM_STATE["probed"]:
++        _SYM_STATE["probed"] = True
++        try:
++            import math_verify  # noqa: F401
++            _SYM_STATE["backend"] = "math_verify"
++        except Exception:
++            try:
++                from sympy.parsing.latex import parse_latex  # noqa: F401
++                _SYM_STATE["backend"] = "sympy_latex"
++            except Exception:
++                _SYM_STATE["backend"] = None
++    return _SYM_STATE["backend"]
++
++_SYM_CACHE = {}
++SYM_CACHE_MAX = 50000
++
++@tier("symbolic")
++def eq_symbolic(p, g):
++    """대수 동치. 백엔드가 없으면 None — 조용히 끄지 않고 `math_sym_used`로 관측된다."""
++    be = symbolic_backend()
++    if be is None:
++        return None
++    # ⚠ **가드보다 먼저** 공백을 되살려야 한다. collapse_space가 `\cdot n!` 를 `\cdotn!`,
++    #   `\ln a` 를 `\lna`, `\leq s` 를 `\leqs` 로 붙여놓기 때문에 그대로 보면
++    #   sym_admissible 이 "모르는 명령어"라며 거부한다(실측 9R 놓침 3종).
++    p, g = latex_respace(p), latex_respace(g)
++    if not (sym_admissible(p) and sym_admissible(g)):
++        return None
++    # 등식 vs 식 비교는 의미가 없고 **오답을 정답으로 만든다**:
++    if (len(_relsplit(p)) > 1) != (len(_relsplit(g)) > 1):
++        return None
++    # ⚠ 백엔드가 기호 이름을 소문자로 뭉갠다 — `T` 와 `t`, `C` 와 `c` 가 같아진다(실측).
++    #   단 **한 글자 답**에만 막는다. `\frac{N(N-1)}{2}` vs `\frac{n(n-1)}{2}` 처럼
++    #   식 안의 대소문자 흔들림은 같은 변수를 흘려 쓴 것이라 막으면 정답을 잃는다(실측 20k).
++    if len(p) == 1 and len(g) == 1 and p != g and p.lower() == g.lower():
++        return None
++    # ⚠ 문자 없는 **닫힌 수치 등식**끼리는 백엔드가 참·거짓만 보고 같다고 한다 —
++    #   `1=1` 이 `9=0` 과 맞다고 나온다(실측 88K). 응답 하나로 아무 등식 gold나
++    #   훔칠 수 있으므로 백엔드에 맡기지 않는다.
++    if len(_relsplit(p)) > 1 and not _HAS_ALPHA.search(p + g):
++        return None
++    key = (p, g)
++    if key in _SYM_CACHE:
++        return _SYM_CACHE[key]
++    v = _eq_symbolic_uncached(be, p, g)
++    if len(_SYM_CACHE) >= SYM_CACHE_MAX:
++        _SYM_CACHE.clear()
++    _SYM_CACHE[key] = v
++    return v
+ 
+-def is_equivalent(pred, gold):
+-    """(같은가, 어느 단계에서 판정했는가). 5단계를 순서대로 시도한다."""
+-    if pred is None or str(pred).strip() == "":
+-        return False, "empty"
+-    np_, ng = _normalize(pred), _normalize(gold)
+-    if not ng:
+-        return False, "gold_unparsed"
+-    if np_ == ng:
+-        return True, "string"
+-
+-    fa, fb = _to_float(np_), _to_float(ng)
+-    if fa is not None and fb is not None:
+-        # 상대오차 — 큰 수와 작은 수 모두에서 적당히 동작한다
+-        tol = 1e-6 * max(1.0, abs(fb))
+-        return (abs(fa - fb) <= tol), "numeric"
+-
+-    ca, cb = _as_collection(np_), _as_collection(ng)
+-    if ca and cb:
+-        if ca[0] != cb[0] or len(ca[1]) != len(cb[1]):
+-            return False, "collection"
+-        if ca[0] == "set":
+-            ok = sorted(_normalize(x) for x in ca[1]) == sorted(_normalize(x) for x in cb[1])
+-        else:
+-            ok = all(is_equivalent(x, y)[0] for x, y in zip(ca[1], cb[1]))
+-        return ok, "collection"
++_MV_KW = {}
+ 
+-    sy = _sympy_equal(np_, ng)
+-    if sy is not None:
+-        return sy, "sympy"
+-    return False, "no_match"
++def mv_timeout_kw(fn, name):
++    """이 버전의 math_verify가 벽시계 타임아웃 인자를 받으면 **끈다**(None).
++    """
++    if name not in _MV_KW:
++        try:
++            import inspect
++            _MV_KW[name] = {name: None} if name in inspect.signature(fn).parameters else {}
++        except Exception:
++            _MV_KW[name] = {}
++    return _MV_KW[name]
+ 
++def _eq_symbolic_uncached(be, p, g):
++    try:
++        if be == "math_verify":
++            from math_verify import parse as mv_parse, verify as mv_verify
++            # ⚠ math_verify는 parse/verify에 **벽시계 타임아웃**(각 5초)을 건다. 부하가 걸리면
++            #   같은 입력이 True였다가 False가 된다 — 계약 불변식 3(결정성) 위반이다.
++            #   실측 6R: 같은 gold·pred 쌍이 한 표본에선 정답, 다른 표본에선 오답이었다.
++            #   끝나는 건 sym_admissible 의 모양 가드가 보장한다(soak 50만 호출 최대 163ms).
++            #   Ray 액터는 메인 스레드가 아니라 signal 기반 타임아웃이 애초에 못 걸리기도 한다.
++            pkw = mv_timeout_kw(mv_parse, "parsing_timeout")
++            gp, pp = mv_parse("$" + g + "$", **pkw), mv_parse("$" + p + "$", **pkw)
++            if not gp or not pp:
++                return None
++            if _parse_lost_symbols(gp[0], g) or _parse_lost_symbols(pp[0], p):
++                return None                      # 절단 감지 — 기호 판정을 믿지 않는다
++            # ⚠ 자유변수 집합이 다르면 다른 종류의 답이다. math_verify는 수치 허용오차로
++            #   `2^{-123}`(9.4e-38)과 `0m/s`를 같다고 판정한다(실측 soak).
++            if getattr(gp[0], "free_symbols", set()) != getattr(pp[0], "free_symbols", set()):
++                return None
++            return bool(mv_verify(gp, pp, **mv_timeout_kw(mv_verify, "timeout_seconds")))
++        return _sympy_probe(p, g)
++    except Exception:
++        return None
+ 
+-# ─────────────────────────────────────────────────────────────── 계약
+-_KEYS = ("score", "answer_match", "score_before_overlong", "overlong_penalty",
+-         "overlong_fraction", "overlong_active", "at_response_limit",
+-         "resp_tokens", "resp_limit", "math_answer_format", "math_pred_empty",
+-         "math_gold_unparsed", "math_sympy_available",
+-         "math_latex_parser_available", "math_equiv_path")
++def _sympy_probe(p, g):
++    """고정 대입점 4개에서 값이 모두 같으면 동치(결정적 — simplify는 안 끝날 수 있다)."""
++    from sympy.parsing.latex import parse_latex
++    ep, eg = parse_latex(p), parse_latex(g)
++    free = sorted(ep.free_symbols | eg.free_symbols, key=str)
++    if len(free) > 4:
++        return None
++    if not free:
++        return abs((ep - eg).evalf(30)) < Fraction(1, 10 ** 20)
++    for shift in range(2):
++        sub = {s: _PROBE[(i + shift) % len(_PROBE)] for i, s in enumerate(free)}
++        try:
++            a, b = ep.subs(sub).evalf(30), eg.subs(sub).evalf(30)
++        except Exception:
++            return None
++        if not (a.is_number and b.is_number):
++            return None
++        if abs(a - b) > 1e-18 * (1 + abs(a)):
++            return False
++    return True
++
++# ───────────────────────────────────────────────────────── 진입점
++TIER_NOMATCH = len(EQ_TIERS)
++
++def is_equivalent(pred, gold, skip=()):
++    """(정답여부, tier, 예외목록). 예외는 삼키지 않고 그 tier만 건너뛰며 사유를 남긴다."""
++    p, g = normalize(pred), normalize(gold)
++    errs = []
++    if not p or not g:
++        return False, TIER_NOMATCH, errs
++    for idx, (name, fn) in enumerate(EQ_TIERS):
++        if name in skip:
++            continue
++        try:
++            v = fn(p, g)
++        except Exception as e:
++            errs.append("%s:%s" % (name, type(e).__name__))
++            continue
++        if v is not None:
++            return bool(v), idx, errs
++    return False, TIER_NOMATCH, errs
+ 
++def tier_names():
++    return list(TIER_NAMES)
+ 
+-def compute_score_dict(data_source, solution_str, ground_truth, extra_info=None, **kw):
+-    ei = extra_info or {}
+-    pred = extract_answer(solution_str)
+-    ok, path = is_equivalent(pred, ground_truth)
+-    base = 1.0 if ok else 0.0
++# §4 진입점 — 계약 구현. 위 세 단계를 엮어 21개 키를 돌려준다.
++
++__version__ = "reward-v1"
++import os
++import sys
++
++# 학습 기동이 넘기는 값. ⚠ 새 T01_* env는 Ray 액터에 안 닿아 조용히 꺼지므로 만들지 않는다
++# (constants_ppo.py:81~103 전파 목록). 아래 셋은 이미 전파된다.
++OVERLONG_BUFFER = int(os.environ.get("T15_OVERLONG_BUFFER", "0"))
++OVERLONG_PENALTY = float(os.environ.get("T15_OVERLONG_PENALTY", "1.0"))
++MAXRESP = int(os.environ.get("T15_MAXRESP", "15360"))
++
++# gold 형태 코드 — ⚠ 문자열이 아니라 int. verl이 첫 행 키로 지표 배열을 만들고
++#   np.mean을 돌린다(agent_loop.py:1080).
++GT_INT, GT_NUM, GT_TUPLE, GT_SET, GT_REL, GT_EXPR, GT_OTHER = 0, 1, 2, 3, 4, 5, 6
++_INT_GT_RE = __import__("re").compile(r"^-?[0-9]+$")   # isdigit()는 유니코드 숫자에도 True
++
++def gt_kind(g):
++    """정규화된 gold의 형태 코드(관측용) — 형태별 정답률을 쪼개 보기 위해."""
++    if not g:
++        return GT_OTHER
++    if _INT_GT_RE.match(g):
++        return GT_INT
++    if parse_number(g) is not None:
++        return GT_NUM
++    if g.startswith("\\{"):
++        return GT_SET
++    if g[0] in "([" and len(split_top(g[1:-1])) > 1:
++        return GT_TUPLE
++    if len(split_top(g, ("=",))) > 1:
++        return GT_REL
++    return GT_EXPR if any(c.isalpha() or c == "\\" for c in g) else GT_OTHER
+ 
+-    rl = int(ei.get("valid_response_length") or 0)
+-    ml = int(ei.get("max_response_length") or MAXRESP)
++def _overlong(base, ei):
++    """t15_reward_v3.py:543~601 및 dispatcher `_overlong_fields`와 **동일 산식**.
++    """
++    rl = ei.get("valid_response_length")
++    ml = ei.get("max_response_length") or MAXRESP
++    if OVERLONG_BUFFER > 0 and (rl is None or not ml):
++        raise RuntimeError("overlong shaping이 켜졌는데 길이 정보가 없다 "
++                           "(valid_response_length=%r, max_response_length=%r)" % (rl, ml))
++    rl_i, ml_i = int(rl) if rl is not None else 0, int(ml) if ml else MAXRESP
+     pen = frac = 0.0
+-    at_lim = 1.0 if (rl and ml and rl >= ml) else 0.0
+-    if OVERLONG_BUFFER > 0 and ml:
+-        exceed = rl - (ml - OVERLONG_BUFFER)
++    at_lim = 1.0 if (rl is not None and ml_i and rl_i >= ml_i) else 0.0
++    if OVERLONG_BUFFER > 0:
++        exceed = rl_i - (ml_i - OVERLONG_BUFFER)
+         if exceed > 0:
+-            frac = min(1.0, exceed / OVERLONG_BUFFER)
++            frac = min(1.0, float(exceed) / OVERLONG_BUFFER)
+             pen = -frac * OVERLONG_PENALTY
++    return {"score_before_overlong": float(base), "overlong_penalty": float(pen),
++            "overlong_fraction": float(frac),
++            "overlong_active": 1.0 if OVERLONG_BUFFER > 0 else 0.0,
++            "at_response_limit": float(at_lim),
++            "resp_tokens": float(rl_i), "resp_limit": float(ml_i)}
++
++_SEEN = set()
++
++def _warn_once(errs):
++    """⚠ 예외를 삼키지 않는다 — 파싱 실패를 조용히 0점 처리하면 채점기 버그가
++    '모델이 못 푼다'로 위장된다. 같은 사유는 한 번만 찍는다."""
++    for e in errs:
++        if e not in _SEEN:
++            _SEEN.add(e)
++            sys.stderr.write("[t01_math_reward] tier 예외: %s\n" % e)
++
++def compute_score_dict(data_source, solution_str, ground_truth, extra_info=None, **kw):
++    ei = extra_info or {}
++    resp = "" if solution_str is None else str(solution_str)
++    if isinstance(ground_truth, (list, tuple)):
++        gold = str(ground_truth[0]) if ground_truth else ""
++    else:
++        gold = "" if ground_truth is None else str(ground_truth)
+ 
++    pred, ex_tier = extract_answer(resp)
++    ok, mt_tier, errs = is_equivalent(pred, gold)
++    base = 1.0 if ok else 0.0
++    ov = _overlong(base, ei)
++    n_box, at_lim = count_boxed(resp), ov["at_response_limit"]
++    if errs:
++        _warn_once(errs)
+     return {
+-        "score": float(base + pen),
++        # 계약 3종. ⚠ answer_match는 **순수 정오만** — DDCA가 이 값으로 정답
++        #   클러스터를 나눈다(ray_trainer.py:315). 감점이 섞이면 길이 신호가 오염된다.
++        "score": float(base + ov["overlong_penalty"]),
+         "answer_match": float(base),
+-        "score_before_overlong": float(base),
+-        "overlong_penalty": float(pen),
+-        "overlong_fraction": float(frac),
+-        "overlong_active": 1.0 if OVERLONG_BUFFER > 0 else 0.0,
+-        "at_response_limit": float(at_lim),
+-        "resp_tokens": float(rl),
+-        "resp_limit": float(ml),
+-        # 관측용 — 채점기 버그를 "모델이 못 푼다"로 위장시키지 않기 위한 키들
+-        "math_answer_format": 1.0 if any(_iter_boxed(solution_str or "")) else 0.0,
++        "score_before_overlong": ov["score_before_overlong"],
++        # overlong shaping (t15와 동일 산식)
++        "overlong_penalty": ov["overlong_penalty"], "overlong_fraction": ov["overlong_fraction"],
++        "overlong_active": ov["overlong_active"], "at_response_limit": at_lim,
++        "resp_tokens": ov["resp_tokens"], "resp_limit": ov["resp_limit"],
++        # 수학 관측 (전 행 항상 반환, 해당 없으면 0.0)
++        "math_has_boxed": 1.0 if n_box else 0.0, "math_n_boxed": float(n_box),
+         "math_pred_empty": 0.0 if pred else 1.0,
+-        "math_gold_unparsed": 1.0 if path == "gold_unparsed" else 0.0,
+-        "math_sympy_available": 1.0 if _HAS_SYMPY else 0.0,
+-        "math_latex_parser_available": 1.0 if _HAS_LATEX else 0.0,
+-        "math_equiv_path": path,
++        # 0점의 원인이 '못 풀어서'인지 '잘려서'인지 분리한다
++        "math_truncated": 1.0 if (at_lim and not pred) else 0.0,
++        "math_extract_tier": float(ex_tier),      # 0=boxed 1=Answer: 2=$$ 3=실패
++        "math_match_tier": float(mt_tier),        # 0=문자열 … 5=기호 6=불일치
++        "math_gt_kind": float(gt_kind(normalize(gold))),
++        "math_sym_used": 1.0 if symbolic_backend() else 0.0,
++        "math_sym_error": 1.0 if any(e.startswith("symbolic") for e in errs) else 0.0,
++        "math_scorer_error": 1.0 if errs else 0.0,
++        "math_pred_chars": float(len(pred)), "math_resp_chars": float(len(resp)),
+     }
+ 
+-
+ def compute_score(data_source, solution_str, ground_truth, extra_info=None, **kw):
+     return compute_score_dict(data_source, solution_str, ground_truth, extra_info, **kw)["score"]
++
++# 키 집합 고정 확인 — import 시점에 한 번. 행마다 키가 달라지면 배치가 죽는다.
++KEYS = tuple(sorted(compute_score_dict(
++    "t01_math", "\\boxed{1}", "1",
++    {"valid_response_length": 1, "max_response_length": MAXRESP})))

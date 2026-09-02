@@ -128,7 +128,7 @@ def compute_reward(ext: ExtractionResult, er: ExecutionResult, cfg: RewardConfig
     rc.n_f2p, rc.t_f2p = float(er.f2p.n_passed), float(er.f2p.total)
     rc.n_p2p, rc.t_p2p = float(er.p2p.n_passed), float(er.p2p.total)
     rc.touched_files = float(len(ext.touched_files))
-    rc.hack_flags = ";".join(list(er.hack_flags) + list(extra_flags))
+    rc.hack_flags = ";".join(dict.fromkeys(list(er.hack_flags) + list(extra_flags)))
     rc.rubric_score = float(rubric_score or 0.0)
     rc.timeout_error_penalty = -cfg.timeout_penalty if er.timed_out else 0.0
     rc.infra_excluded = 1.0 if st == "infra" else 0.0

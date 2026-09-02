@@ -1,0 +1,2044 @@
+# instance_id=luozhouyang__python-string-similarity.115acaac.func_pm_class_rm_funcs__hv4o2all data_source=t15_repo_patch variant=swe_32k total_chars=75400
+
+===== ROLE: system (chars=805) =====
+You are an expert software engineer. You are given a GitHub issue and a snapshot of the repository the issue belongs to. Most files in the snapshot are unrelated to the issue; first locate the code that causes the problem, then fix it.
+
+Finish your reply with your final answer in exactly this format — one or more edit blocks:
+
+<solution>
+### path/to/file.py
+<<<<<<< SEARCH
+exact lines copied from the current file
+=======
+replacement lines
+>>>>>>> REPLACE
+</solution>
+
+Rules for edit blocks:
+- The SEARCH text must match the current file content exactly (including indentation).
+- Keep each SEARCH section minimal but unambiguous.
+- Use one block per contiguous change; multiple blocks are allowed, including for the same file.
+- Only edit files shown in the repository snapshot. Do not edit test files.
+
+===== ROLE: user (chars=74595) =====
+# Issue
+SIFT4 class에서 distance method가 없는 문제
+
+#### 설명
+
+SIFT4 class에 distance method가 없어. Distance method를 사용하려고 하면 AttributeError를 raise해.
+
+#### Steps/Code 재현하기
+
+```python
+from strsimpy.sift4 import SIFT4
+
+s = SIFT4()
+result = s.distance('This is the first string', 'And this is another string', maxoffset=5)
+print(result)
+```
+
+다음과 같은 error가 나와:
+```
+AttributeError: 'SIFT4' object has no attribute 'distance'
+```
+
+정상적으로는 numeric distance value를 반환해야 하는데 (위의 예시처럼 11.0 같은 값).
+
+# Repository snapshot
+Files included (35):
+```
+setup.py
+strsimpy/__init__.py
+strsimpy/cosine.py
+strsimpy/cosine_test.py
+strsimpy/damerau.py
+strsimpy/damerau_test.py
+strsimpy/jaccard.py
+strsimpy/jaccard_test.py
+strsimpy/jaro_winkler.py
+strsimpy/jaro_winkler_test.py
+strsimpy/levenshtein.py
+strsimpy/levenshtein_test.py
+strsimpy/longest_common_subsequence.py
+strsimpy/longest_common_subsequence_test.py
+strsimpy/metric_lcs.py
+strsimpy/metric_lcs_test.py
+strsimpy/ngram.py
+strsimpy/ngram_test.py
+strsimpy/normalized_levenshtein.py
+strsimpy/normalized_levenshtein_test.py
+strsimpy/optimal_string_alignment.py
+strsimpy/optimal_string_alignment_test.py
+strsimpy/overlap_coefficient.py
+strsimpy/overlap_coefficient_test.py
+strsimpy/qgram.py
+strsimpy/qgram_test.py
+strsimpy/shingle_based.py
+strsimpy/sift4.py
+strsimpy/sift4_test.py
+strsimpy/sorensen_dice.py
+strsimpy/sorensen_dice_test.py
+strsimpy/string_distance.py
+strsimpy/string_similarity.py
+strsimpy/weighted_levenshtein.py
+strsimpy/weighted_levenshtein_test.py
+```
+
+[FILE] strsimpy/longest_common_subsequence_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .longest_common_subsequence import LongestCommonSubsequence
+
+
+class LongestCommonSubsequenceTest(unittest.TestCase):
+
+    def test_longest_common_subsequence(self):
+        a = LongestCommonSubsequence()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+
+        self.assertEqual(0, a.distance(s0, s1))
+        self.assertEqual(2, a.distance(s0, s2))
+        self.assertEqual(3, a.distance(s0, s3))
+        self.assertEqual(1, a.distance(s2, s3))
+        self.assertEqual(2, a.length(s2, s3))
+        self.assertEqual(4, a.distance('AGCAT', 'GAC'))
+        self.assertEqual(2, a.length('AGCAT', 'GAC'))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/ngram.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .string_distance import NormalizedStringDistance
+
+
+class NGram(NormalizedStringDistance):
+
+    def __init__(self, n=2):
+        self.n = n
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+
+        special = '\n'
+        sl = len(s0)
+        tl = len(s1)
+
+        if sl == 0 or tl == 0:
+            return 1.0
+
+        cost = 0
+        if sl < self.n or tl < self.n:
+            for i in range(min(sl, tl)):
+                if s0[i] == s1[i]:
+                    cost += 1
+            return 1.0 - cost / max(sl, tl)
+
+        sa = [''] * (sl + self.n - 1)
+
+        for i in range(len(sa)):
+            if i < self.n - 1:
+                sa[i] = special
+            else:
+                sa[i] = s0[i - self.n + 1]
+
+        p = [0.0] * (sl + 1)
+        d = [0.0] * (sl + 1)
+        t_j = [''] * self.n
+        for i in range(sl + 1):
+            p[i] = 1.0 * i
+
+        for j in range(1, tl + 1):
+            if j < self.n:
+                for ti in range(self.n - j):
+                    t_j[ti] = special
+                for ti in range(self.n - j, self.n):
+                    t_j[ti] = s1[ti - (self.n - j)]
+            else:
+                t_j = s1[j - self.n:j]
+
+            d[0] = 1.0 * j
+            for i in range(sl + 1):
+                cost = 0
+                tn = self.n
+                for ni in range(self.n):
+                    if sa[i - 1 + ni] != t_j[ni]:
+                        cost += 1
+                    elif sa[i - 1 + ni] == special:
+                        tn -= 1
+                ec = cost / tn
+                d[i] = min(d[i - 1] + 1, p[i] + 1, p[i - 1] + ec)
+            p, d = d, p
+
+        return p[sl] / max(tl, sl)
+
+```
+
+[FILE] strsimpy/longest_common_subsequence.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .string_distance import StringDistance
+
+
+class LongestCommonSubsequence(StringDistance):
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+        return len(s0) + len(s1) - 2 * self.length(s0, s1)
+
+    @staticmethod
+    def length(s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        s0_len, s1_len = len(s0), len(s1)
+        x, y = s0[:], s1[:]
+        matrix = [[0] * (s1_len + 1) for _ in range(s0_len + 1)]
+        for i in range(1, s0_len + 1):
+            for j in range(1, s1_len + 1):
+                if x[i - 1] == y[j - 1]:
+                    matrix[i][j] = matrix[i - 1][j - 1] + 1
+                else:
+                    matrix[i][j] = max(matrix[i][j - 1], matrix[i - 1][j])
+        return matrix[s0_len][s1_len]
+
+```
+
+[FILE] strsimpy/overlap_coefficient.py
+```python
+from .shingle_based import ShingleBased
+from .string_distance import NormalizedStringDistance
+from .string_similarity import NormalizedStringSimilarity
+
+
+class OverlapCoefficient(ShingleBased, NormalizedStringDistance, NormalizedStringSimilarity):
+
+    def __init__(self, k=3):
+        super().__init__(k)
+
+    def distance(self, s0, s1):
+        return 1.0 - self.similarity(s0, s1)
+
+    def similarity(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 1.0
+        union = set()
+        profile0, profile1 = self.get_profile(s0), self.get_profile(s1)
+        for k in profile0.keys():
+            union.add(k)
+        for k in profile1.keys():
+            union.add(k)
+        inter = int(len(profile0.keys()) + len(profile1.keys()) - len(union))
+        return inter / min(len(profile0), len(profile1))
+
+```
+
+[FILE] strsimpy/jaccard.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .shingle_based import ShingleBased
+from .string_distance import NormalizedStringDistance, MetricStringDistance
+from .string_similarity import NormalizedStringSimilarity
+
+
+class Jaccard(ShingleBased, MetricStringDistance, NormalizedStringDistance, NormalizedStringSimilarity):
+
+    def __init__(self, k):
+        super().__init__(k)
+
+    def distance(self, s0, s1):
+        return 1.0 - self.similarity(s0, s1)
+
+    def similarity(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 1.0
+        if len(s0) < self.get_k() or len(s1) < self.get_k():
+            return 0.0
+        profile0 = self.get_profile(s0)
+        profile1 = self.get_profile(s1)
+        union = set()
+        for ite in profile0.keys():
+            union.add(ite)
+        for ite in profile1.keys():
+            union.add(ite)
+        inter = int(len(profile0.keys()) + len(profile1.keys()) - len(union))
+        return 1.0 * inter / len(union)
+
+```
+
+[FILE] strsimpy/qgram.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .shingle_based import ShingleBased
+from .string_distance import StringDistance
+
+
+class QGram(ShingleBased, StringDistance):
+
+    def __init__(self, k=3):
+        super().__init__(k)
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+
+        profile0 = self.get_profile(s0)
+        profile1 = self.get_profile(s1)
+        return self.distance_profile(profile0, profile1)
+
+    @staticmethod
+    def distance_profile(profile0, profile1):
+        union = set()
+        for k in profile0.keys():
+            union.add(k)
+        for k in profile1.keys():
+            union.add(k)
+        agg = 0
+        for k in union:
+            v0, v1 = 0, 0
+            if profile0.get(k) is not None:
+                v0 = int(profile0.get(k))
+            if profile1.get(k) is not None:
+                v1 = int(profile1.get(k))
+            agg += abs(v0 - v1)
+        return agg
+
+```
+
+[FILE] strsimpy/optimal_string_alignment.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+from .string_distance import StringDistance
+
+
+class OptimalStringAlignment(StringDistance):
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+
+        n, m = len(s0), len(s1)
+        if n == 0:
+            return 1.0 * n
+        if m == 0:
+            return 1.0 * m
+
+        d = [[0] * (m + 2) for _ in range(n + 2)]
+        for i in range(n + 1):
+            d[i][0] = i
+        for j in range(m + 1):
+            d[0][j] = j
+
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                cost = 1
+                if s0[i - 1] == s1[j - 1]:
+                    cost = 0
+                d[i][j] = min(d[i - 1][j - 1] + cost, d[i][j - 1] + 1, d[i - 1][j] + 1)
+
+                if i > 1 and j > 1 and s0[i - 1] == s1[j - 2] and s0[i - 2] == s1[j - 1]:
+                    d[i][j] = min(d[i][j], d[i - 2][j - 2] + cost)
+
+        return d[n][m]
+
+```
+
+[FILE] strsimpy/normalized_levenshtein.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .string_distance import NormalizedStringDistance
+from .string_similarity import NormalizedStringSimilarity
+from .levenshtein import Levenshtein
+
+
+class NormalizedLevenshtein(NormalizedStringDistance, NormalizedStringSimilarity):
+
+    def __init__(self):
+        self.levenshtein = Levenshtein()
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+        m_len = max(len(s0), len(s1))
+        if m_len == 0:
+            return 0.0
+        return self.levenshtein.distance(s0, s1) / m_len
+
+    def similarity(self, s0, s1):
+        return 1.0 - self.distance(s0, s1)
+
+```
+
+[FILE] strsimpy/weighted_levenshtein_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .weighted_levenshtein import WeightedLevenshtein
+
+
+class TestWeightedLevenshtein(unittest.TestCase):
+
+    def test_weighted_levenshtein(self):
+        a = WeightedLevenshtein()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/metric_lcs.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .string_distance import MetricStringDistance, NormalizedStringDistance
+from .longest_common_subsequence import LongestCommonSubsequence
+
+
+class MetricLCS(MetricStringDistance, NormalizedStringDistance):
+
+    def __init__(self):
+        self.lcs = LongestCommonSubsequence()
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+        max_len = int(max(len(s0), len(s1)))
+        if max_len == 0:
+            return 0.0
+        return 1.0 - (1.0 * self.lcs.length(s0, s1)) / max_len
+
+```
+
+[FILE] strsimpy/overlap_coefficient_test.py
+```python
+import unittest
+
+from strsimpy.overlap_coefficient import OverlapCoefficient
+
+
+class TestOverlapCoefficient(unittest.TestCase):
+
+    def test_overlap_coefficient_onestringissubsetofother_return0(self):
+        sim = OverlapCoefficient(3)
+        s1, s2 = "eat", "eating"
+        actual = sim.distance(s1, s2)
+        print("distance: {:.4}\t between '{}' and '{}'".format(str(actual), s1, s2))
+        self.assertEqual(0, actual)
+
+    def test_overlap_coefficient_onestringissubset_return1(self):
+        sim = OverlapCoefficient(3)
+        s1, s2 = "eat", "eating"
+        actual = sim.similarity(s1, s2)
+        print("strsim: {:.4}\t between '{}' and '{}'".format(str(actual), s1, s2))
+        self.assertEqual(1, actual)
+
+    def test_overlap_coefficient_onestringissubsetofother_return1(self):
+        sim = OverlapCoefficient(3)
+        s1, s2 = "eat", "eating"
+        actual = sim.similarity(s1, s2)
+        print("strsim: {:.4}\t between '{}' and '{}'".format(str(actual), s1, s2))
+        self.assertEqual(1, actual)
+
+    def test_overlap_coefficient_halfsimilar_return1(self):
+        sim = OverlapCoefficient(2)
+        s1, s2 = "car", "bar"
+        self.assertEqual(1 / 2, sim.similarity(s1, s2))
+        self.assertEqual(1 / 2, sim.distance(s1, s2))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/shingle_based.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import re
+
+_SPACE_PATTERN = re.compile("\\s+")
+
+
+class ShingleBased:
+
+    def __init__(self, k=3):
+        self.k = k
+
+    def get_k(self):
+        return self.k
+
+    def get_profile(self, string):
+        shingles = dict()
+        no_space_str = _SPACE_PATTERN.sub(" ", string)
+        for i in range(len(no_space_str) - self.k + 1):
+            shingle = no_space_str[i:i + self.k]
+            old = shingles.get(shingle)
+            if old:
+                shingles[str(shingle)] = int(old + 1)
+            else:
+                shingles[str(shingle)] = 1
+        return shingles
+
+```
+
+[FILE] setup.py
+```python
+import setuptools
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="strsimpy",
+    version="0.2.1",
+    description="A library implementing different string similarity and distance measures",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/luozhouyang/python-string-similarity",
+    author="ZhouYang Luo",
+    author_email="zhouyang.luo@gmail.com",
+    packages=setuptools.find_packages(),
+    include_package_data=True,
+    install_requires=[],
+    license="MIT License",
+    classifiers=(
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    )
+)
+
+```
+
+[FILE] strsimpy/metric_lcs_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .metric_lcs import MetricLCS
+
+
+class TestMetricLCS(unittest.TestCase):
+
+    def test_metric_lcs(self):
+        a = MetricLCS()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/optimal_string_alignment_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .optimal_string_alignment import OptimalStringAlignment
+
+
+class TestOptimalStringAlignment(unittest.TestCase):
+
+    def test_optimal_string_alignment(self):
+        a = OptimalStringAlignment()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/qgram_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .qgram import QGram
+
+
+class TestQGram(unittest.TestCase):
+
+    def test_qgram(self):
+        a = QGram(1)
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/sift4.py
+```python
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+from .string_distance import MetricStringDistance
+
+
+class SIFT4Options(MetricStringDistance):
+    def __init__(self, options=None):
+        self.options = {
+            'maxdistance': 0,
+            'tokenizer': lambda x: [i for i in x],
+            'tokenmatcher': lambda t1, t2: t1 == t2,
+            'matchingevaluator': lambda t1, t2: 1,
+            'locallengthevaluator': lambda x: x,
+            'transpositioncostevaluator': lambda c1, c2: 1,
+            'transpositionsevaluator': lambda lcss, trans: lcss - trans
+        }
+        otheroptions = {
+            'tokenizer': {
+                'ngram': self.ngramtokenizer,
+                'wordsplit': self.wordsplittokenizer,
+                'characterfrequency': self.characterfrequencytokenizer
+            },
+            'tokematcher': {'sift4tokenmatcher': self.sift4tokenmatcher},
+            'matchingevaluator': {'sift4matchingevaluator': self.sift4matchingevaluator},
+            'locallengthevaluator': {
+                'rewardlengthevaluator': self.rewardlengthevaluator,
+                'rewardlengthevaluator2': self.rewardlengthevaluator2
+            },
+            'transpositioncostevaluator': {'longertranspositionsaremorecostly':self.longertranspositionsaremorecostly},
+            'transpositionsevaluator': {}
+        }
+        if isinstance(options, dict):
+            for k, v in options.items():
+                if k in self.options.keys():
+                    if k == 'maxdistance':
+                        if isinstance(v, int):
+                            self.options[k] = v
+                        else:
+                            raise ValueError("Option maxdistance should be int")
+                    else:
+                        if callable(v):
+                            self.options[k] = v
+                        else:
+                            if v in otheroptions[k].keys():
+                                self.options[k] = otheroptions[k][v]
+                            else:
+                                msg = "Option {} should be callable or one of [{}]".format(k, ', '.join(otheroptions[k].keys()))
+                                raise ValueError(msg)
+                else:
+                    raise ValueError("Option {} not recognized.".format(k))
+        elif options is not None:
+            raise ValueError("options should be a dictionary")
+        self.maxdistance = self.options['maxdistance']
+        self.tokenizer = self.options['tokenizer']
+        self.tokenmatcher = self.options['tokenmatcher']
+        self.matchingevaluator = self.options['matchingevaluator']
+        self.locallengthevaluator = self.options['locallengthevaluator']
+        self.transpositioncostevaluator = self.options['transpositioncostevaluator']
+        self.transpositionsevaluator = self.options['transpositionsevaluator']
+
+    # tokenizers:
+    @staticmethod
+    def ngramtokenizer(s, n):
+        result = []
+        if not s:
+            return result
+        for i in range(len(s) - n - 1):
+            result.append(s[i:(i + n)])
+        return result
+
+    @staticmethod
+    def wordsplittokenizer(s):
+        if not s:
+            return []
+        return s.split()
+
+    @staticmethod
+    def characterfrequencytokenizer(s):
+        letters = [i for i in 'abcdefghijklmnopqrstuvwxyz']
+        return [s.lower().count(x) for x in letters]
+
+    # tokenMatchers:
+    @staticmethod
+    def sift4tokenmatcher(t1, t2):
+        similarity = 1 - SIFT4().distance(t1, t2, 5) / max(len(t1), len(t2))
+        return similarity > 0.7
+
+    # matchingEvaluators:
+    @staticmethod
+    def sift4matchingevaluator(t1, t2):
+        similarity = 1 - SIFT4().distance(t1, t2, 5) / max(len(t1), len(t2))
+        return similarity
+
+    # localLengthEvaluators:
+    @staticmethod
+    def rewardlengthevaluator(l):
+        if l < 1:
+            return l
+        return l - 1 / (l + 1)
+
+    @staticmethod
+    def rewardlengthevaluator2(l):
+        return pow(l, 1.5)
+
+    # transpositionCostEvaluators:
+    @staticmethod
+    def longertranspositionsaremorecostly(c1, c2):
+        return abs(c2 - c1) / 9 + 1
+
+
+class SIFT4:
+    pass
+
+
+```
+
+[FILE] strsimpy/jaro_winkler_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .jaro_winkler import JaroWinkler
+
+
+class TestJaroWinkler(unittest.TestCase):
+
+    def test_jarowinkler(self):
+        a = JaroWinkler()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        similarity_format = "strsim: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+        print(similarity_format.format(str(a.similarity(s0, s1)), s0, s1))
+        print(similarity_format.format(str(a.similarity(s0, s2)), s0, s2))
+        print(similarity_format.format(str(a.similarity(s0, s3)), s0, s3))
+        print(similarity_format.format(str(a.similarity(s1, s2)), s1, s2))
+        print(similarity_format.format(str(a.similarity(s1, s3)), s1, s3))
+        print(similarity_format.format(str(a.similarity(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/weighted_levenshtein.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from functools import reduce
+from .string_distance import StringDistance
+
+
+def default_insertion_cost(char):
+    return 1.0
+
+
+def default_deletion_cost(char):
+    return 1.0
+
+
+def default_substitution_cost(char_a, char_b):
+    return 1.0
+
+
+class WeightedLevenshtein(StringDistance):
+
+    def __init__(self,
+                 substitution_cost_fn=default_substitution_cost,
+                 insertion_cost_fn=default_insertion_cost,
+                 deletion_cost_fn=default_deletion_cost,
+                 ):
+        self.substitution_cost_fn = substitution_cost_fn
+        self.insertion_cost_fn = insertion_cost_fn
+        self.deletion_cost_fn = deletion_cost_fn
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+        if len(s0) == 0:
+            return reduce(lambda cost, char: cost + self.insertion_cost_fn(char), s1, 0)
+        if len(s1) == 0:
+            return reduce(lambda cost, char: cost + self.deletion_cost_fn(char), s0, 0)
+
+        v0, v1 = [0.0] * (len(s1) + 1), [0.0] * (len(s1) + 1)
+
+        v0[0] = 0
+        for i in range(1, len(v0)):
+            v0[i] = v0[i - 1] + self.insertion_cost_fn(s1[i - 1])
+
+        for i in range(len(s0)):
+            s0i = s0[i]
+            deletion_cost = self.deletion_cost_fn(s0i)
+            v1[0] = v0[0] + deletion_cost
+
+            for j in range(len(s1)):
+                s1j = s1[j]
+                cost = 0
+                if s0i != s1j:
+                    cost = self.substitution_cost_fn(s0i, s1j)
+                insertion_cost = self.insertion_cost_fn(s1j)
+                v1[j + 1] = min(v1[j] + insertion_cost, v0[j + 1] + deletion_cost, v0[j] + cost)
+            v0, v1 = v1, v0
+
+        return v0[len(s1)]
+
+```
+
+[FILE] strsimpy/damerau.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .string_distance import MetricStringDistance
+
+
+class Damerau(MetricStringDistance):
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+        inf = int(len(s0) + len(s1))
+        da = dict()
+        for i in range(len(s0)):
+            da[s0[i]] = str(0)
+        for i in range(len(s1)):
+            da[s1[i]] = str(0)
+        h = [[0] * (len(s1) + 2) for _ in range(len(s0) + 2)]
+        for i in range(len(s0) + 1):
+            h[i + 1][0] = inf
+            h[i + 1][1] = i
+        for j in range(len(s1) + 1):
+            h[0][j + 1] = inf
+            h[1][j + 1] = j
+        for i in range(1, len(s0) + 1):
+            db = 0
+            for j in range(1, len(s1) + 1):
+                i1 = int(da[s1[j - 1]])
+                j1 = db
+
+                cost = 1
+                if s0[i - 1] == s1[j - 1]:
+                    cost = 0
+                    db = j
+                h[i + 1][j + 1] = min(h[i][j] + cost,
+                                      h[i + 1][j] + 1,
+                                      h[i][j + 1] + 1,
+                                      h[i1][j1] + (i - i1 - 1) + 1 + (j - j1 - 1))
+            da[s0[i - 1]] = str(i)
+
+        return h[len(s0) + 1][len(s1) + 1]
+
+```
+
+[FILE] strsimpy/levenshtein.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .string_distance import MetricStringDistance
+
+
+class Levenshtein(MetricStringDistance):
+
+    def distance(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 0.0
+        if len(s0) == 0:
+            return len(s1)
+        if len(s1) == 0:
+            return len(s0)
+
+        v0 = [0] * (len(s1) + 1)
+        v1 = [0] * (len(s1) + 1)
+
+        for i in range(len(v0)):
+            v0[i] = i
+
+        for i in range(len(s0)):
+            v1[0] = i + 1
+            for j in range(len(s1)):
+                cost = 1
+                if s0[i] == s1[j]:
+                    cost = 0
+                v1[j + 1] = min(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost)
+            v0, v1 = v1, v0
+
+        return v0[len(s1)]
+
+```
+
+[FILE] strsimpy/jaro_winkler.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .string_distance import NormalizedStringDistance
+from .string_similarity import NormalizedStringSimilarity
+
+
+class JaroWinkler(NormalizedStringSimilarity, NormalizedStringDistance):
+
+    def __init__(self, threshold=0.7):
+        self.threshold = threshold
+        self.three = 3
+        self.jw_coef = 0.1
+
+    def get_threshold(self):
+        return self.threshold
+
+    def similarity(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 1.0
+        mtp = self.matches(s0, s1)
+        m = mtp[0]
+        if m == 0:
+            return 0.0
+        j = (m / len(s0) + m / len(s1) + (m - mtp[1]) / m) / self.three
+        jw = j
+        if j > self.get_threshold():
+            jw = j + min(self.jw_coef, 1.0 / mtp[self.three]) * mtp[2] * (1 - j)
+        return jw
+
+    def distance(self, s0, s1):
+        return 1.0 - self.similarity(s0, s1)
+
+    @staticmethod
+    def matches(s0, s1):
+        if len(s0) > len(s1):
+            max_str = s0
+            min_str = s1
+        else:
+            max_str = s1
+            min_str = s0
+        ran = int(max(len(max_str) / 2 - 1, 0))
+        match_indexes = [-1] * len(min_str)
+        match_flags = [False] * len(max_str)
+        matches = 0
+        for mi in range(len(min_str)):
+            c1 = min_str[mi]
+            for xi in range(max(mi - ran, 0), min(mi + ran + 1, len(max_str))):
+                if not match_flags[xi] and c1 == max_str[xi]:
+                    match_indexes[mi] = xi
+                    match_flags[xi] = True
+                    matches += 1
+                    break
+
+        ms0, ms1 = [0] * matches, [0] * matches
+        si = 0
+        for i in range(len(min_str)):
+            if match_indexes[i] != -1:
+                ms0[si] = min_str[i]
+                si += 1
+        si = 0
+        for j in range(len(max_str)):
+            if match_flags[j]:
+                ms1[si] = max_str[j]
+                si += 1
+        transpositions = 0
+        for mi in range(len(ms0)):
+            if ms0[mi] != ms1[mi]:
+                transpositions += 1
+        prefix = 0
+        for mi in range(len(min_str)):
+            if s0[mi] == s1[mi]:
+                prefix += 1
+            else:
+                break
+        return [matches, int(transpositions / 2), prefix, len(max_str)]
+
+```
+
+[FILE] strsimpy/sift4_test.py
+```python
+import unittest
+
+from .sift4 import SIFT4
+
+
+class SIFT4Test(unittest.TestCase):
+
+    def testSIFT4(self):
+        s = SIFT4()
+        
+        results = [
+            ('This is the first string', 'And this is another string', 5, 11.0),
+            ('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'Amet Lorm ispum dolor sit amet, consetetur adixxxpiscing elit.', 10, 12.0)
+        ]
+
+        for a, b, offset, res in results:
+            self.assertEqual(res, s.distance(a, b, maxoffset=offset))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/cosine_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .cosine import Cosine
+
+
+class TestCosine(unittest.TestCase):
+
+    def test_cosine(self):
+        cos = Cosine(1)
+        s = ['', ' ', 'Shanghai', 'ShangHai', 'Shang Hai']
+        for i in range(len(s)):
+            for j in range(i, len(s)):
+                print('dis between \'%s\' and \'%s\': %.4f' % (s[i], s[j], cos.distance(s[i], s[j])))
+                print('sim between \'%s\' and \'%s\': %.4f' % (s[i], s[j], cos.similarity(s[i], s[j])))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/sorensen_dice_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .sorensen_dice import SorensenDice
+
+
+class TestSorensenDice(unittest.TestCase):
+
+    def test_sorensen_dice(self):
+        a = SorensenDice(2)
+        # s0 = ""
+        # s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        similarity_format = "strsim: {:.4}\t between {} and {}"
+        # print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        # print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        # print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        # print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        # print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+        # print(similarity_format.format(str(a.strsim(s0, s1)), s0, s1))
+        # print(similarity_format.format(str(a.strsim(s0, s2)), s0, s2))
+        # print(similarity_format.format(str(a.strsim(s0, s3)), s0, s3))
+        # print(similarity_format.format(str(a.strsim(s1, s2)), s1, s2))
+        # print(similarity_format.format(str(a.strsim(s1, s3)), s1, s3))
+        print(similarity_format.format(str(a.similarity(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/damerau_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .damerau import Damerau
+
+
+class TestDamerau(unittest.TestCase):
+
+    def test_damerau(self):
+        a = Damerau()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/ngram_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .ngram import NGram
+
+
+class TestNGram(unittest.TestCase):
+
+    def test_ngram(self):
+        a = NGram(2)
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/string_distance.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+class StringDistance:
+
+    def distance(self, s0, s1):
+        raise NotImplementedError()
+
+
+class NormalizedStringDistance(StringDistance):
+
+    def distance(self, s0, s1):
+        raise NotImplementedError()
+
+
+class MetricStringDistance(StringDistance):
+
+    def distance(self, s0, s1):
+        raise NotImplementedError()
+
+```
+
+[FILE] strsimpy/string_similarity.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+class StringSimilarity:
+
+    def similarity(self, s0, s1):
+        raise NotImplementedError()
+
+
+class NormalizedStringSimilarity(StringSimilarity):
+
+    def similarity(self, s0, s1):
+        raise NotImplementedError()
+
+```
+
+[FILE] strsimpy/sorensen_dice.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from .shingle_based import ShingleBased
+from .string_distance import NormalizedStringDistance
+from .string_similarity import NormalizedStringSimilarity
+
+
+class SorensenDice(ShingleBased, NormalizedStringDistance, NormalizedStringSimilarity):
+
+    def __init__(self, k=3):
+        super().__init__(k)
+
+    def distance(self, s0, s1):
+        return 1.0 - self.similarity(s0, s1)
+
+    def similarity(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 1.0
+        union = set()
+        profile0, profile1 = self.get_profile(s0), self.get_profile(s1)
+        for k in profile0.keys():
+            union.add(k)
+        for k in profile1.keys():
+            union.add(k)
+        inter = int(len(profile0.keys()) + len(profile1.keys()) - len(union))
+        return 2.0 * inter / (len(profile0) + len(profile1))
+
+```
+
+[FILE] strsimpy/jaccard_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .jaccard import Jaccard
+
+
+class TestJaccard(unittest.TestCase):
+
+    def test_jaccard(self):
+        jaccard = Jaccard(1)
+        s = ['', ' ', 'Shanghai', 'ShangHai', 'Shang Hai']
+        for i in range(len(s)):
+            for j in range(i, len(s)):
+                print('dis between \'%s\' and \'%s\': %.4f' % (s[i], s[j], jaccard.distance(s[i], s[j])))
+                print('sim between \'%s\' and \'%s\': %.4f' % (s[i], s[j], jaccard.similarity(s[i], s[j])))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/normalized_levenshtein_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .normalized_levenshtein import NormalizedLevenshtein
+
+
+class TestNormalizedLevenshtein(unittest.TestCase):
+
+    def test_normalized_levenshtein(self):
+        a = NormalizedLevenshtein()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        similarity_format = "strsim: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+        print(similarity_format.format(str(a.similarity(s0, s1)), s0, s1))
+        print(similarity_format.format(str(a.similarity(s0, s2)), s0, s2))
+        print(similarity_format.format(str(a.similarity(s0, s3)), s0, s3))
+        print(similarity_format.format(str(a.similarity(s1, s2)), s1, s2))
+        print(similarity_format.format(str(a.similarity(s1, s3)), s1, s3))
+        print(similarity_format.format(str(a.similarity(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/cosine.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import math
+
+from .shingle_based import ShingleBased
+from .string_distance import NormalizedStringDistance
+from .string_similarity import NormalizedStringSimilarity
+
+
+class Cosine(ShingleBased, NormalizedStringDistance,
+             NormalizedStringSimilarity):
+
+    def __init__(self, k):
+        super().__init__(k)
+
+    def distance(self, s0, s1):
+        return 1.0 - self.similarity(s0, s1)
+
+    def similarity(self, s0, s1):
+        if s0 is None:
+            raise TypeError("Argument s0 is NoneType.")
+        if s1 is None:
+            raise TypeError("Argument s1 is NoneType.")
+        if s0 == s1:
+            return 1.0
+        if len(s0) < self.get_k() or len(s1) < self.get_k():
+            return 0.0
+        profile0 = self.get_profile(s0)
+        profile1 = self.get_profile(s1)
+        return self._dot_product(profile0, profile1) / (self._norm(profile0) * self._norm(profile1))
+
+    def similarity_profiles(self, profile0, profile1):
+        return self._dot_product(profile0, profile1) / (self._norm(profile0) * self._norm(profile1))
+
+    @staticmethod
+    def _dot_product(profile0, profile1):
+        small = profile1
+        large = profile0
+        if len(profile0) < len(profile1):
+            small = profile0
+            large = profile1
+        agg = 0.0
+        for k, v in small.items():
+            i = large.get(k)
+            if not i:
+                continue
+            agg += 1.0 * v * i
+        return agg
+
+    @staticmethod
+    def _norm(profile):
+        agg = 0.0
+        for k, v in profile.items():
+            agg += 1.0 * v * v
+        return math.sqrt(agg)
+
+```
+
+[FILE] strsimpy/levenshtein_test.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import unittest
+
+from .levenshtein import Levenshtein
+
+
+class TestLevenshtein(unittest.TestCase):
+
+    def test_levenshtein(self):
+        a = Levenshtein()
+        s0 = ""
+        s1 = ""
+        s2 = "上海"
+        s3 = "上海市"
+        distance_format = "distance: {:.4}\t between {} and {}"
+        print(distance_format.format(str(a.distance(s0, s1)), s0, s1))
+        print(distance_format.format(str(a.distance(s0, s2)), s0, s2))
+        print(distance_format.format(str(a.distance(s0, s3)), s0, s3))
+        print(distance_format.format(str(a.distance(s1, s2)), s1, s2))
+        print(distance_format.format(str(a.distance(s1, s3)), s1, s3))
+        print(distance_format.format(str(a.distance(s2, s3)), s2, s3))
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+```
+
+[FILE] strsimpy/__init__.py
+```python
+# Copyright (c) 2018 luozhouyang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+from .cosine import Cosine
+from .damerau import Damerau
+from .jaccard import Jaccard
+from .levenshtein import Levenshtein
+from .longest_common_subsequence import LongestCommonSubsequence
+from .metric_lcs import MetricLCS
+from .ngram import NGram
+from .normalized_levenshtein import NormalizedLevenshtein
+from .optimal_string_alignment import OptimalStringAlignment
+from .qgram import QGram
+from .shingle_based import ShingleBased
+from .sorensen_dice import SorensenDice
+from .string_distance import StringDistance
+from .string_similarity import StringSimilarity
+from .weighted_levenshtein import WeightedLevenshtein
+from .sift4 import SIFT4Options, SIFT4
+
+__name__ = 'strsimpy'
+__version__ = '0.2.1'
+
+```
+
+# Task
+위 이슈를 저장소 파일을 수정해 해결하세요. 답은 ```diff 코드블록 안에 unified diff
+하나로 작성합니다. 경로는 저장소 루트 기준(`--- a/<경로>` / `+++ b/<경로>`)으로 쓰고,
+테스트 파일은 수정하지 마세요.

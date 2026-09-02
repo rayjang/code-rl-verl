@@ -1,0 +1,81 @@
+{
+ "t15_code_unittest": {
+  "counts": {
+   "function|called_name_in_statement": 1319,
+   "function|called_name_NOT_in_statement": 1232,
+   "pytest|imported_names_NOT_in_statement": 1696,
+   "pytest|entry_point_present": 2012,
+   "pytest|entry_point_not_among_imports": 118,
+   "pytest|some_imported_names_in_statement": 21,
+   "pytest|entry_point_in_statement": 270,
+   "function|entry_point_in_statement": 46,
+   "function|no_name_extracted": 31,
+   "pytest|all_imported_names_in_statement": 25,
+   "stdio": 1287,
+   "stdio|tests_have_stdin_stdout": 1287
+  },
+  "examples": {
+   "function_missing": [
+    "opencodeinstruct-8fe7c2210ce5",
+    [
+     "merge_sorted_lists"
+    ],
+    "You are given two sorted lists of integers, `list1` and `list2`. Your task is to merge these two lists into a single sorted list. You must not use any"
+   ],
+   "pytest_missing": [
+    "kodcode-87078c4d5267",
+    [
+     "TreeNode",
+     "path_sum"
+    ],
+    "You are given a binary tree with `n` nodes where each node has a value represented by an integer. You need to perform `q` queries on this tree. Each q"
+   ],
+   "ep_not_imported": [
+    "kodcode-87078c4d5267",
+    "TreeNode, path_sum",
+    [
+     "TreeNode",
+     "path_sum"
+    ]
+   ]
+  }
+ },
+ "t15_code_unittest_ext": {
+  "counts": {
+   "function|called_name_in_statement": 5908,
+   "function|called_name_NOT_in_statement": 3533,
+   "pytest|imported_names_NOT_in_statement": 5484,
+   "pytest|entry_point_present": 6562,
+   "pytest|some_imported_names_in_statement": 95,
+   "pytest|entry_point_not_among_imports": 507,
+   "pytest|all_imported_names_in_statement": 96,
+   "pytest|entry_point_in_statement": 887,
+   "function|entry_point_in_statement": 350,
+   "function|no_name_extracted": 111
+  },
+  "examples": {
+   "function_missing": [
+    "opencodeinstruct-dd3fb68bcafe",
+    [
+     "calculate_gc_content"
+    ],
+    "You are given a DNA sequence consisting of the nucleotides A, T, C, and G. Your task is to compute the GC content of the sequence, which is defined as"
+   ],
+   "pytest_missing": [
+    "kodcode-c5e5b570d1a5",
+    [
+     "find_starting_indices"
+    ],
+    "You are given a list of strings `words` and a string `s` representing a concatenation of an arbitrary order of all words from the list `words`. Each w"
+   ],
+   "ep_not_imported": [
+    "kodcode-83971eaf71cd",
+    "TreeNode, pathSum",
+    [
+     "TreeNode",
+     "pathSum"
+    ]
+   ]
+  }
+ }
+}

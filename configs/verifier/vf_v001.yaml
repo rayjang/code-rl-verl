@@ -1,0 +1,14 @@
+# Verifier version vf_v001 — baseline-equivalent settings (cascade parser, strict apply)
+version: vf_v001
+parser: fallback            # strict | markdown | fallback | baseline
+select: last                # last | first | longest | concat_distinct
+allow_search_replace: true  # convert <solution> SEARCH/REPLACE blocks (system prompt format) to a diff
+apply_mode: strict          # strict | fuzz(baseline)
+p2p_cap: 30
+swe_timeout: 900
+isolate: true
+canary: true
+forbid_test_edits: true
+forbid_config_edits: true
+requested_fmt: fenced_diff
+rusca: null                 # null -> RUSCA disabled (rule stage); dict -> RuscaConfig fields

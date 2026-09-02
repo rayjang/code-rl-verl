@@ -1,0 +1,420 @@
+{
+ "n_tests_semantics|t15_code_unittest": {
+  "function|n_tests==len(tests)": 2628,
+  "pytest|n_tests==def_test_count": 2012,
+  "stdio|n_tests==len(tests)": 1287
+ },
+ "n_tests_semantics|t15_code_unittest_ext": {
+  "function|n_tests==len(tests)": 9902,
+  "pytest|n_tests==def_test_count": 6562
+ },
+ "swe_gold_would_be_rejected_by_touches_tests": {
+  "total": 47,
+  "by_category": {
+   "gold_path_is_F2P/P2P_test_file+gold_path_matches_TESTISH_regex": 7,
+   "gold_path_is_F2P/P2P_test_file": 40
+  },
+  "by_repo": {
+   "swesmith/luozhouyang__python-string-similarity.115acaac": 7,
+   "swesmith/jaraco__inflect.c079a96a": 40
+  },
+  "examples": {
+   "gold_path_is_F2P/P2P_test_file+gold_path_matches_TESTISH_regex": [
+    [
+     "luozhouyang__python-string-similarity.115acaac.func_pm_ctrl_shuffle__ni1hji13",
+     [
+      "strsimpy/jaccard_test.py"
+     ]
+    ],
+    [
+     "luozhouyang__python-string-similarity.115acaac.func_basic__ujspq4ne",
+     [
+      "strsimpy/overlap_coefficient_test.py"
+     ]
+    ],
+    [
+     "luozhouyang__python-string-similarity.115acaac.func_basic__rkija2xk",
+     [
+      "strsimpy/overlap_coefficient_test.py"
+     ]
+    ],
+    [
+     "luozhouyang__python-string-similarity.115acaac.combine_file__d9cyukdt",
+     [
+      "strsimpy/overlap_coefficient_test.py"
+     ]
+    ],
+    [
+     "luozhouyang__python-string-similarity.115acaac.func_pm_ctrl_shuffle__380c1d6z",
+     [
+      "strsimpy/cosine_test.py"
+     ]
+    ],
+    [
+     "luozhouyang__python-string-similarity.115acaac.func_basic__gmqgye5z",
+     [
+      "strsimpy/longest_common_subsequence_test.py"
+     ]
+    ]
+   ],
+   "gold_path_is_F2P/P2P_test_file": [
+    [
+     "jaraco__inflect.c079a96a.func_basic__cey00xv0",
+     [
+      "inflect/__init__.py"
+     ]
+    ],
+    [
+     "jaraco__inflect.c079a96a.func_basic__dbo4i67m",
+     [
+      "inflect/__init__.py"
+     ]
+    ],
+    [
+     "jaraco__inflect.c079a96a.func_basic__e6bhg47n",
+     [
+      "inflect/__init__.py"
+     ]
+    ],
+    [
+     "jaraco__inflect.c079a96a.func_basic__eyxpbrah",
+     [
+      "inflect/__init__.py"
+     ]
+    ],
+    [
+     "jaraco__inflect.c079a96a.func_basic__5cucjnbf",
+     [
+      "inflect/__init__.py"
+     ]
+    ],
+    [
+     "jaraco__inflect.c079a96a.func_basic__f3ammn7c",
+     [
+      "inflect/__init__.py"
+     ]
+    ]
+   ]
+  }
+ },
+ "swe_f2p_ids_whose_file_is_not_testish_by_repo": {
+  "swesmith/jaraco__inflect.c079a96a": 16
+ },
+ "swe_f2p_nontestish_examples": [
+  "inflect/__init__.py::inflect.engine.compare",
+  "inflect/__init__.py::inflect.engine._handle_long_compounds",
+  "inflect/__init__.py::inflect.engine.compare",
+  "inflect/__init__.py::inflect.engine.compare",
+  "inflect/__init__.py::inflect.engine._handle_long_compounds",
+  "inflect/__init__.py::inflect.engine.compare",
+  "inflect/__init__.py::inflect.engine.singular_noun",
+  "inflect/__init__.py::inflect.engine.compare"
+ ],
+ "verdict_x_scope_match": {
+  "drop|scope_match=0": 40,
+  "keep|scope_match=1": 90,
+  "keep|scope_match=0": 229,
+  "drop|scope_match=2": 354,
+  "drop|scope_match=1": 26,
+  "fix|scope_match=0": 2,
+  "drop|scope_match=3": 10
+ },
+ "verdict_x_test_alignment": {
+  "drop|test_alignment=0": 126,
+  "drop|test_alignment=1": 107,
+  "keep|test_alignment=0": 210,
+  "keep|test_alignment=unknown": 31,
+  "keep|test_alignment=1": 66,
+  "drop|test_alignment=2": 160,
+  "drop|test_alignment=unknown": 37,
+  "fix|test_alignment=1": 1,
+  "keep|test_alignment=2": 12,
+  "fix|test_alignment=0": 1
+ },
+ "verdict_x_issue_quality": {
+  "drop|issue_quality=0": 370,
+  "keep|issue_quality=0": 298,
+  "drop|issue_quality=1": 59,
+  "keep|issue_quality=1": 21,
+  "fix|issue_quality=0": 1,
+  "drop|issue_quality=2": 1,
+  "fix|issue_quality=1": 1
+ },
+ "verdict_x_judge_difficulty": {
+  "drop|medium": 191,
+  "drop|trivial": 50,
+  "keep|easy": 112,
+  "keep|trivial": 108,
+  "keep|medium": 85,
+  "drop|easy": 94,
+  "drop|hard": 95,
+  "fix|easy": 1,
+  "keep|hard": 14,
+  "fix|trivial": 1
+ },
+ "verdict_x_bugkind": {
+  "drop|combine_file": 254,
+  "keep|combine_file": 110,
+  "keep|func_basic": 104,
+  "drop|combine_module": 92,
+  "drop|func_basic": 43,
+  "drop|1a8bd2f7": 34,
+  "keep|combine_module": 31,
+  "keep|func_pm_ctrl_shuffle": 22,
+  "keep|func_pm_ctrl_invert_if": 10,
+  "keep|func_pm_class_rm_funcs": 9,
+  "keep|func_pm_remove_assign": 7,
+  "keep|1a8bd2f7": 6,
+  "keep|func_pm_op_swap": 4,
+  "keep|func_pm_class_rm_base": 3,
+  "drop|func_pm_remove_assign": 3,
+  "keep|func_pm_remove_loop": 3,
+  "keep|lm_rewrite": 2,
+  "keep|func_pm_op_change": 2,
+  "keep|func_pm_op_change_const": 2,
+  "keep|func_pm_remove_cond": 2
+ },
+ "fix_verdict_rows": [
+  [
+   "jd__tenacity.0d40e76f.combine_file__8pa1fxvj",
+   {
+    "issue_quality": 0,
+    "scope_match": 0,
+    "artifact_leak": "none",
+    "test_alignment": 1,
+    "ko_translation": 2
+   }
+  ],
+  [
+   "pudo__dataset.5c2dc8d3.func_basic__r1lam6h6",
+   {
+    "issue_quality": 1,
+    "scope_match": 0,
+    "artifact_leak": "none",
+    "test_alignment": 0,
+    "ko_translation": 2
+   }
+  ]
+ ],
+ "ko_translation_null_iff_ps_ko_identical": 751,
+ "extra_info.image_name_values_unittest": {
+  "t15_unittest.sif": 22391
+ },
+ "extra_info.image_name_values_swe_sample": {
+  "jyangballin/swesmith.x86_64.pycqa_1776_flake8.cf1542ce": 40,
+  "jyangballin/swesmith.x86_64.knio_1776_dominate.9082227e": 40,
+  "jyangballin/swesmith.x86_64.pudo_1776_dataset.5c2dc8d3": 40
+ },
+ "rubric_tag_reward_true_count": 0,
+ "rubric_tag_judge_true_count": 0,
+ "rubric_tags_verify_values": {
+  "failing_test": 751,
+  "approach": 23142,
+  "edge_cases": 23142,
+  "tests_pass": 751,
+  "output_format": 23142,
+  "no_extra": 23142,
+  "complexity": 22391,
+  "impl_hint": 9521
+ },
+ "rubric_criteria_unittest_top": {
+  "State the algorithm in one line before writing the code.": 22391,
+  "Handle empty input, single element, and boundary values.": 22391,
+  "Keep the solution within the stated time limit for the largest input.": 22391,
+  "Reply with one ```python code block containing the full solution.": 22391,
+  "Do not print anything the problem did not ask for.": 22391,
+  "Define exactly these names: trap.": 80,
+  "Define exactly these names: two_sum.": 44,
+  "Define exactly these names: max_subarray_sum.": 44,
+  "Define exactly these names: rob.": 42,
+  "Define exactly these names: shortest_path.": 42,
+  "Define exactly these names: rearrange_string.": 41,
+  "Define exactly these names: evaluate_expression.": 40
+ },
+ "rubric_criteria_swe_top": {
+  "Locate the root cause first, then make the smallest edit that fixes it.": 751,
+  "Handle the boundary conditions the issue describes, not just the happy path.": 751,
+  "Do not break any test that currently passes.": 751,
+  "Reply with one unified diff inside a ```diff block.": 751,
+  "Change only what the issue requires; no refactoring or reformatting.": 751,
+  "Make these currently failing tests pass: <T><T><T>.": 440,
+  "Make these currently failing tests pass: <T>.": 126,
+  "Make these currently failing tests pass: <T><T>.": 111,
+  "Make these currently failing tests pass: testSIFT4.": 7,
+  "Make these currently failing tests pass: <T>[typing_extensions], <T>[typing_extensions], <": 4
+ },
+ "unittest_prompt_vs_statement": {
+  "user==statement": 22391,
+  "sys=e8748b": 22391,
+  "no_stdin_mention": 2,
+  "entry_point_NOT_in_user_msg": 7968,
+  "entry_point_in_user_msg": 1553,
+  "prompt_mentions_stdin": 1285
+ },
+ "unittest_prompt_examples": {},
+ "pytest_example_test_file": "from solution import min_penalty\n\ndef test_min_penalty_empty():\n    assert min_penalty([]) == 0\n\ndef test_min_penalty_single_building():\n    assert min_penalty([10]) == 0\n\ndef test_min_penalty_two_buildings_different_heights():\n    assert min_penalty([5, 10]) == 0\n\ndef test_min_penalty_two_buildings_same_height():\n    assert min_penalty([10, 10]) == 0\n\ndef test_min_penalty_multiple_buildings():\n    assert min_penalty([5, 1, 6, 8]) == 0\n\ndef test_min_penalty_penalty_case():\n    assert min_penalty([1, 2, 1, 2, 1]) == 0",
+ "pytest_example_entry_point": "min_penalty",
+ "pytest_example_ref_head": "def min_penalty(heights):\n    \"\"\"\n    This function calculates the minimum penalty possible for painting buildings represented by their heights.\n    :param heights: A list of integers representing the heights of the buildings.\n    :return: An integer, the minimum penalty possible.\n    \"\"\"\n    n = le",
+ "function_example_statement": "You are given two sorted lists of integers, `list1` and `list2`. Your task is to merge these two lists into a single sorted list. You must not use any built-in sorting functions or similar utilities. \n\n**Input:**\n- Two sorted lists of integers, `list1` and `list2`.\n\n**Output:**\n- A single sorted list containing all elements from `list1` and `list2`.\n\n**Sample Input:**\n- `list1 = [1, 3, 5, 7]`\n- `list2 = [2, 4, 6, 8]`\n\n**Sample Output:**\n- `[1, 2, 3, 4, 5, 6, 7, 8]`",
+ "function_example_tests": [
+  "assert merge_sorted_lists([1, 3, 5, 7], [2, 4, 6, 8]) == [1, 2, 3, 4, 5, 6, 7, 8]",
+  "assert merge_sorted_lists([], []) == []",
+  "assert merge_sorted_lists([1, 2, 3], []) == [1, 2, 3]"
+ ],
+ "identical_prompt_groups_across_all_parquet": [
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-0d0e09bba9a9"
+   ],
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-3c2898915911"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-ad713dccf658"
+   ],
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-af89fd636b8d"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-3cb98fee76cc"
+   ],
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-93bdded6810c"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-9dc3d6cad277"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-88162438200b"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-1e4edd44078b"
+   ],
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-177a03c799ea"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-ca832f659892"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-34dd8517835b"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-2da3f67cca30"
+   ],
+   [
+    "t15_code_rl_core_val",
+    "opencodeinstruct-355ff4c96430"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-22aff0155a0d"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-1eaa8a612c11"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-8f93a81fdc10"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-3d23a0fcf8c1"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_core_train",
+    "opencodeinstruct-9aef62e8cb10"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-2705551b9b28"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-384c40f052e6"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-1e254ee7c178"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-8eac1038a5c3"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-37910ab85df9"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-fb0829291e97"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-1d34249717e5"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-684c9264dc07"
+   ]
+  ],
+  [
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-53b168072a07"
+   ],
+   [
+    "t15_code_rl_extended_train",
+    "opencodeinstruct-016ad5246daa"
+   ]
+  ]
+ ],
+ "swe_rows_est_tokens_gt_32768_by_variant": {
+  "swe_64k": 263,
+  "swe_32k": 91,
+  "swe_128k": 137
+ },
+ "swe_rows_est_tokens_le_32768_by_variant": {
+  "swe_32k": 260
+ },
+ "swe_lang_values_parquet": {
+  "ko": 284,
+  "en": 467
+ }
+}

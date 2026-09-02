@@ -1,0 +1,27 @@
+# instance_id=rstar-40f4c57aaa37 harness=stdio total_chars=920
+
+===== ROLE: system (chars=126) =====
+You are an expert programmer. Solve the problem and reply with a single ```python code block containing the complete solution.
+
+===== ROLE: user (chars=794) =====
+Problem Description:
+You have a circular track with a circumference of C meters and M checkpoints along the track. The i-th checkpoint is positioned at a distance of D_i meters from a fixed starting point on the track, measured clockwise. When running between these checkpoints, you can only move along the track in one direction. Determine the shortest distance to visit all checkpoints if you start at any one of them.
+
+Input Format:
+The first line contains two integers, C and M, separated by a space.
+The second line contains M integers, D_1, D_2, ..., D_M, which represent the distances of checkpoints from the starting point.
+
+Output Format:
+Print the minimum distance required to visit all checkpoints starting from one checkpoint.
+Examples
+Input:
+1 1
+0
+Output:
+0
+
+Input:
+2 1
+1
+Output:
+0

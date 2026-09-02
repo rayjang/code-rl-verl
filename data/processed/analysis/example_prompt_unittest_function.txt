@@ -1,0 +1,25 @@
+# instance_id=opencodeinstruct-f58cbc9e596f harness=function total_chars=771
+
+===== ROLE: system (chars=126) =====
+You are an expert programmer. Solve the problem and reply with a single ```python code block containing the complete solution.
+
+===== ROLE: user (chars=645) =====
+You are given a matrix represented as a list of lists `matrix` and an integer `scalar`. Your task is to implement a function `multiply_matrix_scalar(matrix, scalar)` that multiplies each element of the matrix by the scalar and returns the resulting matrix.
+
+**Input:**
+- The first argument `matrix` is a 2D list of integers.
+- The second argument `scalar` is an integer.
+
+**Output:**
+- Return a 2D list of integers where each element of the original matrix is multiplied by the scalar.
+
+**Sample Input:**
+```python
+matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+scalar = 2
+```
+
+**Sample Output:**
+```python
+[[2, 4, 6], [8, 10, 12], [14, 16, 18]]
+```

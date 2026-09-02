@@ -1,0 +1,100 @@
+{
+  "host": "gpu48",
+  "cuda_visible_devices": "0",
+  "n_gpu": 1,
+  "versions": {
+    "torch": "2.11.0+cu130",
+    "cuda": "13.0",
+    "transformers": "5.10.4",
+    "peft": "0.20.0",
+    "vllm": "0.24.0",
+    "verl": "0.9.0"
+  },
+  "gpu": "NVIDIA H200",
+  "vllm": {
+    "eager": {
+      "variant": "eager",
+      "ok": true,
+      "load_s": 113.1,
+      "gen_s": 16.5,
+      "tok_per_s": 257.0,
+      "samples": [
+        "Here's a Python function that finds the longest common prefix of a list of strings:\n\n```python\ndef longest_common_prefix(strs):\n    if not strs:\n        return \"\"\n    prefix = strs[0]\n    for i in range(1, len(strs)):\n        while strs[i].find(prefix) != 0:\n            prefix = prefix[:len(prefix)-",
+        "17*23 = 391"
+      ]
+    },
+    "compile_nopad": {
+      "ok": false,
+      "tail": "ne/llm_engine.py\", line 105, in __init__\n    self.engine_core = EngineCoreClient.make_client(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/r919a03/code_verl_test/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py\", line 103, in make_client\n    return SyncMPClient(vllm_config, executor_class, log_stats)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/r919a03/code_verl_test/.venv/lib/python3.12/site-packages/vllm/tracing/otel.py\", line 178, in sync_wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/r919a03/code_verl_test/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py\", line 786, in __init__\n    super().__init__(\n  File \"/scratch/r919a03/code_verl_test/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py\", line 573, in __init__\n    with launch_core_engines(\n         ^^^^^^^^^^^^^^^^^^^^\n  File \"/scratch/r919a03/.uv/python/cpython-3.12.12-linux-x86_64-gnu/lib/python3.12/contextlib.py\", line 144, in __exit__\n    next(self.gen)\n  File \"/scratch/r919a03/code_verl_test/.venv/lib/python3.12/site-packages/vllm/v1/engine/utils.py\", line 1213, in launch_core_engines\n    wait_for_engine_startup(\n  File \"/scratch/r919a03/code_verl_test/.venv/lib/python3.12/site-packages/vllm/v1/engine/utils.py\", line 1272, in wait_for_engine_startup\n    raise RuntimeError(\nRuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}\n"
+    },
+    "nolora": {
+      "variant": "nolora",
+      "ok": true,
+      "load_s": 50.4,
+      "gen_s": 5.5,
+      "tok_per_s": 268.1,
+      "samples": [
+        " stand in need of a good\n What is the difference between a and b? What is the difference between a and c? What is the difference between a and d? What is the difference between a and e? What is the difference between a and f? What is the difference between a and g? What is the difference between a a",
+        ""
+      ]
+    }
+  },
+  "lora": {
+    "A_attn": {
+      "trainable": 12582912,
+      "total": 14328367104,
+      "base_total": 14315784192,
+      "trainable_pct": 0.088,
+      "peak_mem_gib_seq96": 27.3,
+      "layer0_wrapped": [
+        "L0.self_attn.k_proj",
+        "L0.self_attn.o_proj",
+        "L0.self_attn.q_proj",
+        "L0.self_attn.v_proj"
+      ],
+      "loss": 1.6778494119644165
+    },
+    "B_attn_shared": {
+      "trainable": 30277632,
+      "total": 14346061824,
+      "base_total": 14315784192,
+      "trainable_pct": 0.211,
+      "peak_mem_gib_seq96": 27.5,
+      "layer0_wrapped": [
+        "L0.mlp.shared_expert.down_proj",
+        "L0.mlp.shared_expert.gate_proj",
+        "L0.mlp.shared_expert.up_proj",
+        "L0.self_attn.k_proj",
+        "L0.self_attn.o_proj",
+        "L0.self_attn.q_proj",
+        "L0.self_attn.v_proj"
+      ],
+      "loss": 1.6778494119644165
+    },
+    "C_all_linear_minus_gates": {
+      "trainable": 30277632,
+      "total": 14346061824,
+      "base_total": 14315784192,
+      "trainable_pct": 0.211,
+      "peak_mem_gib_seq96": 27.5,
+      "layer0_wrapped": [
+        "L0.mlp.shared_expert.down_proj",
+        "L0.mlp.shared_expert.gate_proj",
+        "L0.mlp.shared_expert.up_proj",
+        "L0.self_attn.k_proj",
+        "L0.self_attn.o_proj",
+        "L0.self_attn.q_proj",
+        "L0.self_attn.v_proj"
+      ],
+      "loss": 1.6778494119644165
+    },
+    "D_experts_target_parameters": {
+      "expert_param_names_layer0": [
+        "model.layers.0.mlp.experts.gate_up_proj",
+        "model.layers.0.mlp.experts.down_proj"
+      ],
+      "trainable": 98992128,
+      "note": "peft target_parameters on fused expert tensors; vLLM sync path unverified"
+    }
+  }
+}
