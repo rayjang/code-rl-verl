@@ -1,7 +1,7 @@
 algorithm.adv_estimator=grpo
 algorithm.norm_adv_by_std_in_grpo=True
 algorithm.use_kl_in_reward=False
-data.train_batch_size=32
+data.train_batch_size=36
 data.max_prompt_length=30000
 data.max_response_length=2048
 data.filter_overlong_prompts=True
@@ -19,7 +19,7 @@ actor_rollout_ref.model.target_modules=[q_proj,k_proj,v_proj,o_proj]
 actor_rollout_ref.model.use_remove_padding=True
 actor_rollout_ref.model.enable_gradient_checkpointing=True
 actor_rollout_ref.actor.optim.lr=2e-5
-actor_rollout_ref.actor.ppo_mini_batch_size=32
+actor_rollout_ref.actor.ppo_mini_batch_size=36
 actor_rollout_ref.actor.use_dynamic_bsz=True
 actor_rollout_ref.actor.ppo_max_token_len_per_gpu=34000
 actor_rollout_ref.actor.use_kl_loss=False

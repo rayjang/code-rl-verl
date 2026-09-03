@@ -47,9 +47,28 @@ def metric_of(summary, key):
     return float(cands[k])
 
 
+def _failed(r, exp_id):
+    ri = f"{ROOT}/experiments/{exp_id}/run_info.txt"
+    if os.path.exists(ri):
+        m = [l for l in open(ri) if "END_TRAIN" in l]
+        if m and "rc=0" not in m[-1]:
+            return True
+    return r.get("status") in ("failed_or_running",) and (r.get("summary") or {}).get("end_rc") not in (0, None)
+
+
 def ensure(exp, plan, common):
     reg = load_registry()
     r = reg.get(exp["id"], {})
+    if r and _failed(r, exp["id"]) and r.get("decision") != "keep_final":
+        # previous attempt failed: keep its record, re-create overrides (config may have been fixed) and resubmit
+        attempt = int(r.get("attempt", 1)) + 1
+        append({"id": exp["id"], "status": "retry", "attempt": attempt, "retried_at": now()})
+        print(f"[{exp['id']}] previous attempt failed -> attempt {attempt}")
+        r = {}
+        for fn in ("run_info.txt", "train.log", "instance_log.jsonl", "metrics.json"):
+            p = f"{ROOT}/experiments/{exp['id']}/{fn}"
+            if os.path.exists(p):
+                os.replace(p, p + f".attempt{attempt - 1}")
     if not r:
         args = ["new", "--id", exp["id"], "--parent", exp.get("parent", plan["baseline"]), "--hypothesis", exp.get("hypothesis", ""),
                 "--changes", exp.get("changes", ""), "--reward", exp.get("reward", common.get("reward", "configs/reward/rw_v001_baseline.yaml")),
@@ -106,6 +125,10 @@ def main():
         pm = plan.get("primary_metric", "score")
         mine = metric_of(me, pm)
         if exp["id"] == plan["baseline"]:
+            if mine is None or reg[exp["id"]].get("summary", {}).get("end_rc") not in (0,):
+                sh(["decide", "--id", exp["id"], "--reject", "--reason", "baseline run failed; plan aborted"])
+                print("BASELINE FAILED -> aborting plan", flush=True)
+                return
             decision, reason = "keep", "baseline"
         else:
             best = metric_of(reg[state["best"]].get("summary", {}), pm)

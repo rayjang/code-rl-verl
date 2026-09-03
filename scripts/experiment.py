@@ -84,7 +84,7 @@ def cmd_new(a):
     sets = {}
     for s in a.set or []:
         k, v = s.split("=", 1)
-        sets[k] = v
+        sets[k.lstrip("+")] = v
     absp = lambda x: x if (not x or x.startswith(("/", "$"))) else os.path.join(ROOT, x)
     if a.train:
         sets["data.train_files"] = absp(a.train)
@@ -94,6 +94,11 @@ def cmd_new(a):
     sets["trainer.experiment_name"] = "$EXP_NAME"
     sets["trainer.default_local_dir"] = "$ROOT/checkpoints/$EXP_NAME"
     out, seen = [], set()
+    plus = {}
+    for s_ in a.set or []:
+        k_ = s_.split("=", 1)[0]
+        if k_.startswith("+"):
+            plus[k_[1:]] = True
     for line in base:
         if not line.strip() or line.startswith("#"):
             out.append(line); continue
@@ -104,7 +109,7 @@ def cmd_new(a):
             out.append(line)
     for k, v in sets.items():
         if k not in seen:
-            out.append(f"{k}={v}")
+            out.append(("+" if plus.get(k) else "") + f"{k}={v}")
     with open(os.path.join(exp_dir, "overrides.txt"), "w", encoding="utf-8") as f:
         f.write("\n".join(out) + "\n")
     with open(os.path.join(exp_dir, "env.sh"), "w", encoding="utf-8") as f:

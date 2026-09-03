@@ -17,6 +17,7 @@ export RAY_TMPDIR=/tmp/r919a03_ray_${SLURM_JOB_ID}
 export TORCHINDUCTOR_CACHE_DIR=/tmp/r919a03_inductor
 export NCCL_DEBUG=WARN
 mkdir -p $VERIFIER_RUN_DIR $RAY_TMPDIR $EXP_DIR
+ray stop --force >/dev/null 2>&1 || true   # clear any stale Ray session from a previous job on this node
 echo "host=$(hostname) job=$SLURM_JOB_ID CVD=$CUDA_VISIBLE_DEVICES start=$(date -Is) git=$(git rev-parse --short HEAD)" | tee $EXP_DIR/run_info.txt
 nvidia-smi --query-gpu=index,name,memory.used --format=csv | tee -a $EXP_DIR/run_info.txt
 python -c "import torch,vllm,verl,transformers,peft,flash_attn; print('torch',torch.__version__,'vllm',vllm.__version__,'verl',verl.__version__,'transformers',transformers.__version__,'peft',peft.__version__,'flash_attn',flash_attn.__version__)" | tee -a $EXP_DIR/run_info.txt
