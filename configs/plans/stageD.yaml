@@ -10,6 +10,7 @@ common:
   val: data/curated/curated_v2/validation.parquet
   reward: configs/reward/rw_v001_baseline.yaml
   verifier: configs/verifier/vf_v002.yaml
+  rubric: rubrics/rubric_v001_code_hint.yaml   # scaffold-only rubric shipped with the data (weight 0 unless the reward config says otherwise)
   stage: D
   cpus: 60
   mem: 700G
