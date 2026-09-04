@@ -82,3 +82,5 @@ actor_rollout_ref.rollout.max_num_seqs=64
 +data.hier_sampler.variant_weights.ut_function=0.45
 +data.hier_sampler.variant_weights.ut_pytest=0.30
 +data.hier_sampler.variant_weights.ut_stdio=0.25
+actor_rollout_ref.ref.fsdp_config.ulysses_sequence_parallel_size=6
+actor_rollout_ref.actor.ulysses_sequence_parallel_size=6
