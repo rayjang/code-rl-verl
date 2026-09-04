@@ -1,6 +1,6 @@
 #!/bin/bash
 # Export the LoRA adapter (PEFT format) from a verl FSDP checkpoint. Usage: sbatch scripts/export_adapter.sh <exp_id> [step]
-#SBATCH -p koni -w gpu48 -c 8 --mem=96G -t 01:00:00 -J export_lora
+#SBATCH -p koni -w gpu48 -c 8 --mem=200G -t 01:00:00 -J export_lora
 #SBATCH --comment="field=nlp;appl=pytorch"
 #SBATCH -o logs/export_%j.out
 set -uo pipefail
