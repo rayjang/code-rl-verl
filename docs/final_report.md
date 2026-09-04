@@ -116,6 +116,21 @@ signal (patches apply in 25–52 % of samples, a few instances solved), while th
 solved by the base policy. `curated_v3` therefore drops always-solved unit-test rows from the *training* split
 (TOO_EASY, p̂ > 0.95) and the hierarchical sampler weights SWE at 0.3.
 
+### 9.2 First RL result with the final setup (exp_Q000_baseline: Qwen3-30B-A3B, rw_v001, vf_v002, 20 steps, greedy validation n=1, 512 rows)
+| metric (validation) | before training | after 20 steps |
+|---|---|---|
+| SWE mean reward | 0.090 | **0.211** |
+| SWE patch-apply rate | 0.295 | **0.795** |
+| SWE F2P pass fraction | 0.099 | **0.229** |
+| SWE complete solve rate | 0.027 | **0.063** |
+| unit-test complete solve rate | 0.740 | 0.745 |
+| unit-test mean reward | 0.826 | 0.821 |
+| train reward (step 1 → 20) | 0.469 | 0.563 |
+| policy entropy | 0.256 | 0.168 |
+Mean step time 601 s (`experiments/exp_Q000_baseline/metrics.json`). The gain is concentrated where the base
+policy had room: patch format/apply and partial F2P on the long-context SWE track; the unit-test track was
+already near its ceiling for this model (and its always-solved rows were removed from training).
+
 ## 10–19. Ablations, dynamics, data quality, final dataset / verifier / rubric / reward / config / performance
 _(filled from the registry and workbook after Stage D/E — see `docs/experiment_report.md`, `docs/ablation_report.md`)_
 
