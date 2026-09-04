@@ -29,7 +29,7 @@ def worker(a):
     df = df.iloc[a.shard::a.nshards]
     tok_kw = {}
     llm = LLM(model=a.model, dtype="bfloat16", max_model_len=a.max_model_len, gpu_memory_utilization=0.85, enforce_eager=True,
-              enable_lora=bool(a.lora), max_lora_rank=64, seed=a.seed + a.shard, max_num_seqs=a.max_num_seqs)
+              enable_lora=bool(a.lora), max_lora_rank=64, seed=a.seed + a.shard, max_num_seqs=a.max_num_seqs, enable_prefix_caching=True)
     tok = llm.get_tokenizer()
     prompts, meta = [], []
     for _, row in df.iterrows():
