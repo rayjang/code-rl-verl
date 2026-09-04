@@ -11,12 +11,43 @@ Raw rows are never modified; exclusions are recorded with reason codes.
 """
 from __future__ import annotations
 
-import argparse, collections, hashlib, json, os, random, shutil, sys
+import argparse, collections, hashlib, json, os, random, re, shutil, sys
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = f"{ROOT}/sources/rl_code_v1/data"
 MAN = f"{ROOT}/environments/manifests"
+
+
+def required_names(inst):
+    """Names the hidden tests need: pytest -> `from solution import a, b`; function -> called names in assertions."""
+    names = []
+    h = inst.get("harness")
+    tests = inst.get("tests") or []
+    if h == "pytest":
+        for t in tests:
+            for m in re.finditer(r"^\s*from solution import ([^\n]+)", t.get("assertion") or "", re.M):
+                names += [x.strip().split(" as ")[0] for x in m.group(1).split(",") if x.strip()]
+            for m in re.finditer(r"^\s*import solution", t.get("assertion") or "", re.M):
+                pass
+    elif h == "function":
+        ep = inst.get("entry_point")
+        if ep:
+            names += [x.strip() for x in str(ep).split(",")]
+        for t in tests:
+            for m in re.finditer(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(", t.get("assertion") or ""):
+                n = m.group(1)
+                if n not in ("assert", "print", "len", "str", "int", "float", "list", "dict", "set", "tuple", "sorted", "abs", "round", "range",
+                             "isinstance", "type", "max", "min", "sum", "any", "all", "bool", "repr", "hash", "iter", "next", "map", "filter",
+                             "zip", "enumerate", "reversed", "open", "Exception", "ValueError", "TypeError", "KeyError", "IndexError", "pytest",
+                             "raises", "approx", "frozenset", "bytes", "chr", "ord", "divmod", "pow", "format", "callable", "getattr", "hasattr",
+                             "math", "np", "array", "Decimal", "Fraction", "datetime", "date", "timedelta", "deque", "Counter", "defaultdict", "OrderedDict"):
+                    names.append(n)
+    out = []
+    for n in names:
+        if n and n not in out:
+            out.append(n)
+    return out[:6]
 
 
 def load_jsonl(p):
@@ -77,40 +108,10 @@ def main():
     swe_full = {r["instance_id"]: r for r in load_jsonl(f"{SRC}/index/t15_code_swesmith.full.jsonl")}
     ut_full = {}
     if a.fix_entry_point:
-        import re as _re
         for fn in ("t15_code_unittest.full.jsonl", "t15_code_unittest_ext.full.jsonl"):
             for r in load_jsonl(f"{SRC}/index/{fn}"):
                 ut_full[r["instance_id"]] = r
 
-    def required_names(inst):
-        """Names the hidden tests need: pytest -> `from solution import a, b`; function -> called names in assertions."""
-        names = []
-        h = inst.get("harness")
-        tests = inst.get("tests") or []
-        if h == "pytest":
-            for t in tests:
-                for m in _re.finditer(r"^\s*from solution import ([^\n]+)", t.get("assertion") or "", _re.M):
-                    names += [x.strip().split(" as ")[0] for x in m.group(1).split(",") if x.strip()]
-                for m in _re.finditer(r"^\s*import solution", t.get("assertion") or "", _re.M):
-                    pass
-        elif h == "function":
-            ep = inst.get("entry_point")
-            if ep:
-                names += [x.strip() for x in str(ep).split(",")]
-            for t in tests:
-                for m in _re.finditer(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(", t.get("assertion") or ""):
-                    n = m.group(1)
-                    if n not in ("assert", "print", "len", "str", "int", "float", "list", "dict", "set", "tuple", "sorted", "abs", "round", "range",
-                                 "isinstance", "type", "max", "min", "sum", "any", "all", "bool", "repr", "hash", "iter", "next", "map", "filter",
-                                 "zip", "enumerate", "reversed", "open", "Exception", "ValueError", "TypeError", "KeyError", "IndexError", "pytest",
-                                 "raises", "approx", "frozenset", "bytes", "chr", "ord", "divmod", "pow", "format", "callable", "getattr", "hasattr",
-                                 "math", "np", "array", "Decimal", "Fraction", "datetime", "date", "timedelta", "deque", "Counter", "defaultdict", "OrderedDict"):
-                        names.append(n)
-        out = []
-        for n in names:
-            if n and n not in out:
-                out.append(n)
-        return out[:6]
 
     # ------------------------------------------------------------------ per-row quality decision
     seen_prompt = {}
