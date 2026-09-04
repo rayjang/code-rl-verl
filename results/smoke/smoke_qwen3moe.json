@@ -1,0 +1,68 @@
+{
+ "model": "/scratch/r919a03/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+ "versions": {
+  "torch": "2.11.0+cu130",
+  "transformers": "5.10.4",
+  "peft": "0.20.0",
+  "vllm": "0.24.0",
+  "verl": "0.9.0"
+ },
+ "gpu": "NVIDIA H200",
+ "linear_modules": {
+  "lm_head": {
+   "count": 1,
+   "params_each": 311164928
+  },
+  "model.layers.N.self_attn.k_proj": {
+   "count": 48,
+   "params_each": 1048576
+  },
+  "model.layers.N.self_attn.o_proj": {
+   "count": 48,
+   "params_each": 8388608
+  },
+  "model.layers.N.self_attn.q_proj": {
+   "count": 48,
+   "params_each": 8388608
+  },
+  "model.layers.N.self_attn.v_proj": {
+   "count": 48,
+   "params_each": 1048576
+  }
+ },
+ "expert_params_layer0": [
+  "model.layers.0.mlp.experts.gate_up_proj",
+  "model.layers.0.mlp.experts.down_proj"
+ ],
+ "total_params": 30532122624,
+ "vllm": {
+  "prompt_tokens": [
+   116578,
+   118808,
+   24572,
+   28199
+  ],
+  "gen_s": 75.8,
+  "out_tokens": [
+   956,
+   618,
+   361,
+   172
+  ],
+  "samples": [
+   "The issue is in the `get_histogram_counts` method of the `Stats` class in `boltons/statsutils.py`. The problem is that the bin boundaries are being rounded down, which can cause data points to be assigned to the wrong bin. The method uses `ceil` to round the bin boundaries, but this can lead to data points being excluded from the histogram if they fall exactly on a bin boundary.\n\nThe fix is to use `floor` instead of `ceil` when rounding the bin boundaries, and to ensure that the maximum value is included in the last bin. This will ensure that all data points are counted in the histogram.\n\n```d",
+   "I'll fix the issues with the `Package` and `SafetyRequirement` models by correcting the data representation in their `to_dict()` methods.\n\n```diff\ndiff --git a/safety/models.py b/safety/models.py\nindex 1a2b3c4..5d6e7f8 100644\n--- a/safety/models.py\n+++ b/safety/models.py\n@@ -117,12 +117,12 @@ class SafetyRequirement(Requirement):\n     def to_dict(self, **kwargs: Any) -> Dict:\n         \"\"\"\n         Convert the requirement to a dictionary.\n \n         Args:\n             **kwargs: Additional keyword arguments.\n \n         Returns:\n             dict: The dictionary representation of the requirement.",
+   "I'll analyze the issue and provide a solution.\n\nThe problem is that the `container` class in `dominate/util.py` is not properly rendering its children. Looking at the code, I can see that the `container` class inherits from `dom_tag` but its `_render` method is defined incorrectly.\n\nThe issue is in the `container` class definition in `dominate/util.py`. The `_render` method is defined but it's not properly implemented. The method should render the children without adding any container tags, but the current implementation is missing the proper rendering logic.\n\nLet me fix this by correcting the",
+   "<solution>\n### src/flake8/formatting/base.py\n<<<<<<< SEARCH\n    def start(self) -> None:\n        \"\"\"Prepare the formatter to receive input.\n\n        This defaults to initializing :attr:`output_fd` if :attr:`filename`\n        \"\"\"\n        if self.filename:\n            dirname = os.path.dirname(os.path.abspath(self.filename))\n            os.makedirs(dirname, exist_ok=False)\n            self.output_fd = open(self.filename, \"w\")\n=======\n    def start(self) -> None:\n        \"\"\"Prepare the formatter to receive input.\n\n        This defaults to initializing :attr:`output_fd` if :attr:`filename`\n       "
+  ]
+ },
+ "lora": {
+  "A_attn": {
+   "trainable": 26738688,
+   "total": 30558861312,
+   "trainable_pct": 0.087,
+   "peak_gib_seq8192": 74.8,
+   "peak_gib_seq32768": 128.2
+  }
+ }
+}
