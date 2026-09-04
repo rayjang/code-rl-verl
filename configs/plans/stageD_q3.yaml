@@ -14,7 +14,7 @@ common:
   rubric: rubrics/rubric_v001_code_hint.yaml   # scaffold-only rubric shipped with the data (weight 0 unless the reward config says otherwise)
   stage: D
   cpus: 40
-  mem: 480G
+  mem: 720G
   gpus: 4
   time: "10:00:00"
 hypotheses:
