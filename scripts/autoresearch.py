@@ -78,6 +78,8 @@ def ensure(exp, plan, common):
                 "--stage", common.get("stage", "D")]
         if exp.get("rubric") or common.get("rubric"):
             args += ["--rubric", exp.get("rubric", common.get("rubric"))]
+        if exp.get("model") or common.get("model"):
+            args += ["--model", exp.get("model", common.get("model"))]
         for s in (common.get("set", []) + exp.get("set", [])):
             args += ["--set", s]
         p = sh(args); print(p.stdout.strip(), p.stderr.strip()[-300:])

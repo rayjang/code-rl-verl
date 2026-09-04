@@ -113,7 +113,9 @@ def cmd_new(a):
     with open(os.path.join(exp_dir, "overrides.txt"), "w", encoding="utf-8") as f:
         f.write("\n".join(out) + "\n")
     with open(os.path.join(exp_dir, "env.sh"), "w", encoding="utf-8") as f:
-        f.write(f"export EXP_NAME={a.id}\nexport MODEL_PATH={S_MODEL}\n")
+        f.write(f"export EXP_NAME={a.id}\nexport MODEL_PATH={a.model or S_MODEL}\n")
+        if a.train:
+            f.write(f"export DATASET_VERSION={os.path.basename(os.path.dirname(absp(a.train)))}\n")
         f.write(f"export REWARD_CONFIG=$ROOT/{a.reward}\nexport VERIFIER_CONFIG=$ROOT/{a.verifier}\n")
         if a.rubric:
             f.write(f"export RUBRIC_CONFIG=$ROOT/{a.rubric}\n")
@@ -123,7 +125,7 @@ def cmd_new(a):
            "dataset_version": {"train": a.train, "train_sha": sha(a.train), "val": a.val, "val_sha": sha(a.val)},
            "reward_version": yaml_version(a.reward), "verifier_version": yaml_version(a.verifier),
            "rubric_version": yaml_version(a.rubric) if a.rubric else "rb_v000_none",
-           "reward_config": a.reward, "verifier_config": a.verifier, "rubric_config": a.rubric,
+           "reward_config": a.reward, "verifier_config": a.verifier, "rubric_config": a.rubric, "model": a.model or S_MODEL,
            "overrides": out, "status": "created", "gpu": "gpu48:6xH200", "stage": a.stage}
     append(rec)
     print(json.dumps({k: rec[k] for k in ("id", "parent", "git_commit", "reward_version", "verifier_version", "rubric_version")}))
@@ -238,7 +240,7 @@ def main():
     p.add_argument("--verifier", default="configs/verifier/vf_v001.yaml"); p.add_argument("--rubric", default="")
     p.add_argument("--train", default=""); p.add_argument("--val", default=""); p.add_argument("--overrides-from", default="")
     p.add_argument("--set", action="append"); p.add_argument("--seed", type=int, default=0); p.add_argument("--stage", default="D")
-    p.add_argument("--concurrency", type=int, default=6); p.set_defaults(fn=cmd_new)
+    p.add_argument("--concurrency", type=int, default=6); p.add_argument("--model", default=""); p.set_defaults(fn=cmd_new)
     p = sub.add_parser("submit"); p.add_argument("--id", required=True); p.add_argument("--cpus", type=int, default=40)
     p.add_argument("--gpus", type=int, default=int(os.environ.get("NGPU", "4")))
     p.add_argument("--mem", default="500G"); p.add_argument("--time", default="06:00:00"); p.set_defaults(fn=cmd_submit)

@@ -5,6 +5,7 @@ min_improvement: 0.0
 independent_arms: true
 guard_metrics: {max_grad_norm: 100.0}
 common:
+  model: /scratch/r919a03/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe
   overrides_from: experiments/base_stageD_q3/overrides.txt
   train: data/curated/curated_v3/train.parquet
   val: data/curated/curated_v3/validation.parquet
