@@ -21,7 +21,7 @@ def se(p, n):
 
 
 def test_phat(exp):
-    p = f"{ROOT}/results/phat/curated_v2_test_{exp}_k8/summary.json"
+    p = f"{ROOT}/results/phat/curated_v3_test_{exp}_k8/summary.json"
     if not os.path.exists(p):
         return None
     s = json.load(open(p))["summary"]
@@ -51,7 +51,7 @@ def main():
         print("no completed arms"); return
     base = df[df["experiment_id"].str.endswith("baseline")].iloc[0] if df["experiment_id"].str.endswith("baseline").any() else None
     prim = "test_solve_k8" if "test_solve_k8" in df.columns and df["test_solve_k8"].notna().any() else "val_resolved"
-    n_ref = 667 * 8 if prim == "test_solve_k8" else 435
+    n_ref = 699 * 8 if prim == "test_solve_k8" else 435
     df["primary"] = df[prim]
     df["primary_se"] = [se(p, n_ref) for p in df["primary"]]
     if base is not None:
