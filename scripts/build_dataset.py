@@ -43,6 +43,8 @@ def main():
     ap.add_argument("--rubric_version", default="rb_v001_code_hint")
     ap.add_argument("--fix_entry_point", action="store_true", help="append the names the hidden tests import/call to unit-test prompts (PROMPT_FIX_ENTRY_POINT)")
     ap.add_argument("--hard_rule", default="no_signal", choices=["p_hat", "no_signal"], help="TOO_HARD when p_hat<lo (p_hat) or when p_hat<lo AND reward_std==0 (no_signal)")
+    ap.add_argument("--max_prompt_tokens", type=int, default=30000, help="exclude rows whose chat prompt exceeds this many tokens (CONTEXT_OVERFLOW); 0 = no limit")
+    ap.add_argument("--tokenizer", default="", help="tokenizer path used for --max_prompt_tokens (default: bucket heuristic swe_64k/128k > 30000)")
     a = ap.parse_args()
     rng = random.Random(a.seed)
     out_dir = f"{ROOT}/data/curated/{a.version}"
@@ -58,6 +60,13 @@ def main():
     df["_iid"] = ei["instance_id"].values; df["_variant"] = ei["variant_type"].values; df["_repo"] = ei["repo"].values
     df["_lang"] = ei["lang"].values; df["_harness"] = ei["harness"].values; df["_p_hat_src"] = ei["p_hat_source"].values
     df["_prompt_text"] = [json.dumps([dict(m) for m in p], ensure_ascii=False) for p in df["prompt"]]
+    tok_len = {}
+    if a.max_prompt_tokens and a.tokenizer:
+        from transformers import AutoTokenizer
+        tk = AutoTokenizer.from_pretrained(a.tokenizer)
+        for iid, p in zip(df["_iid"], df["prompt"]):
+            tok_len[iid] = len(tk.apply_chat_template([dict(m) for m in p], tokenize=True, add_generation_prompt=True))
+        print(f"tokenised {len(tok_len)} prompts with {a.tokenizer}: max={max(tok_len.values())}")
     vswe = {r["instance_id"]: r for r in load_jsonl(f"{MAN}/validation_swe.jsonl")}
     vut = {r["instance_id"]: r for r in load_jsonl(f"{MAN}/validation_ut.jsonl")}
     phat = {}
@@ -119,8 +128,11 @@ def main():
         if var.startswith("swe"):
             meta["environment_id"] = swe_full.get(iid, {}).get("image_name", "").rsplit("/", 1)[-1]
             v = vswe.get(iid)
-            if var != "swe_32k":
-                excl = excl or "CONTEXT_OVERFLOW"; flags.append("prompt_gt_32k")
+            too_long = (tok_len[iid] > a.max_prompt_tokens) if (iid in tok_len) else (var != "swe_32k")
+            if a.max_prompt_tokens and too_long:
+                excl = excl or "CONTEXT_OVERFLOW"; flags.append(f"prompt_gt_{a.max_prompt_tokens}")
+            if iid in tok_len:
+                meta["prompt_tokens"] = int(tok_len[iid])
             if v is None:
                 excl = excl or "UNVALIDATED"
             else:
@@ -223,7 +235,7 @@ def main():
         e.update({"environment_id": m["environment_id"], "f2p_effective": list(m["f2p_effective"]), "p2p_effective": list(m["p2p_effective"]),
                   "n_f2p_effective": int(m["n_f2p_effective"]), "n_p2p_effective": int(m["n_p2p_effective"]),
                   "empirical_success_rate": -1.0 if m["empirical_success_rate"] is None else float(m["empirical_success_rate"]),
-                  "empirical_n": int(m["empirical_n"]), "data_quality_status": row["_status"], "exclusion_reason": row["_reason"],
+                  "empirical_n": int(m["empirical_n"]), "prompt_tokens": int(m.get("prompt_tokens", -1)), "data_quality_status": row["_status"], "exclusion_reason": row["_reason"],
                   "quality_flags": ";".join(row["_flags"]), "verifier_version": a.verifier_version, "reward_version": a.reward_version,
                   "rubric_version": a.rubric_version, "dataset_version": a.version, "split": row["_split"],
                   "task_type": "swe_patch" if row["_variant"].startswith("swe") else f"unittest_{row['_harness']}",
