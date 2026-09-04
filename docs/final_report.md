@@ -102,6 +102,20 @@ conservative fallback parser recovers the gold patch in 89 % of 9 wrappings (bas
 strict 22 %); on real samples the baseline cascade "accepts" 67 % of SWE responses whereas only 12–13 %
 are structurally valid (the rest would fail to apply anyway).
 
+### 9.1 Base policy after the model switch (Qwen3-30B-A3B-Instruct-2507, curated_v3pre validation, k=8)
+| variant | n | p̂ | always-solved | never-solved | in [0.2,0.8] | extract | apply | mean reward |
+|---|---|---|---|---|---|---|---|---|
+| swe_32k | 62 | 0.038 | 0 % | 90 % | 8 % | 1.00 | 0.48 | 0.128 |
+| swe_64k | 25 | 0.065 | 0 % | 80 % | 16 % | 1.00 | 0.52 | 0.178 |
+| swe_128k | 25 | 0.030 | 0 % | 92 % | 4 % | 1.00 | 0.25 | 0.078 |
+| ut_function | 173 | 0.836 | 75 % | 9 % | 8 % | 1.00 | 1.00 | 0.900 |
+| ut_pytest | 141 | 0.681 | 48 % | 16 % | 24 % | 0.98 | 0.97 | 0.776 |
+| ut_stdio | 86 | 0.673 | 43 % | 17 % | 20 % | 0.94 | 0.94 | 0.758 |
+The switch inverts the difficulty picture: SWE-smith (all three context buckets) now has a real learning
+signal (patches apply in 25–52 % of samples, a few instances solved), while the unit-test tracks are mostly
+solved by the base policy. `curated_v3` therefore drops always-solved unit-test rows from the *training* split
+(TOO_EASY, p̂ > 0.95) and the hierarchical sampler weights SWE at 0.3.
+
 ## 10–19. Ablations, dynamics, data quality, final dataset / verifier / rubric / reward / config / performance
 _(filled from the registry and workbook after Stage D/E — see `docs/experiment_report.md`, `docs/ablation_report.md`)_
 
