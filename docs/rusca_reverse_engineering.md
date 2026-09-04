@@ -58,6 +58,14 @@ Our `verifier/verl_reward.py` keeps this contract (33 keys, template-locked afte
 * Reward dict (ours): see `verifier/schemas.py::RewardComponents` — every component is logged
   (extraction/format/apply/F2P/P2P/rubric/rule/timeout/length/final + infra_excluded + err_kind + versions).
 
+## 4.1 Long-context training settings (Qwen3-30B-A3B)
+`experiments/base_stageD_q3/overrides.txt`: `data.max_prompt_length=131072`, `rollout.max_model_len=135168`,
+`rollout.enable_prefix_caching=True` (8 rollouts share a 100k+ prefix), `rollout.max_num_seqs=64`,
+`actor.fsdp_config.ulysses_sequence_parallel_size=6` (128k+ sequences split across the 6 GPUs for
+log-prob/update), `entropy_from_logits_with_chunking` + `entropy_checkpointing`, dynamic batching at 36k tokens
+per GPU, hierarchical sampler variant weights swe 32k/64k/128k = 0.45/0.35/0.20 so long rows do not dominate
+a batch, task weights SWE 0.3 / unit-test 0.7.
+
 ## 5. Conflicts between local materials (reported, not hidden)
 
 1. The SWE system prompt asks for `<solution>` SEARCH/REPLACE blocks while the user turn asks for a

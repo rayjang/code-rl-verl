@@ -26,6 +26,16 @@ _(filled after Stage D/E)_
 * Full audit: `data/processed/analysis/reports/dataset_audit.md`, per-instance CSVs in
   `data/processed/analysis/`.
 
+### 2.1 Policy-model decision (2026-09-04)
+The user asked to include the 400 SWE rows that do not fit a 32k window. Qwen1.5-MoE-A2.7B-Chat (32,768
+tokens, no YaRN training) cannot train on them, so the policy was switched to **Qwen3-30B-A3B-Instruct-2507**
+(same MoE family, 3B active / 30B total, 262k native context, already cached on this machine; verl 0.9,
+vLLM 0.24 and transformers 5.10 support `qwen3_moe`). Qwen1.5-MoE results (Stage D arms D000–D002) are kept
+as a same-data reference. With the Qwen3 tokenizer every SWE prompt fits: swe_32k 18–28k, swe_64k 37–62k,
+swe_128k 75–119k tokens (`results/smoke/swe_prompt_tokens_qwen3.json`). Dataset `curated_v3pre` therefore
+keeps all 504 environment-valid SWE rows (train 198/213/93 for 32k/64k/128k, validation 112, test 99) and
+`curated_v3` applies the Qwen3 base-policy difficulty filter to the training split only.
+
 ## 3. Execution environment analysis
 * 19 `jyangballin/swesmith.x86_64.*` images pulled from Docker Hub as `.sif` (23 GB total; digests in
   `sources/rl_code_v1/data/index/images_manifest.json`), plus `python:3.11-slim-bookworm.sif` with a bind-mounted
