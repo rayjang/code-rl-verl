@@ -21,9 +21,10 @@ def main():
         b, a = before.get(vt, {}), after.get(vt, {})
         rows.append((vt, b.get("mean_p_hat"), a.get("mean_p_hat"), b.get("frac_band_0.2_0.8"), a.get("frac_band_0.2_0.8"), b.get("mean_reward"), a.get("mean_reward")))
     print("variant       p_hat(v1)  p_hat(v2pre)  band(v1)  band(v2pre)  reward(v1)  reward(v2pre)")
+    fmt = lambda x, w, d: (f"{x:{w}.{d}f}" if isinstance(x, (int, float)) else f"{'n/a':>{w}s}")
     for r in rows:
-        print(f"{r[0]:12s} {r[1]:9.3f} {r[2]:12.3f} {r[3]:9.2f} {r[4]:11.2f} {r[5]:10.3f} {r[6]:13.3f}")
-    gain = sum((after.get(vt, {}).get("mean_p_hat", 0) - before.get(vt, {}).get("mean_p_hat", 0)) for vt in ("ut_pytest", "ut_function"))
+        print(f"{r[0]:12s} {fmt(r[1],9,3)} {fmt(r[2],12,3)} {fmt(r[3],9,2)} {fmt(r[4],11,2)} {fmt(r[5],10,3)} {fmt(r[6],13,3)}")
+    gain = sum((after.get(vt, {}).get("mean_p_hat", 0) or 0) - (before.get(vt, {}).get("mean_p_hat", 0) or 0) for vt in ("ut_pytest", "ut_function"))
     use_fix = True   # inherited from the curated_v2 decision (+0.144 on Qwen1.5-MoE); the table above is model-vs-model
     print(f"model switch effect on validation (Qwen1.5 -> Qwen3), pytest+function mean p_hat gain = {gain:+.3f}")
     args = [PY, f"{ROOT}/scripts/build_dataset.py", "--version", "curated_v3", "--seed", "0", "--phat", f"{ROOT}/results/phat/curated_v3pre_train_q3_k8/phat.jsonl",
