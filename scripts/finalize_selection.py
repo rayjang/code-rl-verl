@@ -46,6 +46,16 @@ def main():
                "train_reward": s.get("final_reward"), "max_grad_norm": s.get("max_grad_norm"), "final_kl": s.get("final_kl"), "loop_decision": r.get("decision"), "git": r.get("git_commit"), "seed": r.get("seed")}
         row.update(test_phat(i) or {})
         rows.append(row)
+    # untrained reference: Qwen3 base policy on the same test split (curated_v3 test == curated_v3pre test rows)
+    base_ref = f"{ROOT}/results/phat/curated_v3pre_test_q3_k8/summary.json"
+    if os.path.exists(base_ref):
+        sb = json.load(open(base_ref))["summary"]; n = sum(v["n_instances"] for v in sb.values())
+        rows.append({"experiment_id": "base_policy_no_rl", "stage": "-", "reward": "-", "verifier": "vf_v002", "rubric": "-",
+                     "val_resolved": None, "val_p2p": None, "val_apply": None, "val_invalid": None, "max_grad_norm": None,
+                     "test_solve_k8": sum(v["mean_p_hat"] * v["n_instances"] for v in sb.values()) / n, "test_n": n,
+                     "test_solve_swe": sum(v["mean_p_hat"] * v["n_instances"] for k, v in sb.items() if k.startswith("swe")) / max(1, sum(v["n_instances"] for k, v in sb.items() if k.startswith("swe"))),
+                     "test_solve_ut": sum(v["mean_p_hat"] * v["n_instances"] for k, v in sb.items() if not k.startswith("swe")) / max(1, sum(v["n_instances"] for k, v in sb.items() if not k.startswith("swe"))),
+                     "test_reward_k8": sum(v["mean_reward"] * v["n_instances"] for v in sb.values()) / n, "loop_decision": "reference"})
     df = pd.DataFrame(rows)
     if not len(df):
         print("no completed arms"); return
