@@ -71,8 +71,29 @@ additive gating / non-gating, no-apply-credit).
   the test split is never used for tuning.
 * Compute: gpu48, H200 141 GB; 6 GPUs requested, 4 available while the user's `g4_bench` job holds 2.
 
-## 9–19. Results, ablations, dynamics, data quality, final dataset / verifier / rubric / reward / config / performance
-_(filled from the registry and workbook)_
+## 9. Results so far (base policy, before RL)
+Measured with `scripts/measure_phat.py` (k=8, temperature 1.0, vf_v002 verifier, rw_v001 reward) — files under
+`results/phat/`.
+
+| split (curated_v2) | swe_32k p̂ | ut_function p̂ | ut_pytest p̂ | ut_stdio p̂ | notes |
+|---|---|---|---|---|---|
+| validation (435) | 0.000 (35) | 0.423 (173) | 0.050 (141) | 0.029 (86) | after prompt repair |
+| test (667) | 0.000 (67) | 0.384 (281) | 0.051 (200) | 0.035 (119) | untouched; final before/after reference |
+| curated_v1 validation, before repair | 0.000 | 0.216 | 0.023 | 0.039 | repair effect: +0.12 / +0.02 |
+
+SWE-smith with the full repository snapshot is unsolved by the base policy (0 of 2,000+ samples); only
+8 % of its diffs are structurally valid and 0 % apply, so the SWE track initially supplies format/apply
+signal only. Stage-B parser ablation (`results/verifier_ablation/`): on gold-derived wrappings the
+conservative fallback parser recovers the gold patch in 89 % of 9 wrappings (baseline cascade 75 %,
+strict 22 %); on real samples the baseline cascade "accepts" 67 % of SWE responses whereas only 12–13 %
+are structurally valid (the rest would fail to apply anyway).
+
+## 10–19. Ablations, dynamics, data quality, final dataset / verifier / rubric / reward / config / performance
+_(filled from the registry and workbook after Stage D/E — see `docs/experiment_report.md`, `docs/ablation_report.md`)_
+
+Stage D pass 1 (2026-09-02 night) failed on infrastructure for every arm (batch 32×8 not divisible by the
+6 data-parallel ranks; a duplicated `+rusca.enable` override; one Ray start-up timeout). The records are
+kept in `experiments/registry.jsonl`; pass 2 runs with batch 36 and the fixes listed in the git log.
 
 ## 20. Limitations and open problems
 * Three of the five reference archives are missing on this machine; RUSCA/DDCA/hierarchical-sampler
