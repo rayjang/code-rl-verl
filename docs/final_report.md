@@ -123,6 +123,20 @@ Stage D pass 1 (2026-09-02 night) failed on infrastructure for every arm (batch 
 6 data-parallel ranks; a duplicated `+rusca.enable` override; one Ray start-up timeout). The records are
 kept in `experiments/registry.jsonl`; pass 2 runs with batch 36 and the fixes listed in the git log.
 
+## 18. Training configuration (Qwen3-30B-A3B, Stage D, `experiments/base_stageD_q3/overrides.txt`)
+| item | value | why |
+|---|---|---|
+| GPUs | 4 of gpu48's H200 (an unlisted 2-GPU allocation sits on the node; Ulysses needs `heads % sp == 0` → SP=4 on 4 GPUs) | 32 attention heads are not divisible by 6 |
+| batch / group | 24 prompts × n=6 rollouts, mini-batch 24 (1 update/step) | step 1 at 36×8 took 27 min (update 903 s on 100k-token sequences); 24×6 → 8–15 min/step |
+| context | prompt ≤131,072, response ≤2,048, vLLM `max_model_len` 135,168, prefix caching | swe_128k prompts reach 119k tokens |
+| sequence parallel | Ulysses SP=4 for actor and ref log-probs, dynamic batching 34k tokens/GPU, entropy chunking+checkpointing | one 131k sequence per micro-batch fits 141 GB |
+| sampler | task SWE 0.25 / UT 0.75; variants swe 32k/64k/128k = 0.50/0.35/0.15, ut function/pytest/stdio = 0.45/0.30/0.25 | long rows must not dominate step cost |
+| LoRA | q/k/v/o_proj, r=32, α=64, lr 2e-5 | see §17 |
+| loss | GRPO advantage (std-normalised) + GSPO sequence-level ratio, clip 3e-4/4e-4, no KL, entropy 0 | project target algorithm |
+| RUSCA | scaffold agent loop, logistic decay over 20 steps, rule-only reward (rubric weight 0 unless the arm says otherwise) | |
+| host memory | 720 GB (`load_format=safetensors` so vLLM mmaps the base once; `layered_summon` syncs only LoRA) | 4 FSDP ranks stage the 30B model on CPU at init |
+Measured: step 1 = 897 s (gen 200, old-logprob 189, update 417; max prompt 118k), step 2 = 476 s (max prompt 62k).
+
 ## 17. LoRA configuration (measured, `results/smoke/smoke_qwen3moe.json`)
 | model | targets | rank / alpha / dropout | trainable | total | peak memory (1 GPU, HF+grad-ckpt) |
 |---|---|---|---|---|---|
