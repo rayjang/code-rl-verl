@@ -142,7 +142,7 @@ def cmd_submit(a):
 
 # ------------------------------------------------------------------------------------------- collect
 STEP_RE = re.compile(r"step:(\d+) - (.*)$")
-KV_RE = re.compile(r"([A-Za-z0-9_/.@\-]+):(-?[0-9.]+(?:[eE][-+]?\d+)?|nan|inf|-inf)")
+KV_RE = re.compile(r"([A-Za-z0-9_/.@\-]+):(?:np\.float\d*\()?(-?[0-9.]+(?:[eE][-+]?\d+)?|nan|inf|-inf)\)?")
 
 
 def parse_train_log(path):
