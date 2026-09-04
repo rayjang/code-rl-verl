@@ -38,11 +38,17 @@ def main():
         mp = f"{ROOT}/experiments/{i}/metrics.json"
         if os.path.exists(mp):
             m = json.load(open(mp))
+            inst = m.get("instance_summary", {})
             for step, d in m.get("steps", {}).items():
-                curves.append({"experiment_id": i, "step": int(step), **{k: d.get(k) for k in [
-                    "critic/score/mean", "critic/score/std", "actor/pg_loss", "actor/ppo_kl", "actor/entropy", "actor/grad_norm", "actor/lr",
-                    "response_length/mean", "response_length/clip_ratio", "actor/pg_clipfrac"]},
-                    **{k.replace("reward_extra/", "rx:"): v for k, v in d.items() if any(t in k for t in ("f2p_frac", "p2p_frac", "patch_apply_score", "patch_format_score", "rule_correctness", "infra_excluded", "rubric_score", "rusca_n_inject"))}})
+                row = {"experiment_id": i, "step": int(step), **{k: d.get(k) for k in [
+                    "critic/score/mean", "critic/score/max", "actor/pg_loss", "actor/ppo_kl", "actor/entropy", "actor/grad_norm", "actor/lr",
+                    "response_length/mean", "response_length/clip_ratio", "actor/pg_clipfrac", "timing_s/step", "timing_s/gen"]}}
+                for track in ("swe", "unittest"):
+                    v = inst.get(f"{step}:{track}", {})
+                    for f in ("final_reward", "rule_correctness_score", "f2p_frac", "p2p_frac", "patch_format_score", "patch_apply_score", "infra_excluded", "rubric_score", "gated_out"):
+                        row[f"{track}:{f}"] = v.get(f)
+                    row[f"{track}:n"] = v.get("n")
+                curves.append(row)
     # versions
     rubric_rows = [{"rubric_version": y.get("version"), "file": os.path.relpath(p, ROOT), **{k: json.dumps(v, ensure_ascii=False) if isinstance(v, (dict, list)) else v for k, v in y.items() if k != "version"}}
                    for p in sorted(glob.glob(f"{ROOT}/rubrics/*.yaml")) for y in [yaml.safe_load(open(p))]]
