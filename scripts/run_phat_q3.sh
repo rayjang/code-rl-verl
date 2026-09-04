@@ -15,6 +15,6 @@ for split in validation test train; do
   OUT=$ROOT/results/phat/${V}_${split}_q3_k$K; [ -f $OUT/summary.json ] && { echo "skip $split"; continue; }
   echo "=== $split $(date -Is) ==="
   python scripts/measure_phat.py --parquet $ROOT/data/curated/$V/$split.parquet --out $OUT --k $K --gpus 6 --keep_text --concurrency 10 \
-      --model /scratch/r919a03/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe/ --max_model_len 135168 --max_tokens 4096 --max_num_seqs 32 2>&1 | grep -vE "^\s*$"
+      --model /scratch/r919a03/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe --max_model_len 135168 --max_tokens 4096 --max_num_seqs 32 2>&1 | grep -vE "^\s*$"
 done
 echo "end=$(date -Is)"; rm -rf $VERIFIER_RUN_DIR
