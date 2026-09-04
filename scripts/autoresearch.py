@@ -53,6 +53,13 @@ def _failed(r, exp_id):
         m = [l for l in open(ri) if "END_TRAIN" in l]
         if m and "rc=0" not in m[-1]:
             return True
+        if m and "rc=0" in m[-1]:
+            return False
+    job = r.get("slurm_job")
+    if job:
+        st = job_state(job)
+        if st.startswith(("FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY", "NODE_FAIL")):
+            return True                      # job died without writing END_TRAIN (e.g. scancel)
     return r.get("status") in ("failed_or_running",) and (r.get("summary") or {}).get("end_rc") not in (0, None)
 
 
