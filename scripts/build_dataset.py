@@ -65,7 +65,7 @@ def main():
         from transformers import AutoTokenizer
         tk = AutoTokenizer.from_pretrained(a.tokenizer)
         for iid, p in zip(df["_iid"], df["prompt"]):
-            tok_len[iid] = len(tk.apply_chat_template([dict(m) for m in p], tokenize=True, add_generation_prompt=True))
+            tok_len[iid] = len(tk(tk.apply_chat_template([dict(m) for m in p], tokenize=False, add_generation_prompt=True)).input_ids)
         print(f"tokenised {len(tok_len)} prompts with {a.tokenizer}: max={max(tok_len.values())}")
     vswe = {r["instance_id"]: r for r in load_jsonl(f"{MAN}/validation_swe.jsonl")}
     vut = {r["instance_id"]: r for r in load_jsonl(f"{MAN}/validation_ut.jsonl")}
