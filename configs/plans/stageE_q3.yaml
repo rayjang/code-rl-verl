@@ -1,0 +1,19 @@
+# Stage E: longer runs (100 steps) of the Stage-D winner vs the baseline; ids/rewards are filled by
+# scripts/make_stageE_plan.py from experiments/plan_state_stageD.json after Stage D completes.
+baseline: exp_QE000_baseline_long
+primary_metric: val_resolved
+min_improvement: 0.0
+independent_arms: true
+guard_metrics: {max_grad_norm: 100.0}
+common:
+  overrides_from: experiments/base_stageE_q3/overrides.txt
+  train: data/curated/curated_v3/train.parquet
+  val: data/curated/curated_v3/validation.parquet
+  reward: configs/reward/rw_v001_baseline.yaml
+  verifier: configs/verifier/vf_v002.yaml
+  stage: E
+  cpus: 40
+  mem: 480G
+  gpus: 4
+  time: "16:00:00"
+hypotheses: []   # filled by make_stageE_plan.py

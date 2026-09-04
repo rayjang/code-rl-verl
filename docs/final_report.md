@@ -109,6 +109,18 @@ Stage D pass 1 (2026-09-02 night) failed on infrastructure for every arm (batch 
 6 data-parallel ranks; a duplicated `+rusca.enable` override; one Ray start-up timeout). The records are
 kept in `experiments/registry.jsonl`; pass 2 runs with batch 36 and the fixes listed in the git log.
 
+## 17. LoRA configuration (measured, `results/smoke/smoke_qwen3moe.json`)
+| model | targets | rank / alpha / dropout | trainable | total | peak memory (1 GPU, HF+grad-ckpt) |
+|---|---|---|---|---|---|
+| Qwen1.5-MoE-A2.7B-Chat | q/k/v/o_proj (24 layers) | 32 / 64 / 0 | 12.58 M (0.088 %) | 14.33 B | 27.3 GiB @96 tok |
+| Qwen1.5-MoE + shared expert | + shared_expert gate/up/down | 32 / 64 / 0 | 30.28 M (0.211 %) | 14.35 B | 27.5 GiB @96 tok |
+| **Qwen3-30B-A3B-Instruct-2507** | q/k/v/o_proj (48 layers) | 32 / 64 / 0 | 26.74 M (0.087 %) | 30.56 B | 74.8 GiB @8k, 128.2 GiB @32k tok |
+Experts are fused 3-D tensors in transformers 5.x (`experts.gate_up_proj`, `experts.down_proj`) — not
+`nn.Linear` — so standard LoRA cannot target them; peft's `target_parameters` can (99 M params for
+Qwen1.5-MoE) but vLLM has no weight-sync path for it, so expert LoRA is not used. Under FSDP (weights
+sharded 6-way) + Ulysses SP=6 a 131k-token sequence costs ≈22k tokens of activation per GPU, within the
+141 GB H200 budget together with the sharded weights.
+
 ## 20. Limitations and open problems
 * Three of the five reference archives are missing on this machine; RUSCA/DDCA/hierarchical-sampler
   semantics are reconstructed (documented UNKNOWNs).
