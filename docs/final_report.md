@@ -149,6 +149,23 @@ Qwen1.5-MoE) but vLLM has no weight-sync path for it, so expert LoRA is not used
 sharded 6-way) + Ulysses SP=6 a 131k-token sequence costs ≈22k tokens of activation per GPU, within the
 141 GB H200 budget together with the sharded weights.
 
+## 18. Training configuration (Stage D, Qwen3-30B-A3B) — measured
+`experiments/base_stageD_q3/overrides.txt`, launched by `scripts/launch_verl.sh` on 4 H200 (an unlisted
+2-GPU allocation occupies the rest of gpu48) with 720 GB host memory:
+
+| item | value | why |
+|---|---|---|
+| algorithm | GRPO advantage (std-normalised), GSPO loss (clip 3e-4/4e-4), token-mean aggregation, no KL loss, entropy coeff 0 | target configuration; GSPO in stock verl is seq-mean-token-mean, `gspo_tokenmean` in `rl/algos.py` is the token-mean variant |
+| batch | 24 prompts × n=6 rollouts, mini-batch 24 (1 update/step), 20 steps per arm | 36×8 gave 27 min/step (100k-token SWE sequences dominate); 24×6 gives 8–15 min |
+| context | prompt ≤131,072 tokens, response ≤2,048, vLLM `max_model_len` 135,168, prefix caching on, eager mode | 64k/128k SWE buckets included; compile path breaks MoE+LoRA |
+| parallelism | FSDP over 4 GPUs, Ulysses sequence parallel = 4 (actor and ref), dynamic batching 34k tokens/GPU | 32 attention heads must be divisible by SP; a 131k sequence needs ≥4-way SP to fit 141 GB |
+| LoRA | q/k/v/o_proj, r=32, α=64, dropout 0, lr 2e-5, bf16 model dtype | 26.7 M trainable (0.087 %) |
+| rollout | vLLM 0.24, `load_format=safetensors` + `layered_summon` (only LoRA synced), gpu_memory_utilization 0.75 | dummy load stages 57 GB per vLLM worker on the host → OOM |
+| sampling | hierarchical: task SWE 0.25 / unit-test 0.75; variants swe 32k/64k/128k = 0.50/0.35/0.15, ut function/pytest/stdio = 0.45/0.30/0.25 | bounds the share of 100k-token prompts per step |
+| RUSCA | `rusca_scaffold_agent`, total_steps=20, logistic decay centred at 20 %, intra-group linear decay, `calculate_log_probs=False` | scaffold-conditioned log-probs must not be reused |
+| validation | step 20 only (greedy, n=1, 512 rows) | one 512-row validation with 100k prompts costs ≈1 h |
+| measured | step 1: 897 s (gen 200, old-logprob 189, update 417; longest prompt 118,385 tok); step 2: 476 s; host RSS peak ≈ 500 GB | `experiments/exp_Q000_baseline/train.log`, `mem_trace.log` |
+
 ## 20. Limitations and open problems
 * Three of the five reference archives are missing on this machine; RUSCA/DDCA/hierarchical-sampler
   semantics are reconstructed (documented UNKNOWNs).
