@@ -13,9 +13,9 @@ common:
   verifier: configs/verifier/vf_v002.yaml
   rubric: rubrics/rubric_v001_code_hint.yaml   # scaffold-only rubric shipped with the data (weight 0 unless the reward config says otherwise)
   stage: D
-  cpus: 60
-  mem: 700G
-  gpus: 6
+  cpus: 40
+  mem: 480G
+  gpus: 4
   time: "10:00:00"
 hypotheses:
   - id: exp_Q001_f2p_binary

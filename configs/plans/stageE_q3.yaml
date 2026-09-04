@@ -11,9 +11,9 @@ common:
   reward: configs/reward/rw_v001_baseline.yaml
   verifier: configs/verifier/vf_v002.yaml
   stage: E
-  cpus: 60
-  mem: 700G
-  gpus: 6
+  cpus: 40
+  mem: 480G
+  gpus: 4
   time: '24:00:00'
   model: /scratch/r919a03/huggingface/hub/models--Qwen--Qwen3-30B-A3B-Instruct-2507/snapshots/0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe
 hypotheses: []
