@@ -22,7 +22,8 @@ Registry: `experiments/registry.jsonl`; per-experiment folders hold `overrides.r
 | exp_D012_parser_baseline | D       | rw_v001_baseline        | vf_v003_baseline_parser | rb_v000_none      |       1 |       nan      |    nan      |       nan      |           nan      |          nan      |  nan      |  nan      |    nan      |  nan |  nan      |      0     | reject     |
 | stageD_qwen15_note       | nan     | nan                     | nan                     | nan               |     nan |       nan      |    nan      |       nan      |           nan      |          nan      |  nan      |  nan      |    nan      |  nan |  nan      |    nan     | nan        |
 | exp_Q000_baseline        | D       | rw_v001_baseline        | vf_v002                 | rb_v001_code_hint |      21 |         0.5632 |      0.516  |         0.4037 |             0.0625 |            0.745  |    0.5406 |    0.9961 |      0.8786 |    0 |    0.1678 |      0.154 | keep       |
-| exp_Q001_f2p_binary      | D       | rw_v002_f2p_binary      | vf_v002                 | rb_v001_code_hint |     nan |       nan      |    nan      |       nan      |           nan      |          nan      |  nan      |  nan      |    nan      |  nan |  nan      |    nan     | nan        |
+| exp_Q001_f2p_binary      | D       | rw_v002_f2p_binary      | vf_v002                 | rb_v001_code_hint |      20 |         0.5055 |      0.4549 |         0.4025 |             0.0625 |            0.7425 |    0.5581 |    0.9989 |      0.925  |    0 |    0.1565 |      0.138 | reject     |
+| exp_Q002_f2p_linear      | D       | rw_v003_f2p_linear      | vf_v002                 | rb_v001_code_hint |     nan |       nan      |    nan      |       nan      |           nan      |          nan      |  nan      |  nan      |    nan      |  nan |  nan      |    nan     | nan        |
 
 ## Hypotheses and decisions
 
@@ -42,4 +43,5 @@ Registry: `experiments/registry.jsonl`; per-experiment folders hold `overrides.r
 * **exp_D012_parser_baseline** (parent exp_D000_baseline): The baseline 6-stage cascade (fuzz apply, no validation) inflates apply rate but rewards malformed patches — changed: `verifier.parser=baseline,apply_mode=fuzz` → **reject**: run failed or no validation metric
 * **stageD_qwen15_note** (parent nan): nan — changed: `nan` → **nan**: nan
 * **exp_Q000_baseline** (parent exp_Q000_baseline):  — changed: `` → **keep**: baseline
-* **exp_Q001_f2p_binary** (parent exp_Q000_baseline): All-or-nothing F2P removes partial signal: lower held-out solve rate than the baseline power law — changed: `reward.f2p_mode=binary` → **nan**: nan
+* **exp_Q001_f2p_binary** (parent exp_Q000_baseline): All-or-nothing F2P removes partial signal: lower held-out solve rate than the baseline power law — changed: `reward.f2p_mode=binary` → **reject**: val_resolved 0.4025 <= best 0.40375
+* **exp_Q002_f2p_linear** (parent exp_Q000_baseline): Linear partial credit (half=0.5) learns faster early but rewards easy-test picking — changed: `reward.f2p_mode=linear` → **nan**: nan
