@@ -70,6 +70,10 @@ additive gating / non-gating, no-apply-credit).
 * Splits: SWE by repository (train / validation / untouched test repos); unit-test random after de-duplication;
   the test split is never used for tuning.
 * Compute: gpu48, H200 141 GB; 6 GPUs requested, 4 available while the user's `g4_bench` job holds 2.
+* Decision rule: the loop's keep/reject uses the validation complete-solve rate (data-source averaged, greedy,
+  n=1 per instance; SE ≈ 0.016). Because single-sample validation differences of < 0.03 are noise, the final
+  choice (`scripts/finalize_selection.py`) ranks arms by k=8 held-out test solve rate with a z=1 noise band,
+  then P2P regression, apply/format validity, stability (grad norm, KL, invalid rate), reward-signal health.
 
 ## 9. Results so far (base policy, before RL)
 Measured with `scripts/measure_phat.py` (k=8, temperature 1.0, vf_v002 verifier, rw_v001 reward) — files under
