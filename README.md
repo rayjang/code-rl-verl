@@ -54,7 +54,11 @@ The exact stack the results were produced with:
 ```
 torch 2.11.0+cu130   vllm 0.24.0   verl 0.9.0
 transformers 5.10.4  peft 0.20.0   flash_attn 2.8.3
+ray 2.58.0           datasets 5.0.1  tensordict 0.10.0
 ```
+
+`requirements-lock.txt` is a full 250-package snapshot of that environment. It is a reference, not a
+one-shot installer — torch, vllm and flash-attn need their own index or a local build.
 
 ### 2.2 Python environment
 
@@ -63,9 +67,10 @@ git clone https://github.com/rayjang/code-rl-verl.git && cd code-rl-verl
 uv venv --python 3.12 .venv && source .venv/bin/activate
 uv pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu130
 uv pip install vllm==0.24.0 verl==0.9.0 transformers==5.10.4 peft==0.20.0 \
-               pandas pyarrow pyyaml hydra-core ray
+               ray==2.58.0 datasets==5.0.1 tensordict==0.10.0 torchdata==0.11.0 \
+               hydra-core==1.3.6 omegaconf==2.3.1 pandas pyarrow pyyaml codetiming
 bash scripts/build_flash_attn.sh          # flash-attn 2.8.3, compiled against the installed torch
-python -m pytest tests/verifier -q        # verifier unit tests, no GPU and no images needed
+python -m pytest tests/verifier -q        # verifier unit tests: 55 passed, no GPU and no images needed
 ```
 
 ### 2.3 Container images (23 GB, required for any reward that runs tests)
