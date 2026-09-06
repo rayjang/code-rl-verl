@@ -1,0 +1,1584 @@
+== 2026-09-02T16:31:14+09:00
+Mem:            1007          67         792          14         166         939
+    PID   RSS COMMAND
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+ 917694 877432 VLLM::EngineCor
+ 588079 588700 sssd_be
+ 588080 365824 sssd_nss
+ 920011 277808 litellm
+   2143 77500 systemd-journal
+ 661917 47364 nv-hostengine
+ 919958 30228 slurmstepd
+2179359 30144 slurmstepd
+2179383 29456 slurmstepd
+ 914038 29436 slurmstepd
+== 2026-09-02T16:31:34+09:00
+Mem:            1007          68         791          14         166         939
+    PID   RSS COMMAND
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180085 891084 python
+ 917694 877432 VLLM::EngineCor
+ 588079 589668 sssd_be
+ 588080 365824 sssd_nss
+ 920011 277808 litellm
+   2143 77500 systemd-journal
+ 661917 47364 nv-hostengine
+ 919958 30228 slurmstepd
+2179359 30144 slurmstepd
+2179383 29456 slurmstepd
+== 2026-09-02T16:31:54+09:00
+Mem:            1007          78         782          14         166         929
+    PID   RSS COMMAND
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1006392 gcs_server
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2186721 793276 ray::TaskRunner
+ 588079 589668 sssd_be
+2181251 389168 raylet
+ 588080 365824 sssd_nss
+2180741 318540 python
+2180809 315528 ray-dashboard-R
+2180808 311632 ray-dashboard-N
+== 2026-09-02T16:32:14+09:00
+Mem:            1007          82         778          14         166         925
+    PID   RSS COMMAND
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1012216 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+2187292 599596 ray::SimpleStor
+2187295 599088 ray::SimpleStor
+2187296 599040 ray::SimpleStor
+2187289 598968 ray::SimpleStor
+== 2026-09-02T16:32:34+09:00
+Mem:            1007          88         772          14         166         919
+    PID   RSS COMMAND
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+2188447 2848584 ray::WorkerDict
+2188445 2844364 ray::WorkerDict
+2188446 2839776 ray::WorkerDict
+2188444 2813180 ray::WorkerDict
+ 914145 1201240 vllm
+2180571 1012204 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:32:54+09:00
+Mem:            1007          87         772          14         166         920
+    PID   RSS COMMAND
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+2188444 3959376 ray::WorkerDict
+2188447 2981068 ray::WorkerDict
+2188445 2976532 ray::WorkerDict
+2188446 2971080 ray::WorkerDict
+ 914145 1201240 vllm
+2180571 1015716 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:33:14+09:00
+Mem:            1007          87         771          14         167         920
+    PID   RSS COMMAND
+2188444 5500312 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+2188447 3506764 ray::WorkerDict
+2188445 3500520 ray::WorkerDict
+2188446 3496176 ray::WorkerDict
+ 914145 1201240 vllm
+2180571 1015716 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:33:34+09:00
+Mem:            1007          90         768          14         168         917
+    PID   RSS COMMAND
+2188444 6961544 ray::WorkerDict
+2188447 4969348 ray::WorkerDict
+2188445 4963100 ray::WorkerDict
+2188446 4958756 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1015716 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:33:54+09:00
+Mem:            1007          88         775          14         161         918
+    PID   RSS COMMAND
+2188444 7961996 ray::WorkerDict
+2188447 4954704 ray::WorkerDict
+2188445 4950756 ray::WorkerDict
+2188446 4945348 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1017340 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:34:14+09:00
+Mem:            1007          86         803          14         137         921
+    PID   RSS COMMAND
+2188444 9157520 ray::WorkerDict
+2188447 5138064 ray::WorkerDict
+2188445 5132728 ray::WorkerDict
+2188446 5128136 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1018108 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:34:34+09:00
+Mem:            1007          88         800          14         137         919
+    PID   RSS COMMAND
+2188444 10151324 ray::WorkerDict
+2188447 6131436 ray::WorkerDict
+2188445 6126308 ray::WorkerDict
+2188446 6121716 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1017300 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:34:54+09:00
+Mem:            1007          88         815          14         122         919
+    PID   RSS COMMAND
+2188444 11143020 ray::WorkerDict
+2188447 7123192 ray::WorkerDict
+2188445 7118372 ray::WorkerDict
+2188446 7111932 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1018068 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:35:14+09:00
+Mem:            1007          87         816          14         122         920
+    PID   RSS COMMAND
+2188444 12039556 ray::WorkerDict
+2188447 7005680 ray::WorkerDict
+2188445 7001372 ray::WorkerDict
+2188446 6995188 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1021040 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:35:34+09:00
+Mem:            1007          89         813          14         123         918
+    PID   RSS COMMAND
+2188444 13157008 ray::WorkerDict
+2188447 8123896 ray::WorkerDict
+2188445 8119848 ray::WorkerDict
+2188446 8113532 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1020812 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:35:55+09:00
+Mem:            1007          88         814          14         123         919
+    PID   RSS COMMAND
+2188444 14028928 ray::WorkerDict
+2188447 7981808 ray::WorkerDict
+2188445 7978888 ray::WorkerDict
+2188446 7971444 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1020812 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:36:15+09:00
+Mem:            1007          90         811          14         124         916
+    PID   RSS COMMAND
+2188444 15198168 ray::WorkerDict
+2188447 9151224 ray::WorkerDict
+2188445 9146260 ray::WorkerDict
+2188446 9139592 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1019640 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:36:35+09:00
+Mem:            1007          89         812          14         124         917
+    PID   RSS COMMAND
+2188444 16163052 ray::WorkerDict
+2188447 9102320 ray::WorkerDict
+2188445 9098136 ray::WorkerDict
+2188446 9091456 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1019896 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:36:55+09:00
+Mem:            1007          89         811          14         125         918
+    PID   RSS COMMAND
+2188444 17457132 ray::WorkerDict
+2188447 9382164 ray::WorkerDict
+2188445 9376364 ray::WorkerDict
+2188446 9371512 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022932 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:37:15+09:00
+Mem:            1007          91         809          14         125         916
+    PID   RSS COMMAND
+2188444 18384856 ray::WorkerDict
+2188447 10309184 ray::WorkerDict
+2188445 10303848 ray::WorkerDict
+2188446 10297160 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1025248 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:37:35+09:00
+Mem:            1007          90         809          14         126         917
+    PID   RSS COMMAND
+2188444 19518404 ray::WorkerDict
+2188447 10427668 ray::WorkerDict
+2188445 10423100 ray::WorkerDict
+2188446 10416628 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1025188 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:37:55+09:00
+Mem:            1007          92         809          14         125         915
+    PID   RSS COMMAND
+2188444 20600528 ray::WorkerDict
+2188447 11510080 ray::WorkerDict
+2188445 11506060 ray::WorkerDict
+2188446 11499808 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1025108 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:38:15+09:00
+Mem:            1007          91         814          14         120         916
+    PID   RSS COMMAND
+2188444 21647060 ray::WorkerDict
+2188447 11542548 ray::WorkerDict
+2188445 11538528 ray::WorkerDict
+2188446 11531508 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1026544 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:38:35+09:00
+Mem:            1007          93         811          14         121         913
+    PID   RSS COMMAND
+2188444 22966252 ray::WorkerDict
+2188447 12862024 ray::WorkerDict
+2188445 12858104 ray::WorkerDict
+2188446 12852116 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1026544 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:38:55+09:00
+Mem:            1007          93         811          14         122         914
+    PID   RSS COMMAND
+2188444 24265276 ray::WorkerDict
+2188447 13148480 ray::WorkerDict
+2188445 13144504 ray::WorkerDict
+2188446 13136528 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1026544 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:39:15+09:00
+Mem:            1007          92         810          14         122         914
+    PID   RSS COMMAND
+2188444 25543232 ray::WorkerDict
+2188447 13412884 ray::WorkerDict
+2188445 13409704 ray::WorkerDict
+2188446 13401700 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1026092 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:39:35+09:00
+Mem:            1007          95         807          14         123         912
+    PID   RSS COMMAND
+2188444 26860124 ray::WorkerDict
+2188447 14728776 ray::WorkerDict
+2188445 14726364 ray::WorkerDict
+2188446 14718360 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1026092 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:39:55+09:00
+Mem:            1007          94         808          14         123         913
+    PID   RSS COMMAND
+2188444 27863380 ray::WorkerDict
+2188447 14717204 ray::WorkerDict
+2188445 14715100 ray::WorkerDict
+2188446 14706788 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1024216 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:40:15+09:00
+Mem:            1007          97         804          14         124         909
+    PID   RSS COMMAND
+2188444 29579124 ray::WorkerDict
+2188447 16430892 ray::WorkerDict
+2188445 16430616 ray::WorkerDict
+2188446 16421232 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1023440 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:40:35+09:00
+Mem:            1007          96         804          14         125         910
+    PID   RSS COMMAND
+2188444 30622684 ray::WorkerDict
+2188447 16461388 ray::WorkerDict
+2188445 16461060 ray::WorkerDict
+2188446 16452496 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022076 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:40:55+09:00
+Mem:            1007          96         804          14         125         910
+    PID   RSS COMMAND
+2188444 31979496 ray::WorkerDict
+2188447 16808224 ray::WorkerDict
+2188445 16807128 ray::WorkerDict
+2188446 16798564 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022844 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:41:15+09:00
+Mem:            1007          96         803          14         126         910
+    PID   RSS COMMAND
+2188444 33486584 ray::WorkerDict
+2188445 17301208 ray::WorkerDict
+2188447 17300000 ray::WorkerDict
+2188446 17291108 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022624 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:41:35+09:00
+Mem:            1007          98         800          14         126         908
+    PID   RSS COMMAND
+2188444 34562084 ray::WorkerDict
+2188445 18372884 ray::WorkerDict
+2188447 18372428 ray::WorkerDict
+2188446 18364628 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022240 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:41:55+09:00
+Mem:            1007          96         818          14         111         910
+    PID   RSS COMMAND
+2188444 35557416 ray::WorkerDict
+2188445 18354752 ray::WorkerDict
+2188447 18354528 ray::WorkerDict
+2188446 18345640 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022208 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:42:15+09:00
+Mem:            1007          96         838          14          90         910
+    PID   RSS COMMAND
+2188444 36499252 ray::WorkerDict
+2188445 19298412 ray::WorkerDict
+2188447 19298188 ray::WorkerDict
+2188446 19290248 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022976 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:42:35+09:00
+Mem:            1007          97         844          14          84         909
+    PID   RSS COMMAND
+2188444 37346368 ray::WorkerDict
+2188447 20146532 ray::WorkerDict
+2188445 20146416 ray::WorkerDict
+2188446 20137360 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1022976 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:42:55+09:00
+Mem:            1007          96         845          14          84         911
+    PID   RSS COMMAND
+2188444 38233168 ray::WorkerDict
+2188447 20019036 ray::WorkerDict
+2188445 20018496 ray::WorkerDict
+2188446 20008472 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1023684 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:43:15+09:00
+Mem:            1007          98         843          14          84         909
+    PID   RSS COMMAND
+2188444 39130216 ray::WorkerDict
+2188445 20914772 ray::WorkerDict
+2188447 20914532 ray::WorkerDict
+2188446 20906368 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1201240 vllm
+2180571 1023652 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:43:35+09:00
+Mem:            1007          97         843          14          85         910
+    PID   RSS COMMAND
+2188444 40146052 ray::WorkerDict
+2188447 20919052 ray::WorkerDict
+2188445 20918304 ray::WorkerDict
+2188446 20909132 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1021424 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:43:55+09:00
+Mem:            1007          99         841          14          85         908
+    PID   RSS COMMAND
+2188444 41033116 ray::WorkerDict
+2188447 21805632 ray::WorkerDict
+2188445 21804892 ray::WorkerDict
+2188446 21795712 ray::WorkerDict
+ 917764 4753460 VLLM::Worker_TP
+ 917765 4736200 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1020128 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:44:15+09:00
+Mem:            1007          97         842          14          86         909
+    PID   RSS COMMAND
+2188444 41973396 ray::WorkerDict
+2188445 21733928 ray::WorkerDict
+2188447 21733900 ray::WorkerDict
+2188446 21724748 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1017976 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:44:35+09:00
+Mem:            1007          99         841          14          85         907
+    PID   RSS COMMAND
+2188444 42977452 ray::WorkerDict
+2188445 22735452 ray::WorkerDict
+2188447 22735424 ray::WorkerDict
+2188446 22726272 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1019356 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:44:55+09:00
+Mem:            1007          98         841          14          85         908
+    PID   RSS COMMAND
+2188444 44021156 ray::WorkerDict
+2188445 22767912 ray::WorkerDict
+2188447 22767116 ray::WorkerDict
+2188446 22759036 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1022428 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:45:15+09:00
+Mem:            1007         101         839          14          86         906
+    PID   RSS COMMAND
+2188444 45158844 ray::WorkerDict
+2188445 23903836 ray::WorkerDict
+2188447 23903040 ray::WorkerDict
+2188446 23894192 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1023664 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:45:35+09:00
+Mem:            1007         100         839          14          86         907
+    PID   RSS COMMAND
+2188444 46105780 ray::WorkerDict
+2188447 23834380 ray::WorkerDict
+2188445 23833640 ray::WorkerDict
+2188446 23825532 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1020744 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:45:55+09:00
+Mem:            1007         102         837          14          87         905
+    PID   RSS COMMAND
+2188444 47164620 ray::WorkerDict
+2188447 24895808 ray::WorkerDict
+2188445 24895068 ray::WorkerDict
+2188446 24886256 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1021504 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:46:15+09:00
+Mem:            1007         101         838          14          86         906
+    PID   RSS COMMAND
+2188444 48185284 ray::WorkerDict
+2188447 24904460 ray::WorkerDict
+2188445 24902952 ray::WorkerDict
+2188446 24894300 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1021504 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:46:35+09:00
+Mem:            1007         103         835          14          87         904
+    PID   RSS COMMAND
+2188444 49330140 ray::WorkerDict
+2188447 26046272 ray::WorkerDict
+2188445 26044764 ray::WorkerDict
+2188446 26036388 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+ 914145 1200472 vllm
+2180571 1022028 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:46:56+09:00
+Mem:            1007          91         846          14          88         915
+    PID   RSS COMMAND
+2188444 32180896 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2188447 1402012 ray::WorkerDict
+2188445 1400520 ray::WorkerDict
+2188446 1391712 ray::WorkerDict
+ 914145 1200472 vllm
+2180571 1022796 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:47:16+09:00
+Mem:            1007          79         856          14          90         927
+    PID   RSS COMMAND
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2188447 1491348 ray::WorkerDict
+2188445 1487408 ray::WorkerDict
+2188444 1482000 ray::WorkerDict
+2188446 1479832 ray::WorkerDict
+ 914145 1200472 vllm
+2180571 1020920 gcs_server
+2186721 987704 ray::TaskRunner
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2187290 600292 ray::SimpleStor
+2187012 600004 ray::TransferQu
+== 2026-09-02T16:47:36+09:00
+Mem:            1007          83         852          14          90         924
+    PID   RSS COMMAND
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2188447 1493564 ray::WorkerDict
+2188445 1489948 ray::WorkerDict
+2188444 1485072 ray::WorkerDict
+2188446 1483144 ray::WorkerDict
+ 914145 1200472 vllm
+2186721 1047608 ray::TaskRunner
+2180571 1024812 gcs_server
+2180085 910284 python
+ 917694 877432 VLLM::EngineCor
+2212440 610408 ray::IDLE
+2212183 608744 ray::IDLE
+== 2026-09-02T16:47:56+09:00
+Mem:            1007          88         847          14          90         919
+    PID   RSS COMMAND
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2188447 1493564 ray::WorkerDict
+2188445 1489948 ray::WorkerDict
+2188444 1485072 ray::WorkerDict
+2188446 1483144 ray::WorkerDict
+2212438 1372804 ray::vLLMHttpSe
+2212437 1366716 ray::vLLMHttpSe
+2212439 1365828 ray::vLLMHttpSe
+2212440 1365540 ray::vLLMHttpSe
+ 914145 1200472 vllm
+2186721 1047608 ray::TaskRunner
+2180571 1022168 gcs_server
+== 2026-09-02T16:48:16+09:00
+Mem:            1007          92         843          14          91         915
+    PID   RSS COMMAND
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2188447 1493564 ray::WorkerDict
+2188445 1489948 ray::WorkerDict
+2188444 1485072 ray::WorkerDict
+2188446 1483144 ray::WorkerDict
+2212438 1372804 ray::vLLMHttpSe
+2212437 1366716 ray::vLLMHttpSe
+2212439 1365828 ray::vLLMHttpSe
+2212440 1365540 ray::vLLMHttpSe
+ 914145 1200472 vllm
+2213278 1173456 VLLM::Worker
+2213281 1172172 VLLM::Worker
+== 2026-09-02T16:48:36+09:00
+Mem:            1007          93         842          14          91         914
+    PID   RSS COMMAND
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2213278 1948632 VLLM::Worker
+2213281 1948532 VLLM::Worker
+2213279 1948188 VLLM::Worker
+2213280 1947012 VLLM::Worker
+2188447 1493564 ray::WorkerDict
+2188445 1489948 ray::WorkerDict
+2188444 1485072 ray::WorkerDict
+2188446 1483144 ray::WorkerDict
+2212438 1372804 ray::vLLMHttpSe
+2212437 1366716 ray::vLLMHttpSe
+2212439 1365828 ray::vLLMHttpSe
+== 2026-09-02T16:48:56+09:00
+Mem:            1007          94         840          14          91         912
+    PID   RSS COMMAND
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2213278 1891868 VLLM::Worker
+2213281 1889676 VLLM::Worker
+2213279 1889216 VLLM::Worker
+2213280 1888264 VLLM::Worker
+2188447 1493564 ray::WorkerDict
+2188445 1489948 ray::WorkerDict
+2188444 1485072 ray::WorkerDict
+2188446 1483144 ray::WorkerDict
+2212438 1372804 ray::vLLMHttpSe
+2212437 1366716 ray::vLLMHttpSe
+2212439 1365828 ray::vLLMHttpSe
+== 2026-09-02T16:49:16+09:00
+Mem:            1007          95         839          14          91         912
+    PID   RSS COMMAND
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2213278 1986144 VLLM::Worker
+2213281 1984072 VLLM::Worker
+2213279 1981104 VLLM::Worker
+2213280 1981064 VLLM::Worker
+2188447 1493564 ray::WorkerDict
+2188445 1489948 ray::WorkerDict
+2188444 1485072 ray::WorkerDict
+2188446 1483144 ray::WorkerDict
+2212438 1372804 ray::vLLMHttpSe
+2212437 1366716 ray::vLLMHttpSe
+2212439 1365828 ray::vLLMHttpSe
+== 2026-09-02T16:49:36+09:00
+Mem:            1007         213         721         129         206         793
+    PID   RSS COMMAND
+2213278 33484584 VLLM::Worker
+2213279 32110632 VLLM::Worker
+2213280 31824776 VLLM::Worker
+2213281 31814728 VLLM::Worker
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2188447 1493564 ray::WorkerDict
+2188445 1489948 ray::WorkerDict
+2188444 1485072 ray::WorkerDict
+2188446 1483144 ray::WorkerDict
+2212437 1433528 ray::vLLMHttpSe
+2212439 1433084 ray::vLLMHttpSe
+2212440 1430588 ray::vLLMHttpSe
+== 2026-09-02T16:49:56+09:00
+Mem:            1007         369         565         188         265         638
+    PID   RSS COMMAND
+2213278 47663400 VLLM::Worker
+2213280 47657864 VLLM::Worker
+2213281 47653960 VLLM::Worker
+2213279 47652648 VLLM::Worker
+2188447 26588356 ray::WorkerDict
+2188445 26580696 ray::WorkerDict
+2188444 26576528 ray::WorkerDict
+2188446 26572588 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2212437 1433528 ray::vLLMHttpSe
+2212439 1433084 ray::vLLMHttpSe
+2212440 1430588 ray::vLLMHttpSe
+== 2026-09-02T16:50:16+09:00
+Mem:            1007         383         551         188         265         623
+    PID   RSS COMMAND
+2213278 47663400 VLLM::Worker
+2213280 47657864 VLLM::Worker
+2213281 47653960 VLLM::Worker
+2213279 47652648 VLLM::Worker
+2188444 30575772 ray::WorkerDict
+2188445 30313412 ray::WorkerDict
+2188446 30300048 ray::WorkerDict
+2188447 30070272 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2212437 1433528 ray::vLLMHttpSe
+2212439 1433084 ray::vLLMHttpSe
+2212440 1430588 ray::vLLMHttpSe
+== 2026-09-02T16:50:36+09:00
+Mem:            1007         390         545         188         264         616
+    PID   RSS COMMAND
+2213280 47696940 VLLM::Worker
+2213278 47694120 VLLM::Worker
+2213281 47683912 VLLM::Worker
+2213279 47683368 VLLM::Worker
+2188444 30530732 ray::WorkerDict
+2188445 30268376 ray::WorkerDict
+2188446 30255004 ray::WorkerDict
+2188447 30025996 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1433660 ray::vLLMHttpSe
+== 2026-09-02T16:50:56+09:00
+Mem:            1007         392         544         188         263         615
+    PID   RSS COMMAND
+2213281 47749416 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47718248 VLLM::Worker
+2213280 47696940 VLLM::Worker
+2188444 30530732 ray::WorkerDict
+2188445 30268376 ray::WorkerDict
+2188446 30255004 ray::WorkerDict
+2188447 30025996 ray::WorkerDict
+ 917764 4751084 VLLM::Worker_TP
+ 917765 4733740 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1433660 ray::vLLMHttpSe
+== 2026-09-02T16:51:16+09:00
+Mem:            1007         391         555         188         254         616
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47696940 VLLM::Worker
+2188444 30529964 ray::WorkerDict
+2188445 30267608 ray::WorkerDict
+2188446 30255004 ray::WorkerDict
+2188447 30025228 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:51:36+09:00
+Mem:            1007         391         555         188         254         616
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+2188444 30529964 ray::WorkerDict
+2188445 30267608 ray::WorkerDict
+2188446 30255004 ray::WorkerDict
+2188447 30025228 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:51:56+09:00
+Mem:            1007         391         555         188         254         616
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+2188444 30529964 ray::WorkerDict
+2188445 30267608 ray::WorkerDict
+2188446 30255004 ray::WorkerDict
+2188447 30025228 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:52:16+09:00
+Mem:            1007         391         555         188         254         616
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+2188444 30529964 ray::WorkerDict
+2188445 30267608 ray::WorkerDict
+2188446 30255004 ray::WorkerDict
+2188447 30025228 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:52:36+09:00
+Mem:            1007         391         555         188         254         616
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+2188444 30529964 ray::WorkerDict
+2188445 30267608 ray::WorkerDict
+2188446 30255004 ray::WorkerDict
+2188447 30025228 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:52:56+09:00
+Mem:            1007         285         661         188         254         722
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2188444 2926720 ray::WorkerDict
+2188446 2449940 ray::WorkerDict
+2188445 2440680 ray::WorkerDict
+2188447 2388860 ray::WorkerDict
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:53:16+09:00
+Mem:            1007         285         661         188         254         722
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2188444 2927488 ray::WorkerDict
+2188446 2449940 ray::WorkerDict
+2188445 2442420 ray::WorkerDict
+2188447 2389628 ray::WorkerDict
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:53:37+09:00
+Mem:            1007         286         660         188         254         721
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2188444 3103612 ray::WorkerDict
+2188445 2640332 ray::WorkerDict
+2188446 2621816 ray::WorkerDict
+2188447 2566316 ray::WorkerDict
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:53:57+09:00
+Mem:            1007         363         582         188         254         643
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+2188444 23547472 ray::WorkerDict
+2188445 23082228 ray::WorkerDict
+2188446 23066712 ray::WorkerDict
+2188447 23014068 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:54:17+09:00
+Mem:            1007         396         550         188         254         611
+    PID   RSS COMMAND
+2213281 47750184 VLLM::Worker
+2213279 47743684 VLLM::Worker
+2213278 47719016 VLLM::Worker
+2213280 47697708 VLLM::Worker
+2188444 32027928 ray::WorkerDict
+2188445 31569292 ray::WorkerDict
+2188447 31504236 ray::WorkerDict
+2188446 31483544 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1438904 ray::vLLMHttpSe
+2212439 1436924 ray::vLLMHttpSe
+2212440 1432892 ray::vLLMHttpSe
+== 2026-09-02T16:54:37+09:00
+Mem:            1007         396         549         188         254         610
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47752488 VLLM::Worker
+2213280 47749644 VLLM::Worker
+2188444 32027928 ray::WorkerDict
+2188445 31569292 ray::WorkerDict
+2188447 31504236 ray::WorkerDict
+2188446 31483544 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:54:57+09:00
+Mem:            1007         396         549         188         254         610
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47751480 VLLM::Worker
+2213280 47748672 VLLM::Worker
+2188444 32027928 ray::WorkerDict
+2188445 31569292 ray::WorkerDict
+2188447 31504236 ray::WorkerDict
+2188446 31483544 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:55:17+09:00
+Mem:            1007         396         549         188         254         610
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47751480 VLLM::Worker
+2213280 47748672 VLLM::Worker
+2188444 32027928 ray::WorkerDict
+2188445 31569292 ray::WorkerDict
+2188447 31504236 ray::WorkerDict
+2188446 31483544 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:55:37+09:00
+Mem:            1007         396         549         188         254         610
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47751480 VLLM::Worker
+2213280 47748672 VLLM::Worker
+2188444 32027928 ray::WorkerDict
+2188445 31569292 ray::WorkerDict
+2188447 31504236 ray::WorkerDict
+2188446 31483544 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:55:57+09:00
+Mem:            1007         393         587         188         219         613
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47751480 VLLM::Worker
+2213280 47748672 VLLM::Worker
+2188444 32027928 ray::WorkerDict
+2188445 31569292 ray::WorkerDict
+2188447 31504236 ray::WorkerDict
+2188446 31483544 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:56:17+09:00
+Mem:            1007         393         587         188         219         613
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47751480 VLLM::Worker
+2213280 47748672 VLLM::Worker
+2188444 32027928 ray::WorkerDict
+2188445 31569292 ray::WorkerDict
+2188447 31504236 ray::WorkerDict
+2188446 31483544 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:56:37+09:00
+Mem:            1007         286         695         188         219         721
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47751480 VLLM::Worker
+2213280 47748672 VLLM::Worker
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2188444 3889536 ray::WorkerDict
+2188447 3503448 ray::WorkerDict
+2188446 3392048 ray::WorkerDict
+2188445 2936072 ray::WorkerDict
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:56:57+09:00
+Mem:            1007         393         587         188         219         613
+    PID   RSS COMMAND
+2213279 47766848 VLLM::Worker
+2213278 47763340 VLLM::Worker
+2213281 47751480 VLLM::Worker
+2213280 47748672 VLLM::Worker
+2188444 32161232 ray::WorkerDict
+2188447 31766684 ray::WorkerDict
+2188446 31655524 ray::WorkerDict
+2188445 31211376 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212438 1435168 ray::vLLMHttpSe
+== 2026-09-02T16:57:17+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47789656 VLLM::Worker
+2213278 47785016 VLLM::Worker
+2213281 47769472 VLLM::Worker
+2213280 47767104 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:57:37+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47789448 VLLM::Worker
+2213278 47788088 VLLM::Worker
+2213281 47785352 VLLM::Worker
+2213280 47767400 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:57:57+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47789448 VLLM::Worker
+2213278 47788088 VLLM::Worker
+2213281 47784348 VLLM::Worker
+2213280 47767400 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4747208 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:58:17+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47790216 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:58:37+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47790216 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:58:57+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47790216 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:59:17+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47790216 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:59:37+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47790216 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T16:59:57+09:00
+Mem:            1007         394         586         188         219         613
+    PID   RSS COMMAND
+2213279 47790216 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32075548 ray::WorkerDict
+2188446 31533180 ray::WorkerDict
+2188445 31527612 ray::WorkerDict
+2188447 31509168 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:00:17+09:00
+Mem:            1007         287         693         188         219         720
+    PID   RSS COMMAND
+2213279 47789200 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2188444 4116384 ray::WorkerDict
+2188446 3575188 ray::WorkerDict
+2188445 3570096 ray::WorkerDict
+2188447 3550948 ray::WorkerDict
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:00:37+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47789200 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213281 47785116 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32368864 ray::WorkerDict
+2188447 31702672 ray::WorkerDict
+2188446 31656856 ray::WorkerDict
+2188445 31647636 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:00:57+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31530904 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:01:17+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31530904 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:01:37+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31530904 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:01:57+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31530904 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:02:17+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31530904 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:02:37+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31531672 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:02:57+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31531672 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:03:18+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31531672 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:03:38+09:00
+Mem:            1007         394         586         188         219         612
+    PID   RSS COMMAND
+2213279 47800720 VLLM::Worker
+2213281 47788956 VLLM::Worker
+2213278 47788856 VLLM::Worker
+2213280 47768168 VLLM::Worker
+2188444 32077020 ray::WorkerDict
+2188446 31671472 ray::WorkerDict
+2188447 31557272 ray::WorkerDict
+2188445 31531672 ray::WorkerDict
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+2212437 1439672 ray::vLLMHttpSe
+2212439 1437692 ray::vLLMHttpSe
+2212440 1435196 ray::vLLMHttpSe
+== 2026-09-02T17:03:58+09:00
+Mem:            1007         183         798          14          45         824
+    PID   RSS COMMAND
+ 917764 4750280 VLLM::Worker_TP
+ 917765 4733408 VLLM::Worker_TP
+ 914145 1198432 vllm
+2186721 1070196 ray::CodeTaskRu
+2180085 904604 python
+ 917694 875696 VLLM::EngineCor
+ 588079 588328 sssd_be
+ 588080 365824 sssd_nss
+ 920011 277040 litellm
+   2143 78268 systemd-journal
+ 661917 47364 nv-hostengine
+ 919958 30228 slurmstepd
+2179359 30144 slurmstepd

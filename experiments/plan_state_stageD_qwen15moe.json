@@ -1,0 +1,8 @@
+{
+ "best": "exp_D002_f2p_linear",
+ "done": [
+  "exp_D000_baseline",
+  "exp_D001_f2p_binary",
+  "exp_D002_f2p_linear"
+ ]
+}

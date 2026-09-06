@@ -1,0 +1,85 @@
+{
+ "steps": {},
+ "curves": {},
+ "instance_summary": {
+  "1:swe": {
+   "n": 60,
+   "final_reward": 0.05749999999999999,
+   "rule_correctness_score": 0.0,
+   "f2p_frac": 0.0688888888888889,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.45,
+   "patch_apply_score": 0.3,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.2445061728395061,
+   "gated_out": 0.7
+  },
+  "1:unittest": {
+   "n": 84,
+   "final_reward": 0.6945238095238094,
+   "rule_correctness_score": 0.6071428571428571,
+   "f2p_frac": 0.7888983371126228,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.9880952380952381,
+   "patch_apply_score": 0.9880952380952381,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.7904761904761892,
+   "gated_out": 0.011904761904761904
+  },
+  "2:swe": {
+   "n": 30,
+   "final_reward": 0.05833333333333335,
+   "rule_correctness_score": 0.0,
+   "f2p_frac": 0.102,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.43333333333333335,
+   "patch_apply_score": 0.3333333333333333,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.25644444444444425,
+   "gated_out": 0.6666666666666666
+  },
+  "2:unittest": {
+   "n": 114,
+   "final_reward": 0.6389473684210524,
+   "rule_correctness_score": 0.543859649122807,
+   "f2p_frac": 0.7221108326371483,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.9736842105263158,
+   "patch_apply_score": 0.9736842105263158,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.778947368421051,
+   "gated_out": 0.02631578947368421
+  },
+  "3:swe": {
+   "n": 30,
+   "final_reward": 0.10166666666666667,
+   "rule_correctness_score": 0.06666666666666667,
+   "f2p_frac": 0.06666666666666667,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.43333333333333335,
+   "patch_apply_score": 0.4,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.2814814814814814,
+   "gated_out": 0.6
+  },
+  "3:unittest": {
+   "n": 108,
+   "final_reward": 0.6794444444444442,
+   "rule_correctness_score": 0.5740740740740741,
+   "f2p_frac": 0.799691358024691,
+   "p2p_frac": 1.0,
+   "patch_format_score": 1.0,
+   "patch_apply_score": 1.0,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.7999999999999984,
+   "gated_out": 0.0
+  }
+ },
+ "run_info": {
+  "end_rc": null,
+  "end_time": null,
+  "start_time": "2026-09-05T10:35:20+09:00",
+  "git": "5823899"
+ },
+ "val": {}
+}

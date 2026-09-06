@@ -1,0 +1,151 @@
+{
+ "synthetic": {
+  "baseline/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 0.84,
+   "raw": 0.84,
+   "raw_prose_after": 0.0,
+   "search_replace": 0.94,
+   "truncated_hunk": 0.06,
+   "two_blocks_example_then_final": 1.0
+  },
+  "fallback/concat_distinct": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 1.0,
+   "raw": 1.0,
+   "raw_prose_after": 1.0,
+   "search_replace": 0.94,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 1.0
+  },
+  "fallback/first": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 1.0,
+   "raw": 1.0,
+   "raw_prose_after": 1.0,
+   "search_replace": 0.94,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 0.0
+  },
+  "fallback/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 1.0,
+   "prose_before_raw": 1.0,
+   "raw": 1.0,
+   "raw_prose_after": 1.0,
+   "search_replace": 0.94,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 1.0
+  },
+  "markdown/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 1.0,
+   "fenced_python_lang": 0.0,
+   "prose_before_raw": 0.0,
+   "raw": 0.0,
+   "raw_prose_after": 0.0,
+   "search_replace": 0.94,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 1.0
+  },
+  "strict/last": {
+   "crlf_fenced": 1.0,
+   "fenced_diff": 0.0,
+   "fenced_python_lang": 0.0,
+   "prose_before_raw": 0.0,
+   "raw": 1.0,
+   "raw_prose_after": 0.0,
+   "search_replace": 0.0,
+   "truncated_hunk": 0.0,
+   "two_blocks_example_then_final": 0.0
+  }
+ },
+ "synthetic_overall": {
+  "baseline/last": 0.742,
+  "fallback/concat_distinct": 0.882,
+  "fallback/first": 0.771,
+  "fallback/last": 0.882,
+  "markdown/last": 0.438,
+  "strict/last": 0.222
+ },
+ "model": {
+  "baseline/last": {
+   "extract_rate": 0.6662995594713657,
+   "valid_rate": 0.6662995594713657,
+   "n": 1816,
+   "fmt": {
+    "none": 606,
+    "fenced_diff": 890,
+    "raw_git": 150,
+    "fenced_any": 132,
+    "raw_unified": 38
+   }
+  },
+  "fallback/concat_distinct": {
+   "extract_rate": 0.6795154185022027,
+   "valid_rate": 0.12555066079295155,
+   "n": 1816,
+   "fmt": {
+    "none": 582,
+    "fenced_diff": 891,
+    "fragment": 23,
+    "raw_git": 150,
+    "fenced_any": 132,
+    "raw_unified": 38
+   }
+  },
+  "fallback/first": {
+   "extract_rate": 0.6795154185022027,
+   "valid_rate": 0.1299559471365639,
+   "n": 1816,
+   "fmt": {
+    "none": 582,
+    "fenced_diff": 891,
+    "fragment": 23,
+    "raw_git": 150,
+    "fenced_any": 132,
+    "raw_unified": 38
+   }
+  },
+  "fallback/last": {
+   "extract_rate": 0.6789647577092511,
+   "valid_rate": 0.1222466960352423,
+   "n": 1816,
+   "fmt": {
+    "none": 583,
+    "fenced_diff": 890,
+    "fragment": 23,
+    "raw_git": 150,
+    "fenced_any": 132,
+    "raw_unified": 38
+   }
+  },
+  "markdown/last": {
+   "extract_rate": 0.6789647577092511,
+   "valid_rate": 0.08975770925110133,
+   "n": 1816,
+   "fmt": {
+    "none": 583,
+    "fenced_diff": 890,
+    "unfenced": 343
+   }
+  },
+  "strict/last": {
+   "extract_rate": 0.6178414096916299,
+   "valid_rate": 0.0022026431718061676,
+   "n": 1816,
+   "fmt": {
+    "none": 694,
+    "fenced_diff": 434,
+    "raw": 688
+   }
+  }
+ }
+}

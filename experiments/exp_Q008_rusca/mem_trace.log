@@ -1,0 +1,512 @@
+== 2026-09-06T14:06:10+09:00
+Mem:            1007          90         853          44         112         917
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+1317375 971732 VLLM::EngineCor
+ 588079 578236 sssd_be
+ 588080 367360 sssd_nss
+1338534 306664 litellm
+   2143 129328 systemd-journal
+  84732 62760 dcgm-exporter
+ 661917 60520 nv-hostengine
+1280652 30112 slurmstepd
+1280479 30104 slurmstepd
+3202010 29124 slurmstepd
+== 2026-09-06T14:06:30+09:00
+Mem:            1007          91         852          44         112         916
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+1317375 972500 VLLM::EngineCor
+3203664 799668 python
+ 588079 578236 sssd_be
+ 588080 367360 sssd_nss
+1338534 306664 litellm
+   2143 129328 systemd-journal
+  84732 62760 dcgm-exporter
+ 661917 60520 nv-hostengine
+1280652 30112 slurmstepd
+1280479 30104 slurmstepd
+== 2026-09-06T14:06:50+09:00
+Mem:            1007          95         848          44         112         912
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+1317375 973268 VLLM::EngineCor
+3203826 953080 gcs_server
+3203664 899736 python
+ 588079 578236 sssd_be
+ 588080 367360 sssd_nss
+3204062 312376 ray-dashboard-R
+1338534 306664 litellm
+3204064 289668 ray-dashboard-S
+3204059 288168 ray-dashboard-E
+3204057 284436 ray-dashboard-M
+== 2026-09-06T14:07:10+09:00
+Mem:            1007         103         840          44         112         904
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3203826 1003292 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3209956 795224 ray::TaskRunner
+3210631 599344 ray::TransferQu
+ 588079 578236 sssd_be
+3210907 453512 ray::IDLE
+3210901 453364 ray::IDLE
+3210905 452828 ray::IDLE
+3210906 452804 ray::IDLE
+== 2026-09-06T14:07:30+09:00
+Mem:            1007         105         839          44         112         902
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3211553 1148428 ray::TaskRunner
+3209956 1033260 ray::TaskRunner
+3203826 1005776 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3211557 774340 ray::TaskRunner
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+3210905 599352 ray::SimpleStor
+3210631 599344 ray::TransferQu
+== 2026-09-06T14:07:50+09:00
+Mem:            1007         105         839          44         112         902
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3211553 1138440 ray::TaskRunner
+3209956 1033260 ray::TaskRunner
+3203826 1010580 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3211557 774340 ray::TaskRunner
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+3210905 599352 ray::SimpleStor
+3210631 599344 ray::TransferQu
+== 2026-09-06T14:08:10+09:00
+Mem:            1007         105         839          44         112         902
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1038092 ray::TaskRunner
+3212238 1010804 ray::TaskRunner
+3203826 1010252 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3212242 830792 ray::TaskRunner
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+3210905 599352 ray::SimpleStor
+3210631 599344 ray::TransferQu
+== 2026-09-06T14:08:30+09:00
+Mem:            1007         107         836          44         112         900
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3212759 1046688 ray::WorkerDict
+3212756 1045792 ray::WorkerDict
+3212757 1045720 ray::WorkerDict
+3212758 1043500 ray::WorkerDict
+3209956 1041164 ray::TaskRunner
+3203826 1010916 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:08:50+09:00
+Mem:            1007         109         834          44         112         898
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+3212757 1861596 ray::WorkerDict
+3212759 1860312 ray::WorkerDict
+3212756 1857700 ray::WorkerDict
+3212758 1849880 ray::WorkerDict
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1017068 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:09:10+09:00
+Mem:            1007         111         831          44         113         895
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+3212757 3061112 ray::WorkerDict
+3212756 3057980 ray::WorkerDict
+3212759 3056260 ray::WorkerDict
+3212758 3050352 ray::WorkerDict
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1017836 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:09:31+09:00
+Mem:            1007         110         831          44         114         896
+    PID   RSS COMMAND
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+3212756 4281036 ray::WorkerDict
+3212757 3104688 ray::WorkerDict
+3212759 3100860 ray::WorkerDict
+3212758 3096304 ray::WorkerDict
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1018604 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:09:51+09:00
+Mem:            1007         113         827          44         114         893
+    PID   RSS COMMAND
+3212756 5867056 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+3212757 4692708 ray::WorkerDict
+3212759 4688136 ray::WorkerDict
+3212758 4683576 ray::WorkerDict
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1018604 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:10:11+09:00
+Mem:            1007         111         829          44         115         895
+    PID   RSS COMMAND
+3212756 6660264 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+3212757 4305232 ray::WorkerDict
+3212759 4301196 ray::WorkerDict
+3212758 4296196 ray::WorkerDict
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1018656 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:10:31+09:00
+Mem:            1007         114         826          44         115         893
+    PID   RSS COMMAND
+3212756 7921560 ray::WorkerDict
+3212757 5568828 ray::WorkerDict
+3212759 5563468 ray::WorkerDict
+3212758 5560400 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1020192 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:10:51+09:00
+Mem:            1007         112         827          44         116         895
+    PID   RSS COMMAND
+3212756 8599440 ray::WorkerDict
+3212757 5065716 ray::WorkerDict
+3212759 5060448 ray::WorkerDict
+3212758 5057284 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1022312 gcs_server
+1317375 973268 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:11:11+09:00
+Mem:            1007         113         826          44         116         893
+    PID   RSS COMMAND
+3212756 9229920 ray::WorkerDict
+3212757 5697072 ray::WorkerDict
+3212759 5691556 ray::WorkerDict
+3212758 5686972 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1022312 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:11:31+09:00
+Mem:            1007         115         824          44         116         892
+    PID   RSS COMMAND
+3212756 9967344 ray::WorkerDict
+3212757 6435812 ray::WorkerDict
+3212759 6432316 ray::WorkerDict
+3212758 6428464 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1023080 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:11:51+09:00
+Mem:            1007         115         823          44         117         891
+    PID   RSS COMMAND
+3212756 10397424 ray::WorkerDict
+3212757 6863168 ray::WorkerDict
+3212759 6859580 ray::WorkerDict
+3212758 6854960 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1024616 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:12:11+09:00
+Mem:            1007         113         825          44         117         893
+    PID   RSS COMMAND
+3212756 11040748 ray::WorkerDict
+3212757 6328392 ray::WorkerDict
+3212759 6325236 ray::WorkerDict
+3212758 6320616 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1025384 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:12:31+09:00
+Mem:            1007         115         823          44         117         892
+    PID   RSS COMMAND
+3212756 11696376 ray::WorkerDict
+3212757 6984076 ray::WorkerDict
+3212759 6980152 ray::WorkerDict
+3212758 6976300 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1025084 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:12:51+09:00
+Mem:            1007         116         821          44         118         891
+    PID   RSS COMMAND
+3212756 12405004 ray::WorkerDict
+3212757 7692628 ray::WorkerDict
+3212759 7689904 ray::WorkerDict
+3212758 7685248 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1027492 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:13:11+09:00
+Mem:            1007         114         823          44         118         893
+    PID   RSS COMMAND
+3212756 13074256 ray::WorkerDict
+3212757 7181452 ray::WorkerDict
+3212759 7177320 ray::WorkerDict
+3212758 7173432 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1029884 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:13:31+09:00
+Mem:            1007         115         822          44         118         891
+    PID   RSS COMMAND
+3212756 13665076 ray::WorkerDict
+3212757 7774104 ray::WorkerDict
+3212759 7770728 ray::WorkerDict
+3212758 7766072 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1031284 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:13:51+09:00
+Mem:            1007         117         820          44         119         890
+    PID   RSS COMMAND
+3212756 14378488 ray::WorkerDict
+3212757 8486108 ray::WorkerDict
+3212759 8484076 ray::WorkerDict
+3212758 8479612 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1031284 gcs_server
+1317375 974036 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:14:11+09:00
+Mem:            1007         113         877          44          64         893
+    PID   RSS COMMAND
+3212756 15156504 ray::WorkerDict
+3212757 9264308 ray::WorkerDict
+3212759 9261824 ray::WorkerDict
+3212758 9255256 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1031284 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:14:31+09:00
+Mem:            1007         112         879          44          65         895
+    PID   RSS COMMAND
+3212756 16028112 ray::WorkerDict
+3212757 8955496 ray::WorkerDict
+3212759 8953792 ray::WorkerDict
+3212758 8947604 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1031484 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:14:51+09:00
+Mem:            1007         114         876          44          65         893
+    PID   RSS COMMAND
+3212756 16965608 ray::WorkerDict
+3212757 9891808 ray::WorkerDict
+3212759 9887784 ray::WorkerDict
+3212758 9882576 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1030676 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:15:11+09:00
+Mem:            1007         112         878          44          65         894
+    PID   RSS COMMAND
+3212756 17884384 ray::WorkerDict
+3212757 9632944 ray::WorkerDict
+3212759 9628124 ray::WorkerDict
+3212758 9622148 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1032212 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:15:31+09:00
+Mem:            1007         114         875          44          66         893
+    PID   RSS COMMAND
+3212756 18694636 ray::WorkerDict
+3212757 10442484 ray::WorkerDict
+3212759 10438432 ray::WorkerDict
+3212758 10432456 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1032212 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:15:51+09:00
+Mem:            1007         115         873          44          66         891
+    PID   RSS COMMAND
+3212756 19599608 ray::WorkerDict
+3212757 11347792 ray::WorkerDict
+3212759 11342632 ray::WorkerDict
+3212758 11336656 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1032172 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:16:11+09:00
+Mem:            1007         114         876          44          66         893
+    PID   RSS COMMAND
+3212756 20479984 ray::WorkerDict
+3212757 11049384 ray::WorkerDict
+3212759 11044060 ray::WorkerDict
+3212758 11038084 ray::WorkerDict
+1317538 4833648 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1032172 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor
+== 2026-09-06T14:16:31+09:00
+Mem:            1007         115         874          44          66         891
+    PID   RSS COMMAND
+3212756 21359612 ray::WorkerDict
+3212757 11928300 ray::WorkerDict
+3212759 11922976 ray::WorkerDict
+3212758 11917768 ray::WorkerDict
+1317538 4832880 VLLM::Worker_TP
+1317539 4831092 VLLM::Worker_TP
+1280658 1231232 vllm
+3209956 1041164 ray::TaskRunner
+3203826 1031812 gcs_server
+1317375 974804 VLLM::EngineCor
+3203664 909356 python
+3210901 603172 ray::SimpleStor
+3210907 601312 ray::SimpleStor

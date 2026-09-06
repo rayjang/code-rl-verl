@@ -1,0 +1,3 @@
+experiment_id,stage,reward,verifier,rubric,val_resolved,val_resolved_ut,val_resolved_swe,val_score,val_p2p,val_apply,val_format,val_invalid,train_reward,max_grad_norm,final_kl,loop_decision,git,seed,primary,primary_se,delta_vs_baseline,significant,stable,rank
+exp_D001_f2p_binary,D,rw_v002_f2p_binary,vf_v002,rb_v001_code_hint,0.13,0.26,0.0,0.1769642864141081,1.0,0.4925,0.7210714285714286,0.5075,0.22152777016162872,0.47265625,0.0,keep,e4d7e85,0,0.13,0.0161245154965971,0.0037500000000000033,False,True,1
+exp_D000_baseline,D,rw_v001_baseline,vf_v002,rb_v000_none,0.12625,0.2525,0.0,0.21301945048916554,1.0,0.49625,0.6819642857142858,0.50375,0.21727854013442993,0.384765625,0.0,keep,9541dc6,0,0.12625,0.01592445798352225,0.0,False,True,2

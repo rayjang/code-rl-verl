@@ -1,0 +1,78 @@
+{
+ "steps": {
+  "0": {
+   "INFO": 2026.0,
+   "23": 52.0
+  }
+ },
+ "curves": {
+  "0": {
+   "reward": null,
+   "reward_std": null,
+   "pg_loss": null,
+   "kl": null,
+   "entropy": null,
+   "grad_norm": null,
+   "lr": null,
+   "resp_len": null,
+   "clipfrac": null
+  }
+ },
+ "instance_summary": {
+  "0:swe": {
+   "n": 35,
+   "final_reward": 0.007142857142857143,
+   "rule_correctness_score": 0.0,
+   "f2p_frac": 0.0,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.2571428571428571,
+   "patch_apply_score": 0.0,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.04920634920634921,
+   "gated_out": 1.0
+  },
+  "0:unittest": {
+   "n": 400,
+   "final_reward": 0.5222558065765474,
+   "rule_correctness_score": 0.26,
+   "f2p_frac": 0.43348854617604615,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.98,
+   "patch_apply_score": 0.98,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.7810000000000055,
+   "gated_out": 0.02
+  },
+  "1:swe": {
+   "n": 56,
+   "final_reward": 0.002678571428571429,
+   "rule_correctness_score": 0.0,
+   "f2p_frac": 0.0,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.16071428571428573,
+   "patch_apply_score": 0.0,
+   "infra_excluded": 0.0,
+   "rubric_score": 0.07142857142857138,
+   "gated_out": 1.0
+  },
+  "1:unittest": {
+   "n": 200,
+   "final_reward": 0.4549889365153319,
+   "rule_correctness_score": 0.26,
+   "f2p_frac": 0.36393849206349216,
+   "p2p_frac": 1.0,
+   "patch_format_score": 0.845,
+   "patch_apply_score": 0.84,
+   "infra_excluded": 0.005,
+   "rubric_score": 0.6619999999999987,
+   "gated_out": 0.155
+  }
+ },
+ "run_info": {
+  "end_rc": 1,
+  "end_time": "2026-09-02T23:54:52+09:00",
+  "start_time": "2026-09-02T23:44:56+09:00",
+  "git": "6d6ef3b"
+ },
+ "val": {}
+}

@@ -30,3 +30,10 @@ results/phat/*/responses*.jsonl
 results/phat/*/worker*.log
 results/verifier_ablation/*/model.csv
 release/
+
+# GitHub upload exclusions (2026-09-06)
+environments/cache/
+environments/cache_v2/
+environments/cache_v3/
+environments/cache_v4/
+github.txt

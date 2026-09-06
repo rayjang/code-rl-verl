@@ -1,0 +1,78 @@
+{
+ "args": {
+  "parquet": "/scratch/r919a03/code_verl_test/data/curated/curated_v2/validation.parquet",
+  "out": "/scratch/r919a03/code_verl_test/results/phat/curated_v2_validation_base_k8",
+  "k": 8,
+  "limit": 0,
+  "gpus": 6,
+  "model": "/scratch/r919a03/huggingface/hub/models--Qwen--Qwen1.5-MoE-A2.7B-Chat/snapshots/ec052fda178e241c7c443468d2fa1db6618996be",
+  "lora": "",
+  "max_model_len": 32768,
+  "max_tokens": 2048,
+  "max_num_seqs": 64,
+  "temperature": 1.0,
+  "top_p": 1.0,
+  "seed": 0,
+  "concurrency": 10,
+  "keep_text": true,
+  "shard": -1,
+  "nshards": 1,
+  "reward": "",
+  "verifier": ""
+ },
+ "summary": {
+  "swe_32k": {
+   "n_instances": 35,
+   "mean_p_hat": 0.0,
+   "frac_zero": 1.0,
+   "frac_zero_and_no_signal": 0.6857142857142857,
+   "frac_reward_std_zero": 0.6857142857142857,
+   "frac_one": 0.0,
+   "frac_band_0.2_0.8": 0.0,
+   "mean_reward": 0.003035714285714286,
+   "extract_rate": 0.6107142857142858,
+   "apply_rate": 0.0,
+   "mean_resp_tokens": 578.6357142857142
+  },
+  "ut_function": {
+   "n_instances": 173,
+   "mean_p_hat": 0.4226878612716763,
+   "frac_zero": 0.26011560693641617,
+   "frac_zero_and_no_signal": 0.023121387283236993,
+   "frac_reward_std_zero": 0.09826589595375723,
+   "frac_one": 0.07514450867052024,
+   "frac_band_0.2_0.8": 0.48554913294797686,
+   "mean_reward": 0.5312063718160045,
+   "extract_rate": 0.9521056977704377,
+   "apply_rate": 0.9223781998348473,
+   "mean_resp_tokens": 209.97615606936415
+  },
+  "ut_pytest": {
+   "n_instances": 141,
+   "mean_p_hat": 0.04989868287740628,
+   "frac_zero": 0.7943262411347518,
+   "frac_zero_and_no_signal": 0.05673758865248227,
+   "frac_reward_std_zero": 0.05673758865248227,
+   "frac_one": 0.0,
+   "frac_band_0.2_0.8": 0.09929078014184398,
+   "mean_reward": 0.18883070181158523,
+   "extract_rate": 0.9661854103343466,
+   "apply_rate": 0.8810790273556232,
+   "mean_resp_tokens": 216.90070921985816
+  },
+  "ut_stdio": {
+   "n_instances": 86,
+   "mean_p_hat": 0.029069767441860465,
+   "frac_zero": 0.872093023255814,
+   "frac_zero_and_no_signal": 0.0,
+   "frac_reward_std_zero": 0.0,
+   "frac_one": 0.0,
+   "frac_band_0.2_0.8": 0.05813953488372093,
+   "mean_reward": 0.13500901754658146,
+   "extract_rate": 0.8415697674418605,
+   "apply_rate": 0.7772009966777408,
+   "mean_resp_tokens": 221.59738372093022
+  }
+ },
+ "n_responses": 3480
+}

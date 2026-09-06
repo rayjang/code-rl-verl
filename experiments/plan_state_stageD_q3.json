@@ -1,0 +1,13 @@
+{
+ "best": "exp_Q000_baseline",
+ "done": [
+  "exp_Q000_baseline",
+  "exp_Q001_f2p_binary",
+  "exp_Q002_f2p_linear",
+  "exp_Q003_f2p_ladder",
+  "exp_Q004_p2p_strong",
+  "exp_Q005_p2p_tolerant",
+  "exp_Q006_rule_only",
+  "exp_Q007_rubric_heavy"
+ ]
+}

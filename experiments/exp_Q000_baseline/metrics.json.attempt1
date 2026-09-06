@@ -1,0 +1,12 @@
+{
+ "steps": {},
+ "curves": {},
+ "instance_summary": {},
+ "run_info": {
+  "end_rc": 1,
+  "end_time": "2026-09-04T16:43:59+09:00",
+  "start_time": "2026-09-04T16:38:32+09:00",
+  "git": "16f03ce"
+ },
+ "val": {}
+}
