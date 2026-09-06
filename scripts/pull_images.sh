@@ -5,11 +5,13 @@
 # Pull the 19 SWE-smith repository images + the unittest sandbox base image as .sif
 # CPU-only job on gpu48 (no GPUs requested). Idempotent: existing non-empty .sif are skipped.
 set -uo pipefail
-ROOT=/scratch/r919a03/code_verl_test
-DEST=$ROOT/environments/sif
-LIST=$ROOT/sources/rl_code_v1/data/index/images_t15_code_swesmith.txt
-export SINGULARITY_CACHEDIR=/scratch/r919a03/.singularity/cache
-export SINGULARITY_TMPDIR=/tmp/r919a03_sing_$SLURM_JOB_ID
+ROOT=${ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
+DEST=${RL_SIF_DIR:-$ROOT/environments/sif}
+# image list ships with the repo; the sources/ tree is not versioned
+LIST=$ROOT/environments/images/images_t15_code_swesmith.txt
+[[ -f "$LIST" ]] || LIST=$ROOT/sources/rl_code_v1/data/index/images_t15_code_swesmith.txt
+export SINGULARITY_CACHEDIR=${SINGULARITY_CACHEDIR:-$HOME/.singularity/cache}
+export SINGULARITY_TMPDIR=${SINGULARITY_TMPDIR:-/tmp/sing_${USER}_${SLURM_JOB_ID:-$$}}
 mkdir -p "$DEST" "$SINGULARITY_TMPDIR"
 echo "host=$(hostname) start=$(date -Is) CVD=${CUDA_VISIBLE_DEVICES:-none}"
 pull_one() {

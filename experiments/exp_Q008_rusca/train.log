@@ -919,3 +919,57 @@ ray init kwargs: {'num_cpus': None, 'object_store_memory': 40000000000, 'runtime
 [36m(WorkerDict pid=3212759)[0m Loading weights:  15%|█▌        | 81/531 [06:50<32:55,  4.39s/it][32m [repeated 4x across cluster][0m
 [36m(WorkerDict pid=3212759)[0m Loading weights:  15%|█▌        | 82/531 [07:24<46:48,  6.26s/it][32m [repeated 4x across cluster][0m
 [36m(WorkerDict pid=3212759)[0m Loading weights:  17%|█▋        | 92/531 [07:44<30:59,  4.24s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  18%|█▊        | 93/531 [08:15<43:20,  5.94s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  19%|█▉        | 103/531 [08:32<27:59,  3.92s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  20%|█▉        | 104/531 [09:03<40:27,  5.69s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  21%|██▏       | 114/531 [09:23<27:04,  3.90s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  22%|██▏       | 115/531 [09:56<39:55,  5.76s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  24%|██▎       | 125/531 [10:16<27:01,  3.99s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  24%|██▎       | 126/531 [10:48<38:39,  5.73s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  26%|██▌       | 136/531 [11:13<27:49,  4.23s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  26%|██▌       | 137/531 [11:53<42:25,  6.46s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  28%|██▊       | 147/531 [12:21<30:20,  4.74s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  28%|██▊       | 148/531 [13:04<45:53,  7.19s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  30%|██▉       | 158/531 [13:32<31:28,  5.06s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  30%|██▉       | 159/531 [14:19<48:04,  7.76s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  32%|███▏      | 169/531 [14:46<32:15,  5.35s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  32%|███▏      | 170/531 [15:26<45:34,  7.57s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  34%|███▍      | 180/531 [15:54<30:57,  5.29s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  34%|███▍      | 181/531 [16:35<43:58,  7.54s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  36%|███▌      | 191/531 [17:03<30:00,  5.30s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  36%|███▌      | 192/531 [17:43<42:34,  7.53s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  38%|███▊      | 202/531 [18:07<27:41,  5.05s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  38%|███▊      | 203/531 [18:44<38:44,  7.09s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  40%|████      | 213/531 [19:02<24:12,  4.57s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  40%|████      | 214/531 [19:23<29:56,  5.67s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  42%|████▏     | 224/531 [19:42<19:41,  3.85s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  42%|████▏     | 225/531 [20:10<27:34,  5.41s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  44%|████▍     | 235/531 [20:29<18:29,  3.75s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  44%|████▍     | 236/531 [20:57<25:53,  5.27s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  46%|████▋     | 246/531 [21:13<16:41,  3.51s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  47%|████▋     | 247/531 [21:31<21:10,  4.47s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  48%|████▊     | 257/531 [21:47<14:01,  3.07s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  49%|████▊     | 258/531 [22:10<19:46,  4.35s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  50%|█████     | 268/531 [22:25<13:05,  2.99s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  51%|█████     | 269/531 [22:45<17:42,  4.05s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  53%|█████▎    | 279/531 [23:02<12:23,  2.95s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  53%|█████▎    | 280/531 [23:24<17:31,  4.19s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  55%|█████▍    | 290/531 [23:40<11:51,  2.95s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  55%|█████▍    | 291/531 [24:01<16:19,  4.08s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  57%|█████▋    | 301/531 [24:18<11:18,  2.95s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  57%|█████▋    | 302/531 [24:39<15:41,  4.11s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  59%|█████▉    | 312/531 [24:55<10:37,  2.91s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  59%|█████▉    | 313/531 [25:21<15:55,  4.38s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  61%|██████    | 323/531 [25:36<10:26,  3.01s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  61%|██████    | 324/531 [25:57<14:14,  4.13s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  63%|██████▎   | 334/531 [26:13<09:42,  2.95s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  63%|██████▎   | 335/531 [26:32<13:01,  3.98s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  65%|██████▍   | 345/531 [26:49<08:56,  2.88s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  65%|██████▌   | 346/531 [27:17<13:46,  4.47s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  67%|██████▋   | 356/531 [27:35<09:19,  3.20s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  67%|██████▋   | 357/531 [28:03<13:53,  4.79s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  69%|██████▉   | 367/531 [28:21<09:12,  3.37s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  69%|██████▉   | 368/531 [28:50<13:35,  5.01s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  71%|███████   | 378/531 [29:09<08:59,  3.52s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  71%|███████▏  | 379/531 [29:38<12:57,  5.12s/it][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=3212759)[0m Loading weights:  73%|███████▎  | 389/531 [29:56<08:24,  3.56s/it][32m [repeated 4x across cluster][0m

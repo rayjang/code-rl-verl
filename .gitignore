@@ -4,12 +4,10 @@
 *.tgz
 sources/
 # large data / models / images
-*.parquet
 *.sif
 *.safetensors
 environments/sif/
 data/raw/
-data/processed/*.jsonl
 checkpoints/
 ckpt/
 wandb/
@@ -37,3 +35,7 @@ environments/cache_v2/
 environments/cache_v3/
 environments/cache_v4/
 github.txt
+
+# training data IS shipped (see README) - only the immutable source tree stays out
+!data/curated/**/*.parquet
+!data/processed/**/*.parquet
