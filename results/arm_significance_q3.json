@@ -1,0 +1,168 @@
+{
+ "baseline": "exp_Q000_baseline",
+ "baseline_resolved": 0.40375,
+ "unpaired_se": 0.01579632854608039,
+ "arms": {
+  "exp_Q001_f2p_binary": {
+   "step": 20,
+   "resolved": 0.4025,
+   "delta": -0.0012499999999999734,
+   "ci95": [
+    -0.01125,
+    0.00875
+   ],
+   "mcnemar_p": 1.0,
+   "wins": 9,
+   "losses": 10,
+   "n_shared": 512,
+   "per_track": {
+    "swe": {
+     "rate": 0.0625,
+     "n": 112
+    },
+    "unittest": {
+     "rate": 0.7425,
+     "n": 400
+    }
+   }
+  },
+  "exp_Q002_f2p_linear": {
+   "step": 20,
+   "resolved": 0.3955357142857143,
+   "delta": -0.008214285714285674,
+   "ci95": [
+    -0.02267857142857143,
+    0.005
+   ],
+   "mcnemar_p": 0.5034446716308594,
+   "wins": 8,
+   "losses": 12,
+   "n_shared": 512,
+   "per_track": {
+    "swe": {
+     "rate": 0.05357142857142857,
+     "n": 112
+    },
+    "unittest": {
+     "rate": 0.7375,
+     "n": 400
+    }
+   }
+  },
+  "exp_Q004_p2p_strong": {
+   "step": 20,
+   "resolved": 0.4030357142857143,
+   "delta": -0.0007142857142857229,
+   "ci95": [
+    -0.014464285714285714,
+    0.012321428571428573
+   ],
+   "mcnemar_p": 0.8145294189453125,
+   "wins": 10,
+   "losses": 8,
+   "n_shared": 512,
+   "per_track": {
+    "swe": {
+     "rate": 0.05357142857142857,
+     "n": 112
+    },
+    "unittest": {
+     "rate": 0.7525,
+     "n": 400
+    }
+   }
+  },
+  "exp_Q005_p2p_tolerant": {
+   "step": 20,
+   "resolved": 0.39875,
+   "delta": -0.0050000000000000044,
+   "ci95": [
+    -0.0175,
+    0.0075
+   ],
+   "mcnemar_p": 0.557197093963623,
+   "wins": 11,
+   "losses": 15,
+   "n_shared": 512,
+   "per_track": {
+    "swe": {
+     "rate": 0.0625,
+     "n": 112
+    },
+    "unittest": {
+     "rate": 0.735,
+     "n": 400
+    }
+   }
+  },
+  "exp_Q006_rule_only": {
+   "step": 20,
+   "resolved": 0.4025,
+   "delta": -0.0012499999999999734,
+   "ci95": [
+    -0.01,
+    0.0075
+   ],
+   "mcnemar_p": 1.0,
+   "wins": 6,
+   "losses": 7,
+   "n_shared": 512,
+   "per_track": {
+    "swe": {
+     "rate": 0.0625,
+     "n": 112
+    },
+    "unittest": {
+     "rate": 0.7425,
+     "n": 400
+    }
+   }
+  },
+  "exp_Q007_rubric_heavy": {
+   "step": 20,
+   "resolved": 0.40375,
+   "delta": 0.0,
+   "ci95": [
+    -0.01,
+    0.01
+   ],
+   "mcnemar_p": 1.0,
+   "wins": 8,
+   "losses": 8,
+   "n_shared": 512,
+   "per_track": {
+    "swe": {
+     "rate": 0.0625,
+     "n": 112
+    },
+    "unittest": {
+     "rate": 0.745,
+     "n": 400
+    }
+   }
+  },
+  "exp_Q008_rusca": {
+   "step": 20,
+   "resolved": 0.4,
+   "delta": -0.0037499999999999756,
+   "ci95": [
+    -0.015,
+    0.0075
+   ],
+   "mcnemar_p": 0.6476058959960938,
+   "wins": 8,
+   "losses": 11,
+   "n_shared": 512,
+   "per_track": {
+    "swe": {
+     "rate": 0.0625,
+     "n": 112
+    },
+    "unittest": {
+     "rate": 0.7375,
+     "n": 400
+    }
+   }
+  }
+ }
+}
